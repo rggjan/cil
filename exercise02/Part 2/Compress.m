@@ -12,9 +12,11 @@ function I_comp = Compress(I)
   Uk = U(:, size(U,2)-k+1:size(U,2));
   Z = Uk' * Xm;
 
-  I_comp.Uk = single(Uk);
-  I_comp.Z = single(Z);
-  I_comp.mu = single(mu);
+  lambda((size(lambda)-10:size(lambda)));
+
+  I_comp.Uk = int16(Uk*255);
+  I_comp.Z = int16(Z*255);
+  I_comp.mu = mu;
   I_comp.d = d;
   I_comp.color_channels = size(I,3);
 end

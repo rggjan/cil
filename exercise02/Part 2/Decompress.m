@@ -1,5 +1,5 @@
 function out = Decompress(I_comp)
-  I_rec = I_comp.Uk*I_comp.Z + repmat(I_comp.mu, 1, size(I_comp.Z, 2));
+  I_rec = single(I_comp.Uk)*single(I_comp.Z)/255/255 + repmat(I_comp.mu, 1, size(I_comp.Z, 2));
 
   d = I_comp.d;
   
