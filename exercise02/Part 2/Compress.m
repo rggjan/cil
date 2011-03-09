@@ -1,5 +1,6 @@
 % Compressing function
 function I_comp = Compress(I)
+
   d = 16;
   k = 64;  
 
@@ -15,7 +16,7 @@ function I_comp = Compress(I)
   I_comp.Z = single(Z);
   I_comp.mu = single(mu);
   I_comp.d = d;
-
+  I_comp.color_channels = size(I,3);
 end
 
 
@@ -65,7 +66,7 @@ function [X,numRowBl,numColumnBl, extX, extY] = extract(I,d)
     numColumnBl = size(I,2)/d;
 
     X = zeros(d^2,  numRowBl*numColumnBl*3);
-    for c = 1:3
+    for c = 1:size(I,3)
        for i=1:numRowBl
             for j=1:numColumnBl
                 X(:,(c-1)*numRowBl*numColumnBl + (i-1)*numColumnBl + j) = reshape( I( ((i-1)*d+1):i*d , ((j-1)*d+1):j*d, c ), d*d, 1 );
