@@ -1,9 +1,9 @@
 % Compressing function
 function I_comp = Compress(I)
   d = 16;
-  k = 200;  
+  k = 250;  
 
-  X = extract(I, d);
+  [X, I_comp.numRowBlocks, I_comp.numColumnBlocks] = extract(I, d);
   [mu, lambda, U] = PCAanalyse(X)
 
   dims = size(X);
@@ -15,6 +15,8 @@ function I_comp = Compress(I)
   I_comp.Uk = Uk;
   I_comp.Z = Z;
   I_comp.mu = mu;
+  I_comp.d = d;
+
 end
 
 
@@ -26,7 +28,7 @@ function [mu, lambda, U] = PCAanalyse(X)
   lambda = diag(D);
 end
 
-function X = extract(I,d)
+function [X,numRowBl,numColumnBl] = extract(I,d)
     %Replicate the last column/row until it is divisible by d
 
     if (mod(size(I,1), d)) ~= 0
@@ -50,14 +52,14 @@ function X = extract(I,d)
     % dimension divisible by d
 
     % Cut into blocks and return them (vectorized)
-    numRowBlocks=size(I,1)/d;
-    numColumnBlocks = size(I,2)/d;
+    numRowBl=size(I,1)/d;
+    numColumnBl = size(I,2)/d;
 
-    X = zeros(d^2,  numRowBlocks*numColumnBlocks*3);
+    X = zeros(d^2,  numRowBl*numColumnBl*3);
     for c = 1:3
-       for i=1:numRowBlocks
-            for j=1:numColumnBlocks
-                X(:,(c-1)*numRowBlocks*numColumnBlocks + (i-1)*numColumnBlocks + j) = reshape(I( ((i-1)*d+1):i*d , ((j-1)*d+1):j*d,c),d*d,1);
+       for i=1:numRowBl
+            for j=1:numColumnBl
+                X(:,(c-1)*numRowBl*numColumnBl + (i-1)*numColumnBl + j) = reshape(I( ((i-1)*d+1):i*d , ((j-1)*d+1):j*d,c),d*d,1);
             end
             
        end
