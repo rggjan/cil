@@ -8,8 +8,8 @@ function out = Decompress(I_comp)
 
   for i=1:size(I_rec,2)/3
       block_r = reshape(I_rec(:,i)  , I_comp.d, I_comp.d);
-      block_g = reshape(I_rec(:,i+size(I_rec,2)/3), I_comp.d, I_comp.d);
-      block_b = reshape(I_rec(:,i+2*size(I_rec,2)/3), I_comp.d, I_comp.d);
+      block_g = reshape(I_rec(:,i + size(I_rec,2)/3), I_comp.d, I_comp.d);
+      block_b = reshape(I_rec(:,i + 2*size(I_rec,2)/3), I_comp.d, I_comp.d);
       red(  (row-1)*d+1:row*d, (column-1)*d+1:column*d) = block_r;
       green((row-1)*d+1:row*d, (column-1)*d+1:column*d) = block_g;
       blue( (row-1)*d+1:row*d, (column-1)*d+1:column*d) = block_b;
@@ -27,6 +27,9 @@ function out = Decompress(I_comp)
   out(:,:,2) = green;
   out(:,:,3) = blue;
   
+  I_comp.extendedX
+  I_comp.extendedY
   imshow(out(1:size(out,1)-I_comp.extendedX, 1:size(out,2)-I_comp.extendedY, :));
+  out = out(1:size(out,1)-I_comp.extendedX, 1:size(out,2)-I_comp.extendedY, :);
   
 end

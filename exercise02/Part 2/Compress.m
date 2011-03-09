@@ -4,7 +4,7 @@ function I_comp = Compress(I)
   k = 64;  
 
   [X, I_comp.numRowBlocks, I_comp.numColumnBlocks, I_comp.extendedX, I_comp.extendedY] = extract(I, d);
-  [mu, lambda, U] = PCAanalyse(X)
+  [mu, lambda, U] = PCAanalyse(X);
 
   dims = size(X);
   Xm = X - repmat(mu, 1, dims(2));
@@ -28,26 +28,33 @@ function [mu, lambda, U] = PCAanalyse(X)
 end
 
 function [X,numRowBl,numColumnBl, extX, extY] = extract(I,d)
-    %Replicate the last column/row until it is divisible by d
 
-    extX = d-mod(size(I,1), d);
-    extY = d-mod(size(I,1), d);
-    
+    %Copy the last row until height is divisible by d    
     if (mod(size(I,1), d)) ~= 0
+       display('Required cutoff X')
+       extX = d-mod(size(I,1), d)
        % Copy row
        copy = repmat( I(size(I,1),:,:), (d-mod(size(I,1), d)) , 1);
        size(I)
        size(copy)
        I = [I; copy];
-
+    else
+        display('Required cutoff X')
+        extX = 0
     end
-
+    
+    %Copy the last column until width is divisible by d
     if (mod(size(I,2),d)) ~= 0
+        display('Required cutoff Y')
+        extY = d-mod(size(I,2), d)
        % Copy column
        copy2 = repmat(I(:,size(I,2),:), 1, (d-mod(size(I,2), d)));
        size(I)
        size(copy2)
        I = [I copy2];
+    else
+        display('Required cutoff Y')
+        extY = 0
     end
     
     % Now we are guaranteed to have a matrix that is square, with each
@@ -61,7 +68,7 @@ function [X,numRowBl,numColumnBl, extX, extY] = extract(I,d)
     for c = 1:3
        for i=1:numRowBl
             for j=1:numColumnBl
-                X(:,(c-1)*numRowBl*numColumnBl + (i-1)*numColumnBl + j) = reshape(I( ((i-1)*d+1):i*d , ((j-1)*d+1):j*d,c),d*d,1);
+                X(:,(c-1)*numRowBl*numColumnBl + (i-1)*numColumnBl + j) = reshape( I( ((i-1)*d+1):i*d , ((j-1)*d+1):j*d, c ), d*d, 1 );
             end
             
        end
