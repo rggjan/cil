@@ -1,9 +1,28 @@
-function I_comp = Compress(I)
-
 % Compressing function
-extract(I,50);
-I_comp.I = I; % this is just a stump to make the evaluation script run, replace it with your code!
+function I_comp = Compress(I)
+  d = 16;
+  k = 200;  
 
+  X = extract(I, 50);
+  [mu, lambda, U] = PCAanalyse(X)
+
+  dims = size(X)
+  Xm = X - repmat(mu, 1, dims(2));
+
+  Uk = U(:, 1:k)
+  Z = Uk' * Xm;
+
+  I_comp.Uk = I;
+  I_comp.Z = Z;
+end
+
+
+function [mu, lambda, U] = PCAanalyse(X)
+  mu = mean(X, 2);
+
+  [U, D] = eig(cov(Xm));
+  
+  lambda = diag(D);
 end
 
 function X = extract(I,d)
