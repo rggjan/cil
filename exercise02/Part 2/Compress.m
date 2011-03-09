@@ -2,7 +2,7 @@
 function I_comp = Compress(I)
 
   d = 16;
-  k = 64;  
+  k = 64;
 
   [X, I_comp.numRowBlocks, I_comp.numColumnBlocks, I_comp.extendedX, I_comp.extendedY] = extract(I, d);
   [mu, lambda, U] = PCAanalyse(X);
@@ -14,8 +14,22 @@ function I_comp = Compress(I)
 
   lambda((size(lambda)-10:size(lambda)));
 
-  I_comp.Uk = int16(Uk*255);
-  I_comp.Z = int16(Z*255);
+  lower = min(min(Uk));
+  upper = max(max(Uk));
+  range = upper - lower;
+  
+  I_comp.Uk = uint8((Uk-lower)/range*255);
+  I_comp.Uk_lower = lower;
+  I_comp.Uk_upper = upper;
+
+  lower = min(min(Z));
+  upper = max(max(Z));
+  range = upper - lower;
+
+  I_comp.Z = uint8((Z-lower)/range*255);
+  I_comp.Z_lower = lower;
+  I_comp.Z_upper = upper;
+
   I_comp.mu = mu;
   I_comp.d = d;
   I_comp.color_channels = size(I,3);
