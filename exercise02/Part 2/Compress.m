@@ -11,9 +11,9 @@ function I_comp = Compress(I)
   Uk = U(:, size(U,2)-k+1:size(U,2));
   Z = Uk' * Xm;
 
-  I_comp.Uk = Uk;
-  I_comp.Z = Z;
-  I_comp.mu = mu;
+  I_comp.Uk = single(Uk);
+  I_comp.Z = single(Z);
+  I_comp.mu = single(mu);
   I_comp.d = d;
 
 end

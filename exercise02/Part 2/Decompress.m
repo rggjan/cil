@@ -29,7 +29,7 @@ function out = Decompress(I_comp)
   
   I_comp.extendedX
   I_comp.extendedY
-  imshow(out(1:size(out,1)-I_comp.extendedX, 1:size(out,2)-I_comp.extendedY, :));
+  %imshow(out(1:size(out,1)-I_comp.extendedX, 1:size(out,2)-I_comp.extendedY, :));
   out = out(1:size(out,1)-I_comp.extendedX, 1:size(out,2)-I_comp.extendedY, :);
   
 end
