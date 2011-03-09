@@ -8,11 +8,6 @@ function out = Decompress(I_comp)
 
   for i=1:size(I_rec,2)/3
     for c=1:I_comp.color_channels
-      (row-1)*d+1
-      row*d
-      (column-1)*d+1
-      column*d
-      c
       out( (row-1)*d+1:row*d, (column-1)*d+1:column*d, c) = reshape(I_rec(:,i + (c-1)*size(I_rec,2)/3), I_comp.d, I_comp.d);
     end
       
@@ -24,10 +19,6 @@ function out = Decompress(I_comp)
       end
 
   end
-  
-  I_comp.extendedX
-  I_comp.extendedY
-  imshow(out(1:size(out,1)-I_comp.extendedX, 1:size(out,2)-I_comp.extendedY, :));
   
   %Cutting off excess lines/columns
   out = out(1:size(out,1)-I_comp.extendedX, 1:size(out,2)-I_comp.extendedY, :);
