@@ -3,24 +3,25 @@ function I_comp = Compress(I)
   d = 16;
   k = 200;  
 
-  X = extract(I, 50);
+  X = extract(I, d);
   [mu, lambda, U] = PCAanalyse(X)
 
-  dims = size(X)
+  dims = size(X);
   Xm = X - repmat(mu, 1, dims(2));
 
-  Uk = U(:, 1:k)
+  Uk = U(:, 1:k);
   Z = Uk' * Xm;
 
-  I_comp.Uk = I;
+  I_comp.Uk = Uk;
   I_comp.Z = Z;
+  I_comp.mu = mu;
 end
 
 
 function [mu, lambda, U] = PCAanalyse(X)
   mu = mean(X, 2);
 
-  [U, D] = eig(cov(Xm));
+  [U, D] = eig(cov(X'));
   
   lambda = diag(D);
 end
