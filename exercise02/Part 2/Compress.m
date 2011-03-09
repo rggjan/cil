@@ -32,30 +32,22 @@ function [X,numRowBl,numColumnBl, extX, extY] = extract(I,d)
 
     %Copy the last row until height is divisible by d    
     if (mod(size(I,1), d)) ~= 0
-       display('Required cutoff X')
-       extX = d-mod(size(I,1), d)
+       extX = d-mod(size(I,1), d);
        % Copy row
        copy = repmat( I(size(I,1),:,:), (d-mod(size(I,1), d)) , 1);
-       size(I)
-       size(copy)
        I = [I; copy];
     else
-        display('Required cutoff X')
-        extX = 0
+        extX = 0;
     end
     
     %Copy the last column until width is divisible by d
     if (mod(size(I,2),d)) ~= 0
-        display('Required cutoff Y')
-        extY = d-mod(size(I,2), d)
+        extY = d-mod(size(I,2), d);
        % Copy column
        copy2 = repmat(I(:,size(I,2),:), 1, (d-mod(size(I,2), d)));
-       size(I)
-       size(copy2)
        I = [I copy2];
     else
-        display('Required cutoff Y')
-        extY = 0
+        extY = 0;
     end
     
     % Now we are guaranteed to have a matrix that is square, with each
