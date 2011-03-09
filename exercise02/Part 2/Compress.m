@@ -6,13 +6,40 @@ function I_comp = Compress(I)
 
   [X, I_comp.numRowBlocks, I_comp.numColumnBlocks, I_comp.extendedX, I_comp.extendedY] = extract(I, d);
   [mu, lambda, U] = PCAanalyse(X);
+  
+  l = lambda(1:size(lambda)-1);
+
+  klower = 2;
+  kupper = 253;
+  while klower < kupper
+    [p, s] = polyfit(1:klower, l(1:klower)', 1);
+    normlow = s.normr;
+    
+    [p, s] = polyfit(kupper:254, l(kupper:254)', 1);
+    normup = s.normr;
+
+    if (normup > normlow)
+      klower = klower + 1;
+    else
+      kupper = kupper - 1;
+    end
+  end
+  k = kupper;
+  
+%  figure
+%  hold on
+%  plot(l)
+%  [p, s] = polyfit(1:k, lambda(1:k)', 1);
+%  plot(1:k, polyval(p, 1:k), 'r')
+
+%  [p, s] = polyfit(k:254, lambda(k:254)', 1);
+%  plot(k:254, polyval(p, k:254), 'g')
+%  k
 
   dims = size(X);
   Xm = X - repmat(mu, 1, dims(2));
   Uk = U(:, size(U,2)-k+1:size(U,2));
   Z = Uk' * Xm;
-
-  lambda((size(lambda)-10:size(lambda)));
 
   lower = min(min(Uk));
   upper = max(max(Uk));
