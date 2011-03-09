@@ -33,5 +33,7 @@ function out = Decompress(I_comp)
   
   %Cutting off excess lines/columns
   out = out(1:size(out,1)-I_comp.extendedX, 1:size(out,2)-I_comp.extendedY, :);
+  figure
+  imshow(out)
   
 end

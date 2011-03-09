@@ -24,17 +24,23 @@ function I_comp = Compress(I)
       kupper = kupper - 1;
     end
   end
-  k = kupper;
+  k = 255;
   
-%  figure
-%  hold on
-%  plot(l)
-%  [p, s] = polyfit(1:k, lambda(1:k)', 1);
-%  plot(1:k, polyval(p, 1:k), 'r')
+  figure
+  hold on
+  plot(l)
+  [p, s] = polyfit(k:254, lambda(k:254)', 1);
+  plot(k:254, polyval(p, k:254), 'g')
+  
+  [p, s] = polyfit(1:k, lambda(1:k)', 1);
+  plot(1:k, polyval(p, 1:k), 'r')
 
-%  [p, s] = polyfit(k:254, lambda(k:254)', 1);
-%  plot(k:254, polyval(p, k:254), 'g')
-%  k
+
+  k = 255;
+  while (polyval(p, k) < l(k))
+    k = k - 1;
+  end
+  k = 255 - k
 
   dims = size(X);
   Xm = X - repmat(mu, 1, dims(2));
