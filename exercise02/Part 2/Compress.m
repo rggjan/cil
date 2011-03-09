@@ -45,9 +45,6 @@ function X = extract(I,d)
        size(copy2)
        I = [I copy2];
     end
-
-    imshow(I);
-    pause;
     
     % Now we are guaranteed to have a matrix that is square, with each
     % dimension divisible by d
