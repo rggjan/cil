@@ -6,6 +6,8 @@ function out = Decompress(I_comp)
   row=1;
   column=1;
 
+  out = zeros(I_comp.numRowBlocks*d, I_comp.numColumnBlocks*d, I_comp.color_channels);
+  
   for i=1:size(I_rec,2)/3
     for c=1:I_comp.color_channels
       out( (row-1)*d+1:row*d, (column-1)*d+1:column*d, c) = reshape(I_rec(:,i + (c-1)*size(I_rec,2)/3), I_comp.d, I_comp.d);
