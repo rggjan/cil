@@ -1,15 +1,14 @@
 % Compressing function
 function I_comp = Compress(I)
   d = 16;
-  k = 250;  
+  k = 64;  
 
-  [X, I_comp.numRowBlocks, I_comp.numColumnBlocks] = extract(I, d);
+  [X, I_comp.numRowBlocks, I_comp.numColumnBlocks, I_comp.extendedX, I_comp.extendedY] = extract(I, d);
   [mu, lambda, U] = PCAanalyse(X)
 
   dims = size(X);
   Xm = X - repmat(mu, 1, dims(2));
-
-  Uk = U(:, 1:k);
+  Uk = U(:, size(U,2)-k+1:size(U,2));
   Z = Uk' * Xm;
 
   I_comp.Uk = Uk;
@@ -28,9 +27,12 @@ function [mu, lambda, U] = PCAanalyse(X)
   lambda = diag(D);
 end
 
-function [X,numRowBl,numColumnBl] = extract(I,d)
+function [X,numRowBl,numColumnBl, extX, extY] = extract(I,d)
     %Replicate the last column/row until it is divisible by d
 
+    extX = d-mod(size(I,1), d);
+    extY = d-mod(size(I,1), d);
+    
     if (mod(size(I,1), d)) ~= 0
        % Copy row
        copy = repmat( I(size(I,1),:,:), (d-mod(size(I,1), d)) , 1);
