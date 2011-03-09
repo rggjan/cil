@@ -11,14 +11,18 @@ function X = extract(I,d)
 
     if (mod(size(I,1), d)) ~= 0
        % Copy row
-       copy = repmat( I(size(I,1),:,:), (d-mod(size(I,1), d)) , 1));
+       copy = repmat( I(size(I,1),:,:), (d-mod(size(I,1), d)) , 1);
+       size(I)
+       size(copy)
        I = [I; copy];
 
     end
 
     if (mod(size(I,2),d)) ~= 0
        % Copy column
-       copy2 = repmat(:,I(size(I,2),:), 1, (d-mod(size(I,2), d)));
+       copy2 = repmat(I(:,size(I,2),:), 1, (d-mod(size(I,2), d)));
+       size(I)
+       size(copy2)
        I = [I copy2];
     end
 
@@ -29,11 +33,17 @@ function X = extract(I,d)
     % dimension divisible by d
 
     % Cut into blocks and return them (vectorized)
-    X = zeros(d^2, I/d, 3);
-    for i=1:size(I,1)/d
-       for j=1:size(I,2)/d 
+    numRowBlocks=size(I,1)/d;
+    numColumnBlocks = size(I,2)/d;
 
+    X = zeros(d^2,  numRowBlocks*numColumnBlocks*3);
+    for c = 1:3
+       for i=1:numRowBlocks
+            for j=1:numColumnBlocks
+                X(:,(c-1)*numRowBlocks*numColumnBlocks + (i-1)*numColumnBlocks + j) = reshape(I( ((i-1)*d+1):i*d , ((j-1)*d+1):j*d,c),d*d,1);
+            end
+            
        end
-end
+    end
 
 end
