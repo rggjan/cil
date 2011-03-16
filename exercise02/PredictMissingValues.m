@@ -4,4 +4,4 @@ function X_pred = PredictMissingValues(X, nil)
 
 % your collaborative filtering code here!
 X_pred = X;
-X_pred(X_pred == nil) = 1;
+X_pred(X_pred == nil) = mean(X_pred(X_pred ~= nil));
