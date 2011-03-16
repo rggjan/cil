@@ -23,18 +23,16 @@ X_average = X;
 average = (column_pred + 2*row_pred)/3;
 X_average(X_average == nil) = average(X_average == nil);
 
-pause
 size(X_average)
 [U, D, V] = svd(X_average);
-pause
 
 U = U*sqrt(D);
 V = sqrt(D)*V;
 
 U = U(:, 1:10);
-V = V(1:10, :);
+V = V(:, 1:10);
 
-prediction = U*V;
+prediction = U*V';
 
 X_pred = X;
 X_pred(X_pred == nil) = prediction(X_pred == nil);
