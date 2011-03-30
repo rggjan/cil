@@ -34,8 +34,29 @@ K = 20;
 ClustInx = k_means(X_pred', K);
 ClustInx = ClustInx(:);    % Convert the array of cluster indices to a vector
 
-
 % update missing values in X_pred
+
+X=X';
+
+for i=1:K
+  %Extract all columns whose users are in this cluster
+  C = X(:, find(ClustInx==i));
+  
+  temp = C;
+  %Set all nil values to zero
+  temp(temp==nil) = 0;
+  % average with all non-nil values
+  Average = sum(temp,2) ./ (sum(C~=nil,2)+eps);
+  
+  % Now, fill in the nils in C
+  Average = repmat(Average,1,size(C,2));
+  C(C==nil) = Average(C==nil);
+  
+  % Fill back into X
+  X(:, find(ClustInx==i)) = C;
+end 
+
+X_pred=X';
 
 % TODO: fill in your code here 
 % You should update the missing values based of averaging over co-clustered
