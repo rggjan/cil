@@ -23,7 +23,6 @@ function [z, U, score] = k_means(data, nClusters, varargin)
 threshold = 1e-4;
 maxIter = 100;
 [nDims, nExamples] = size(data);
-Z = zeros(nClusters, nExamples);
 score = realmax;
 change = threshold+1;
 iterations = 0;
@@ -48,14 +47,31 @@ end
 
 % k-Means algorithm
 while (change>threshold && iterations < maxIter),
+    Z = zeros(nClusters, nExamples);
     iterations = iterations+1;
     disp(sprintf('Iterations = %d  Change = %0.5g.', iterations, change));
 
     % Assignment step: estimate class indices
     % TODO: fill in your code here
+    for(i=1:nExamples)
+      pointMat = repmat(data(:, i),1,nClusters);
+      % Calculate distance to each centroid
+      distance = (U - pointMat).^2;
+      % Get smallest distance and assign to cluster
+      [~, ind] = min(sum(distance));
+      Z(ind,i) = 1;
+    end
+    
     
     % Update step: estimate means
     % TODO: fill in your code here
+    
+    % For each cluster, divide the '1's for all assigned points by the
+    % total number of assigned points: Eliminates need to account for
+    % denominator of cluster update function
+    Zbar = Z ./ repmat(sum(Z,2),1,nExamples);
+    
+    U = data * Zbar';
 
     % estimate change
     score_old = score;
