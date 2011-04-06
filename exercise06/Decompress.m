@@ -6,7 +6,7 @@ I_rec = zeros(height,width,size(I_comp.U,1));
 
 for r = 1:height
   for c = 1:width
-    I_rec(r,c,:) = reshape(I_comp.U(I_comp.X(r,c)),1,1,[]);
+    I_rec(r,c,:) = I_comp.U(:,I_comp.X(r,c));
   end
 end
 
