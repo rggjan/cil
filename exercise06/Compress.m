@@ -8,4 +8,5 @@ X = reshape(I, [], colors);
 
 % TODO U in smaller datatype
 
+I_comp.U = U;
 I_comp.X = uint8(reshape(z, height, width));

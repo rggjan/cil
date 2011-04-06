@@ -72,7 +72,7 @@ while (change>threshold && iterations < maxIter),
     end
     Z = exp(Z);
     Z = Z.*repmat(pi, [1 nExamples]);
-    mass = sum(Z,1);
+    mass = sum(Z,1) + eps;
     P = Z;
     Z = Z./repmat(mass, nClusters, 1);
     
