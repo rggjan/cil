@@ -77,11 +77,20 @@ while (change>threshold && iterations < maxIter),
     Z = Z./repmat(mass, nClusters, 1);
     
     % M-step: estimate parameters
-    % TODO: needs to be implemented
+    for k=1:nClusters
+      Zpart = repmat(Z(k, :), nDims, 1);
+      average_matrix = Zpart .* data;
+      Nk = sum(Z(k, :));
+      new_u = sum(average_matrix, 2)/Nk;
+
+      U(:, k) = new_u;
+
+      pi(k) = Nk / nExamples;
+    end
 
     % estimate change of log-likelihood
     loglike_old = loglike;
-    loglike = sum(log(sum(P,1)));
+    loglike = sum(log(sum(P,1))); % TODO change to mass
     change = loglike - loglike_old;
 end
 
