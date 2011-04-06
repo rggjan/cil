@@ -96,4 +96,6 @@ function P = LogGaussPDF(data, u, Sigma)
 
 P = data-repmat(u,1,nExamples);
 P = sum(P.*(inv(Sigma)*P), 1);
+% Optimize this with a vector product (and transpose result)?
 P = -0.5*P - log(sqrt((2*pi)^nDims * (abs(det(Sigma))+realmin)));
+% Optimize last line by taking the square root outside of the log (/2)
