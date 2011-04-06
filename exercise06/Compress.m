@@ -1,5 +1,11 @@
 function I_comp = Compress(I)
 
-% Your compression code goes here
+[height, width, colors] = size(I);
 
-I_comp.I = I; % this is just a stump to make the evaluation script run, replace it with your code!
+X = reshape(I, [], colors);
+
+[z, U, loglike] = gmm(X', 256);
+
+% TODO U in smaller datatype
+
+I_comp.X = uint8(reshape(z, height, width));
