@@ -28,7 +28,7 @@ Z = zeros(nClusters, nExamples);
 loglike = -realmax;
 change = threshold+1;
 iterations = 0;
-variance = 1e-3;
+variance = mean(var(data));
 
 % initialization of the class means
 indices = randperm(nExamples);
