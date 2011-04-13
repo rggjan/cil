@@ -44,7 +44,7 @@ X_gt_train = X_gt(:, perm(columnsize_val+1:columns));
         tbest = t;
       end
     end
-    ts(i) = t;
+    ts(i) = tbest;
     
     
   end
