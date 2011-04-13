@@ -1,8 +1,6 @@
 function [Kstar,tstar] = cross_validate_roundedSVD(X, X_gt)
 %these are wrong dummy values, which you should find automatically by
 %cross validation in this function
-  Kstar = 10;
-  tstar = 0.5;
 
 val_prec = 0.3;
 [rows, columns] = size(X);
@@ -23,12 +21,12 @@ X_gt_train = X_gt(:, perm(columnsize_val+1:columns));
   [U,S,V] = svd(X_train,'econ');
 
   ts = zeros(length(S));
-  for i = 1:size(S,2)
+  for K = 1:size(S,2)
   %loop over possible K
     %take K components of decomposition
-    Ustar = U(:,1:i); %all rows, 1 to i columns
-    Sstar = S(1:i,1:i);
-    Vstar = V(:,1:i); %all columns, 1 to i rows
+    Ustar = U(:,1:K); %all rows, 1 to i columns
+    Sstar = S(1:K,1:K);
+    Vstar = V(:,1:K); %all columns, 1 to i rows
     
     reconstructed = Ustar*Sstar*Vstar';
     
@@ -44,7 +42,7 @@ X_gt_train = X_gt(:, perm(columnsize_val+1:columns));
         tbest = t;
       end
     end
-    ts(i) = tbest;
+    ts(K) = tbest;
     
     
   end
@@ -52,7 +50,28 @@ X_gt_train = X_gt(:, perm(columnsize_val+1:columns));
       
 %3. estimate Kstar from the validation set
   %compute svd of validation set
-  %validate which (K,t) pair to use from the training parameters  
+  [U,S,V] = svd(X_val,'econ');
+  %validate which (K,t) pair to use from the training parameters
+  kerr=+Inf;
+  kbest=0;
+  for K = 1:size(S,2)
+  %loop over possible K
+    %take K components of decomposition
+    Ustar = U(:,1:K); %all rows, 1 to i columns
+    Sstar = S(1:K,1:K);
+    Vstar = V(:,1:K); %all columns, 1 to i rows
+    
+    reconstructed = Ustar*Sstar*Vstar';
+    
+    %find rounding threshold t that best reconstructs the ground truth
+    %matrix for the current value of K 
+   
+    err = sum(sum(abs((reconstructed > ts(K)) - X_gt_val)));
+    if err < kerr
+        kerr=err;
+        kbest = K;
+    end
+  end
   
 %4. estimate tstar on the whole data set
   %do svd of whole data set
@@ -60,5 +79,6 @@ X_gt_train = X_gt(:, perm(columnsize_val+1:columns));
   %select tstar such that (Kstar, tstar) opimally reconstructs the ground
   %truth of the whole dataset
   
-  tstar = ts(Kstar);
+  tstar = ts(kbest);
+  Kstar = kbest;
 
