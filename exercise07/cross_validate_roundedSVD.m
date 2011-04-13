@@ -4,15 +4,51 @@ function [Kstar,tstar] = cross_validate_roundedSVD(X, X_gt)
   Kstar = 10;
   tstar = 0.5;
 
+val_prec = 0.3;
+[rows, columns] = size(X);
 
-%1. split X and X_gt in training set and validation set  
+%1. split X and X_gt in training set and validation set
+columnsize_val= round(columns*val_prec);
+% Perform permutation
+perm = randperm(columns);
+% Splitting the data (columns only)
+X_val = X(:,perm(1:columnsize_val));
+X_train = X(:, perm(columnsize_val+1:columns));
+
+X_gt_val = X_gt(:,perm(1:columnsize_val));
+X_gt_train = X_gt(:, perm(columnsize_val+1:columns));
   
 %2. for all K: get best t on training data
   %compute svd on training set
+  [U,S,V] = svd(X_train,'econ');
+
+  ts = zeros(length(S));
+  for i = 1:size(S,2)
   %loop over possible K
     %take K components of decomposition
+    Ustar = U(:,1:i); %all rows, 1 to i columns
+    Sstar = S(1:i,1:i);
+    Vstar = V(:,1:i); %all columns, 1 to i rows
+    
+    reconstructed = Ustar*Sstar*Vstar';
+    
     %find rounding threshold t that best reconstructs the ground truth
     %matrix for the current value of K 
+    
+    tbest=0;
+    terr=+Inf;
+    for t=0: 0.01 :1
+      err = sum(sum(abs((reconstructed > t) - X_gt_train)));
+      if err < terr
+        terr=err;
+        tbest = t;
+      end
+    end
+    ts(i) = t;
+    
+    
+  end
+
       
 %3. estimate Kstar from the validation set
   %compute svd of validation set
@@ -23,4 +59,6 @@ function [Kstar,tstar] = cross_validate_roundedSVD(X, X_gt)
   %take the Kstar estimated in step 3
   %select tstar such that (Kstar, tstar) opimally reconstructs the ground
   %truth of the whole dataset
+  
+  tstar = ts(Kstar);
 
