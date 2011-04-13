@@ -27,6 +27,7 @@ for i=1:11
     X_test_gt = X_gt(:,testInd);
     figure(1);    
     title('Noisy Test Data')
+    imbin(X_test);
     
     figure(2);
     imbin(X_test_gt);
