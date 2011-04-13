@@ -78,7 +78,24 @@ X_gt_train = X_gt(:, perm(columnsize_val+1:columns));
   %take the Kstar estimated in step 3
   %select tstar such that (Kstar, tstar) opimally reconstructs the ground
   %truth of the whole dataset
-  
-  tstar = ts(kbest);
+
   Kstar = kbest;
 
+  [U,S,V] = svd(X,'econ');
+  Ustar = U(:,1:Kstar); %all rows, 1 to i columns
+  Sstar = S(1:Kstar,1:Kstar);
+  Vstar = V(:,1:Kstar); %all columns, 1 to i rows
+    
+  reconstructed = Ustar*Sstar*Vstar';
+
+  tbest=0;
+  terr=+Inf;
+  for t=0: 0.01 :1
+    err = sum(sum(abs((reconstructed > t) - X_gt)));
+    if err < terr
+      terr=err;
+      tbest = t;
+    end
+  end
+  
+  tstar = tbest;
