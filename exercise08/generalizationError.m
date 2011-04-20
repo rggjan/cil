@@ -18,6 +18,9 @@ otherDims = rperm( round(ratio*D)+1 : D );
 
 
 UmatL = combineRolesIntern(Umat, Zmat);
+if numel(Zmat)==1
+    UmatL = UmatL';
+end
 
 newAssN = zeros(1, N);
 newHamm = zeros(1, N);
