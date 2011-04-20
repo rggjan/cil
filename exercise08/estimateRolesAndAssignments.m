@@ -1,6 +1,16 @@
 function [ Z, U ] = estimateRolesAndAssignments(X)
-  K = 5;
+  K = 1;
+  error = +Inf;
 
+  while K < size(X,2)
+    [ Z, U ] = calculateZU(X, K);
+    generalizationError(X, U, Z, 0.7);
+    pause
+    K = K + 1;
+  end
+end
+
+function [ Z, U ] = calculateZU(X, K)
   [perm_size, user_size] = size(X);
 
   perm = randperm(user_size);
@@ -28,5 +38,6 @@ function [ Z, U ] = estimateRolesAndAssignments(X)
       U(:,role) = median(X(:,users),2);
     end
 
-    hamming_dist = sum(sum(abs(X - U*Z)))
+    hamming_dist = sum(sum(abs(X - U*Z)));
   end
+end
