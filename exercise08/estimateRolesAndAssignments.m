@@ -2,12 +2,24 @@ function [ Z, U ] = estimateRolesAndAssignments(X)
   K = 1;
   error = +Inf;
 
+  Z = 0;
+  U = 0;
   while K < size(X,2)
+    old_Z = Z;
+    old_U = U;
     [ Z, U ] = calculateZU(X, K);
-    generalizationError(X, U, Z, 0.7);
-    pause
+    old_error = error;
+    error = generalizationError(X, U, Z, 0.7);
+
+    if (old_error <= error)
+      break;
+    end
+
     K = K + 1;
   end
+
+  Z = old_Z;
+  U = old_U;
 end
 
 function [ Z, U ] = calculateZU(X, K)
