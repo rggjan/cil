@@ -1,16 +1,16 @@
 function I_comp = Compress(I)
 
 % Padding preparation
-[h, w, c] = size(I);
+[h, w, C] = size(I);
 N = 2^(ceil(log2(max(h,w))));
 
 % Create image
-image = zeros(N, N, c);
+image = zeros(N, N, C);
 image(1:h, 1:w, :) = I;
 
 % Haar transform
 H = haarTrans(N);
-for i=1:c
+for c=1:C
   transformed_image(:,:,c) = H'*image(:,:,c)*H;
 end
 
