@@ -1,5 +1,8 @@
 function I_rec = Decompress(I_comp)
 
-% Your decompression code goes here!
+N = size(I_comp.data, 1);
 
-I_rec = I_comp.I; % this is just a stump to make the evaluation script run, replace it with your code!
+H = haarTrans(N);
+I_rec = H*I_comp.data*H';
+
+I_rec = I_rec(1:I_comp.h, 1:I_comp.w);
