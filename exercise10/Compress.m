@@ -15,7 +15,10 @@ for c=1:C
 end
 
 % Thresholding
-transformed_image(abs(transformed_image)<0.5) = 0;
+abs_image = abs(transformed_image);
+t = mean(transformed_image(:));
+v = var(transformed_image(:));
+transformed_image(abs_image<t+2*v) = 0;
 
 I_comp.h = h;
 I_comp.w = w;
