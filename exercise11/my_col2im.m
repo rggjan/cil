@@ -22,8 +22,7 @@ out = zeros(im_size, im_size);
 numColumnBlocks = im_size/patch;
 
 for i=1:size(X,2)
-  out((row-1)*patch+1:row*patch, (column-1)*patch+1:column*patch) =
-    reshape(X(:,i)), patch, patch);
+  out((row-1)*patch+1:row*patch, (column-1)*patch+1:column*patch) = reshape(X(:,i)), patch, patch);
     
   if(numColumnBlocks == column)
      column=1;
