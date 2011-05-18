@@ -23,8 +23,7 @@ num_atoms = size(U, 2);
 
 % Loop over all observations in the columns of X
 for nn = 1:n
-   nn
-   n
+   [nn, n]
 
     % Initialize the residual with the observation x
     % For the modification with masking make sure that you only take into
@@ -32,7 +31,7 @@ for nn = 1:n
     % Initialize z to zero
 
     R = X(:, nn);
-    M = diag(M_orig(:, nn));
+    M = diag(M_orig(:, nn)>0);
     masked_R = M*R;
     % TODO use vector instead of Matrix M
     z = zeros(l, 1);
@@ -43,12 +42,12 @@ for nn = 1:n
     while (norm(masked_R) > threshold && (rc_max > rc_min))
         % Select atom with maximum absolute correlation to the residual       
         % Update the maximum absolute correlation
-        rc_max = 0;
+        rc_max = -1;
         best_atom = 0;
 
         for i = 1:num_atoms
           rc = R'*U(:, i);
-          if rc > rc_max
+          if abs(rc) > abs(rc_max)
             rc_max = rc;
             best_atom = i;
           end
@@ -56,7 +55,7 @@ for nn = 1:n
         
         % Update coefficient vector z and residual z
         R = R - rc_max*U(:, best_atom);
-        z(best_atom) = Z(best_atom) + rc_max;
+        z(best_atom) = z(best_atom) + rc_max;
         
         % For the inpainting modification make sure that you only consider
         % the known observations defined by the mask M
