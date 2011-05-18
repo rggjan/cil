@@ -24,10 +24,10 @@ M = my_im2col(mask, neib);
 % Construct your dictionary
 % If you load your own dictionary U calculated offline you don't have to 
 % add anything here
-% U = buildDictionary(....);  % TO BE FILLED 
+U = buildDictionary(neib*neib);
     
 % Do the sparse coding with modified Matching Pursuit
-  Z = sparseCoding(U, X, M, sigma, rc_min);
+Z = sparseCoding(U, X, M, sigma, rc_min);
 
 % You need to do the image reconstruction using the known image information
 % and for the missing pixels use the reconstruction from the sparse coding.
