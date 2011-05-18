@@ -16,15 +16,11 @@ function X = my_im2col(I, patch)
 % creating matrix X
 
 % Cut into blocks and return them (vectorized)
-numRowBl=size(I,1)/patch;
-numColumnBl = size(I,2)/patch;
+numBlocks = size(I, 1)/patch;
 
-X = zeros(patch^2,  numRowBl*numColumnBl*3);
-for c = 1:size(I,3)
-   for i=1:numRowBl
-        for j=1:numColumnBl
-            X(:,(c-1)*numRowBl*numColumnBl + (i-1)*numColumnBl + j) = 
-              reshape( I( ((i-1)*patch+1):i*patch, ((j-1)*patch+1):j*patch, c ), patch*patch, 1 );
-        end
-   end
+X = zeros(patch^2, numBlocks^2);
+for i=1:numBlocks
+    for j=1:numBlocks
+        X(:, (i-1)*numBlocks + j) = reshape(I(((i-1)*patch+1):i*patch, ((j-1)*patch+1):j*patch), patch*patch, 1);
+    end
 end

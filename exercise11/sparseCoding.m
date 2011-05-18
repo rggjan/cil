@@ -1,4 +1,4 @@
-function Z = sparseCoding(U, X, M, sigma, rc_min)
+function Z = sparseCoding(U, X, M_orig, sigma, rc_min)
 % 
 % Perform sparse coding using a modified matching pursuit tailored to the 
 % inpainting problem with residual stopping criterion.
@@ -17,23 +17,25 @@ function Z = sparseCoding(U, X, M, sigma, rc_min)
 l = size(U,2);
 n = size(X,2);
 
-Z = zeros(l,n);
+Z = zeros(size(X));
 
 num_atoms = size(U, 2);
 
 % Loop over all observations in the columns of X
 for nn = 1:n
-    
+   nn
+   n
+
     % Initialize the residual with the observation x
     % For the modification with masking make sure that you only take into
     % account the known observations defined by the mask M
     % Initialize z to zero
 
     R = X(:, nn);
+    M = diag(M_orig(:, nn));
     masked_R = M*R;
-    M = diag(M(:, nn));
     % TODO use vector instead of Matrix M
-    z = Z(:, nn);
+    z = zeros(l, 1);
     
     threshold = sigma*norm(X(:, nn));
     rc_max = +inf;
@@ -54,7 +56,7 @@ for nn = 1:n
         
         % Update coefficient vector z and residual z
         R = R - rc_max*U(:, best_atom);
-        z(best_atom) += rc_max;
+        z(best_atom) = Z(best_atom) + rc_max;
         
         % For the inpainting modification make sure that you only consider
         % the known observations defined by the mask M
