@@ -32,5 +32,4 @@ Z = sparseCoding(U, X, M, sigma, rc_min);
 % You need to do the image reconstruction using the known image information
 % and for the missing pixels use the reconstruction from the sparse coding.
 % The mask will help you to distinguish between these two parts.
-
-% TO BE FILLED
+I_rec = my_col2im(Z, neib, size(I, 1));

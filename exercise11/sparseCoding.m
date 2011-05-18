@@ -62,5 +62,6 @@ for nn = 1:n
     end
     
     % Add the calculated coefficient vector z to the overall matrix Z
-    Z(:,nn) = z;
+%    Z(:,nn) = z;
+    Z(:,nn) = M*X(:, nn) + (eye(size(M, 1)) - M)*U*z;
 end
