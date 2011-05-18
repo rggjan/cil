@@ -17,12 +17,12 @@ function I_rec = my_col2im(X, patch, im_size)
 row=1;
 column=1;
 
-out = zeros(im_size, im_size);
+I_rec = zeros(im_size, im_size);
 
 numColumnBlocks = im_size/patch;
 
 for i=1:size(X,2)
-  out((row-1)*patch+1:row*patch, (column-1)*patch+1:column*patch) = reshape(X(:,i)), patch, patch);
+  I_rec((row-1)*patch+1:row*patch, (column-1)*patch+1:column*patch) = reshape(X(:,i), patch, patch);
     
   if(numColumnBlocks == column)
      column=1;
@@ -31,3 +31,4 @@ for i=1:size(X,2)
      column=column+1;
   end
 end
+
