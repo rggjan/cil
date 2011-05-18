@@ -43,7 +43,7 @@ for nn = 1:n
         % Select atom with maximum absolute correlation to the residual       
         % Update the maximum absolute correlation
         rc_max = -1;
-        best_atom = 0;
+        best_atom = 1;
 
         for i = 1:num_atoms
           rc = R'*U(:, i);
