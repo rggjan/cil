@@ -1,6 +1,6 @@
 function Z = sparseCoding(U, X, M_orig, sigma, rc_min)
-% 
-% Perform sparse coding using a modified matching pursuit tailored to the 
+%
+% Perform sparse coding using a modified matching pursuit tailored to the
 % inpainting problem with residual stopping criterion.
 %
 % INPUT
@@ -23,46 +23,61 @@ num_atoms = size(U, 2);
 
 % Loop over all observations in the columns of X
 for nn = 1:n
-   [nn, n]
+    [nn, n]
 
     % Initialize the residual with the observation x
     % For the modification with masking make sure that you only take into
     % account the known observations defined by the mask M
-    % Initialize z to zero
 
     R = X(:, nn);
-    M = diag(M_orig(:, nn)>0);
-    masked_R = M*R;
-    % TODO use vector instead of Matrix M
+    M = M_orig(:, nn)>0;
+
+    % Remove the missing pixels and corresponding ??? of Z
+    masked_R = R;
+    %delete those
+    masked_R(M==0) = [];
+
+    %Adapt U to fit size of masked_R
+    masked_U = U;
+    masked_U(M==0,:) = [];
+
+    % Initialize z to zero
     z = zeros(l, 1);
-    
+
     threshold = sigma*norm(X(:, nn));
     rc_max = +inf;
 
     while (norm(masked_R) > threshold && (rc_max > rc_min))
-        % Select atom with maximum absolute correlation to the residual       
-        % Update the maximum absolute correlation
-        rc_max = -1;
-        best_atom = 1;
+      % Select atom with maximum absolute correlation to the residual
+      % Update the maximum absolute correlation
+      rc_max = 0;
+      best_atom = 1;
 
-        for i = 1:num_atoms
-          rc = R'*U(:, i);
-          if abs(rc) > abs(rc_max)
-            rc_max = rc;
-            best_atom = i;
-          end
+      for i = 1:num_atoms
+        rc = masked_R'*masked_U(:, i);
+        if abs(rc) > abs(rc_max)
+          rc_max = rc;
+          best_atom = i;
         end
-        
-        % Update coefficient vector z and residual z
-        R = R - rc_max*U(:, best_atom);
-        z(best_atom) = z(best_atom) + rc_max;
-        
-        % For the inpainting modification make sure that you only consider
-        % the known observations defined by the mask M
-        masked_R = M*R;
+      end
+
+      % Update coefficient vector z and residual z
+      masked_R = masked_R - rc_max*masked_U(:, best_atom);
+
+      z(best_atom) = z(best_atom) + rc_max;
+
+
+      % For the inpainting modification make sure that you only consider
+      % the known observations defined by the mask M
+      %masked_R = M*R;
     end
     
+    %Fill truncated stuff back in, by zeroing
+    unmasked_U = zeros(size(U));
+    % Fill the rest in
+    unmasked_U(M~=0,:) = masked_U; 
+
     % Add the calculated coefficient vector z to the overall matrix Z
-%    Z(:,nn) = z;
-    Z(:,nn) = M*X(:, nn) + (eye(size(M, 1)) - M)*U*z;
+
+    Z(:,nn) = M.*X(:, nn) + (1-M).*(unmasked_U*z);
 end
