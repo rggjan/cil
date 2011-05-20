@@ -14,4 +14,4 @@ function U = buildDictionary(dim)
 % Most trivial implementation, using both DCT and haarTransform
 % Is still a TODO
 
-U = [overDCTdict(dim, 50) haarTrans(dim)];
+U = [overDCTdict(dim, dim)];
