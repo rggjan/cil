@@ -19,11 +19,9 @@ n = size(X,2);
 
 Z = zeros(size(X));
 
-num_atoms = size(U, 2);
-
 % Loop over all observations in the columns of X
 for nn = 1:n
-    [nn, n]
+    %[nn, n]
 
     % Initialize the residual with the observation x
     % For the modification with masking make sure that you only take into
