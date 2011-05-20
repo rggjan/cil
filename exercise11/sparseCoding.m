@@ -27,7 +27,7 @@ for nn = 1:n
     % For the modification with masking make sure that you only take into
     % account the known observations defined by the mask M
     R = X(:, nn);
-    M = M_orig(:, nn)>0;
+    M = M_orig(:, nn);
 
     % Remove the missing pixels and corresponding ??? of Z
     masked_R = R;
