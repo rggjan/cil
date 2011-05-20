@@ -52,13 +52,10 @@ for nn = 1:n
       rc_max = 0;
       best_atom = 0;
 
-      for i = 1:num_atoms
-        rc = masked_R'*masked_U(:, i);
-        if abs(rc) > abs(rc_max)
-          rc_max = rc;
-          best_atom = i;
-        end
-      end
+      results = masked_R'*masked_U;
+      [tilde, best_atom] = max(abs(results));
+      
+      rc_max = results(best_atom);
 
       % Update coefficient vector z and residual z
       masked_R = masked_R - rc_max*masked_U(:, best_atom);
