@@ -33,7 +33,7 @@ for nn = 1:n
 
     % Remove the missing pixels and corresponding ??? of Z
     masked_R = R;
-    %delete those
+    % d_e_l_e_t_e those
     masked_R(M==0) = [];
 
     %Adapt U to fit size of masked_R
