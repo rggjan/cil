@@ -18,12 +18,17 @@ function [U,Z] = dictionary_learning(X)
 %% Parameters
 
 global PRM;
+% 
+% l = PRM.dictionary_learning.l;
+% init_mode = PRM.dictionary_learning.init_mode;     
+% iter_num = PRM.dictionary_learning.iter_num;
+% sigma = PRM.dictionary_learning.sigma;
 
-l = PRM.dictionary_learning.l;
-init_mode = PRM.dictionary_learning.init_mode;     
-iter_num = PRM.dictionary_learning.iter_num;
-sigma = PRM.dictionary_learning.sigma;
-
+l = 5;
+init_mode = 'samples';
+iter_num = 30;
+sigma = 0.01;
+rc_min = 0.01;
 
 %% Initialization of Dictionary
 d = size(X,1);
@@ -45,7 +50,7 @@ else
 end
 
 %funny function to normalize
-U = bsxfun(@rdivide, A, sqrt(sum(A.^2)));
+U = bsxfun(@rdivide, U, sqrt(sum(U.^2)));
 
 % add constant atom as a first column of U
 % and normalize
