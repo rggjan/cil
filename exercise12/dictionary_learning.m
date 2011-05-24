@@ -26,21 +26,30 @@ sigma = PRM.dictionary_learning.sigma;
 
 
 %% Initialization of Dictionary
-
+d = size(X,1);
+n = size(X,2);
 
 if strcmp(init_mode, 'rand')
     
-    % Initialize D with random unit length atoms
+    % Initialize D with random atoms
+    U = rand(d,l);
     
 elseif strcmp(init_mode, 'samples')
     
     % Draw uniform samples from data matrix
+    Perm = randperm(n);
+    U = X(:,Perm(1:l));
+    
 else
     error('Invalid value for parameter init_mode.')
 end
 
-% add constant atom as a first column of U
+%funny function to normalize
+U = bsxfun(@rdivide, A, sqrt(sum(A.^2)));
 
+% add constant atom as a first column of U
+% and normalize
+U(:,1) = ones(d,1)/sqrt(d);
 
 %% Alternating Update of U and Z
 
@@ -54,8 +63,12 @@ for i=1:iter_num
      Z = mp(U, X, sigma, rc_min);   
     
     % Update each atom
-    for a = some_order       
-        % update U_new(:,a)
+    % TODO Use UNew?
+    for a = 1: size(U,2)
+      R = X-U*Z;
+      R = R + U(:,a)*Z(:,a);
+      [UU,~,~] = svd(R);
+      U_new(:,a) = UU(:,1);
     end
     
     U(:,2:end) = U_new(:,2:end);
