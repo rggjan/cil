@@ -15,4 +15,12 @@ function X = my_im2col(I, patch)
 % transform each patch to an 1D signal sequentially
 % creating matrix X
 
-% TO BE FILLED
+% Cut into blocks and return them (vectorized)
+numBlocks = size(I, 1)/patch;
+
+X = zeros(patch^2, numBlocks^2);
+for i=1:numBlocks
+    for j=1:numBlocks
+        X(:, (i-1)*numBlocks + j) = reshape(I(((i-1)*patch+1):i*patch, ((j-1)*patch+1):j*patch), patch*patch, 1);
+    end
+end
