@@ -26,7 +26,7 @@ function [U,Z] = dictionary_learning(I)
 
 l = 5;
 init_mode = 'samples';
-iter_num = 1;
+iter_num = 3;
 sigma = 0.4;
 rc_min = 0.1;
 neib = 16;
@@ -82,10 +82,18 @@ for i=1:iter_num
       U(:,a) = UU(:,1);
     end
 
+    %figure
+    %imshow(I);
+    %pause
+    figure
     new_I = my_col2im(U*Z, neib, size(I, 1));
     imshow(new_I);
+    pause
     figure
-    imshow(my_col2im(U, neib, size(I, 1)));
+    U
+    imagesc(reshape(U(:,2:l), neib, []))
+    axis image
+    pause
     
     %U(:,2:end) = U_new(:,2:end);
 end
