@@ -24,7 +24,9 @@ M = my_im2col(mask, neib);
 % Construct your dictionary
 % If you load your own dictionary U calculated offline you don't have to 
 % add anything here
-U = buildDictionary(neib*neib);
+if size(U,1) == 0
+  U = buildDictionary(neib*neib);
+end
     
 % Do the sparse coding with modified Matching Pursuit
 Z = sparseCoding(U, X, M, sigma, rc_min);

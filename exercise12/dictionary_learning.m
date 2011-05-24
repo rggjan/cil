@@ -54,7 +54,7 @@ U(:,1) = ones(d,1)/sqrt(d);
 %% Alternating Update of U and Z
 
 Z = zeros(l,n);
-U_new = zeros(size(U));
+%U_new = zeros(size(U));
 
 for i=1:iter_num
     disp(['iteration: ' num2str(i)]);
@@ -64,13 +64,16 @@ for i=1:iter_num
     
     % Update each atom
     % TODO Use UNew?
-    for a = 1: size(U,2)
+    
+    P = randperm(l-1)+1;
+    for a = P
       R = X-U*Z;
-      R = R + U(:,a)*Z(:,a);
+      R = R + U(:,a)*Z(a,:);
       [UU,~,~] = svd(R);
-      U_new(:,a) = UU(:,1);
+      % U_new(:,a) = UU(:,1);
+      U(:,a) = UU(:,1);
     end
     
-    U(:,2:end) = U_new(:,2:end);
+    %U(:,2:end) = U_new(:,2:end);
     
 end
