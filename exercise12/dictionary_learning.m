@@ -1,4 +1,4 @@
-function [U,Z] = dictionary_learning(X)
+function [U,Z] = dictionary_learning(I)
 % Implements dictionary learning algorithm, using matching pursuit as the
 % sparse coding stage.
 %
@@ -17,7 +17,7 @@ function [U,Z] = dictionary_learning(X)
 
 %% Parameters
 
-global PRM;
+%global PRM;
 % 
 % l = PRM.dictionary_learning.l;
 % init_mode = PRM.dictionary_learning.init_mode;     
@@ -26,9 +26,12 @@ global PRM;
 
 l = 5;
 init_mode = 'samples';
-iter_num = 30;
-sigma = 0.01;
-rc_min = 0.01;
+iter_num = 1;
+sigma = 0.4;
+rc_min = 0.1;
+neib = 16;
+
+X = my_im2col(I, neib);  
 
 %% Initialization of Dictionary
 d = size(X,1);
@@ -74,11 +77,15 @@ for i=1:iter_num
     for a = P
       R = X-U*Z;
       R = R + U(:,a)*Z(a,:);
-      [UU,~,~] = svd(R);
+      [UU,tilde,tilde] = svd(R);
       % U_new(:,a) = UU(:,1);
       U(:,a) = UU(:,1);
     end
+
+    new_I = my_col2im(U*Z, neib, size(I, 1));
+    imshow(new_I);
+    figure
+    imshow(my_col2im(U, neib, size(I, 1)));
     
     %U(:,2:end) = U_new(:,2:end);
-    
 end
