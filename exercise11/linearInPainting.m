@@ -29,54 +29,6 @@ for x=1:w
 
       for (i=1:10)
         try
-          if mask(x+i, y+i) ~= 0
-            values = values + I(x+i, y+i)/i;
-            s = s + 1/i;
-            break;
-          end
-        catch
-          break;
-        end
-      end
-
-      for (i=1:10)
-        try
-          if mask(x-i, y+i) ~= 0
-            values = values + I(x-i, y+i)/i;
-            s = s + 1/i;
-            break;
-          end
-        catch
-          break;
-        end
-      end
-
-      for (i=1:10)
-        try
-          if mask(x-i, y-i) ~= 0
-            values = values + I(x-i, y-i)/i;
-            s = s + 1/i;
-            break;
-          end
-        catch
-          break;
-        end
-      end
-
-      for (i=1:10)
-        try
-          if mask(x+i, y-i) ~= 0
-            values = values + I(x+i, y-i)/i;
-            s = s + 1/i;
-            break;
-          end
-        catch
-          break;
-        end
-      end
-
-      for (i=1:10)
-        try
           if mask(x+i, y) ~= 0
             values = values + I(x+i, y)/i;
             s = s + 1/i;
