@@ -1,4 +1,4 @@
-function [z, U, score] = k_means(data, nClusters, varargin)
+function [z, U, score] = k_means(data, mask, nClusters, varargin)
 % K_MEANS   k-means clustering
 % 
 %   [z, U, score] = k_means(data, nClusters, varargin)
@@ -52,7 +52,6 @@ while (change>threshold && iterations < maxIter),
     disp(sprintf('Iterations = %d  Change = %0.5g.', iterations, change));
 
     % Assignment step: estimate class indices
-    % TODO: fill in your code here
     for(i=1:nExamples)
       pointMat = repmat(data(:, i),1,nClusters);
       % Calculate distance to each centroid
@@ -64,7 +63,6 @@ while (change>threshold && iterations < maxIter),
     
     
     % Update step: estimate means
-    % TODO: fill in your code here
     
     % For each cluster, divide the '1's for all assigned points by the
     % total number of assigned points: Eliminates need to account for
