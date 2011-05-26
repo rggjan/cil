@@ -44,9 +44,9 @@ for x = (1+radius):(radius+width)
   end
 end
 
-%[z, U, score] = k_means(X, maskX, 50);
+[z, U, score] = k_means(X, maskX, 50);
 
-%X = U*z;
+X = U*z;
 
 counter = 1;
 for x = (1+radius):(radius+width)
