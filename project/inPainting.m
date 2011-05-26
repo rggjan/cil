@@ -22,7 +22,7 @@ border_out = border_I;
 border_mask = zeros(height+2*radius, width+2*radius);
 border_mask((1+radius):(radius+height), (1+radius):(radius+width)) = mask;
 
-tile_size = (radius*2+1)*(radius*2+1)-1;
+tile_size = (radius*2+1)*(radius*2+1);
 
 X = zeros(tile_size, total);
 maskX = zeros(tile_size, total);
@@ -44,14 +44,22 @@ for x = (1+radius):(radius+width)
   end
 end
 
+%[z, U, score] = k_means(X, maskX, 50);
+
+%X = U*z;
+
 counter = 1;
 for x = (1+radius):(radius+width)
   for y = (1+radius):(radius+height)
-    if (~border_mask(y, x))
-      average = sum(X(:, counter))/sum(maskX(:, counter));
-      border_out(y,x) = average;
-    end
-    
+    %if (~border_mask(y, x))
+    %  average = sum(X(:, counter))/sum(maskX(:, counter));
+     % border_out(y,x) = average;
+    %end
+
+    my_cluster = X(:, counter);
+
+    border_out(y, x) = my_cluster(floor(tile_size/2+1));
+
     counter = counter + 1;
   end
 end
