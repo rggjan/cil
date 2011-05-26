@@ -1,4 +1,4 @@
-function I_rec = inPainting(I, mask)
+function I_rec = linearInPainting(I, mask)
 
 % Perform the actual inpainting of the image 
 
@@ -16,10 +16,13 @@ rc_min = 0.01; % rc_min: minimal residual correlation before stopping
 neib = 32; % neib: The patch sizes used in the decomposition of the image
 sigma = 0.01; % sigma: residual error stopping criterion, normalized by signal norm
 
+patchsize=16; neighbourhood=8; t=88;
+
+
 % Get patches of size neib x neib from the image and the mask and
 % convert each patch to 1D signal
 
-[w, h] = size(I)
+[w, h] = size(I);
 
 for x=1:w
   for y=1:h
@@ -79,6 +82,54 @@ for x=1:w
     end
   end
 end
+
+% Create overlapping patches
+numBlocks=size(I,1)/patchsize;
+
+if(mod(size(I,1),patchsize)~=0)
+  throw('Imagesize not multiple of pactchsize');
+end
+
+tic;
+
+IG = zeros(size(I,1)+2*neighbourhood, size(I,1)+2*neighbourhood);
+IG(neighbourhood+1 : neighbourhood+size(I,1), neighbourhood+1 : neighbourhood+size(I,1)) = I;
+
+%Fill borders
+for i=1:neighbourhood
+  IG(:,i) = IG(:,neighbourhood+1);
+  IG(:,end-i+1) = IG(:,end-neighbourhood);
+  IG(i,:) = IG(neighbourhood+1,:);
+  IG(end-i+1,:) = IG(end-neighbourhood,:);
+end
+
+% Create inverted mask (0=keep, 1=replace)
+mask = logical(1-mask);
+for i=1:numBlocks
+    for j=1:numBlocks
+      % Get block from neighbourhooded picture
+        block = IG( patchsize*(i-1)+1 : patchsize*i + 2*neighbourhood , patchsize*(j-1)+1:patchsize*j+2*neighbourhood);
+        F = fft2(block);
+        T = abs(F);
+        perc = prctile(reshape(T,1,[]),t);
+        F(abs(F) < perc) = 0;
+        % Set reconstructed part to be inverse of FFT
+        Whole = abs(ifft2(F));
+        
+        %Extract inner part
+        Inner = Whole(neighbourhood+1:end-neighbourhood, neighbourhood+1:end-neighbourhood);
+        
+        Currentmask = logical(zeros(size(mask)));
+        Currentmask(patchsize*(i-1)+1 : patchsize*i , patchsize*(j-1)+1 : patchsize*j) = mask(patchsize*(i-1)+1 : patchsize*i , patchsize*(j-1)+1 : patchsize*j);
+
+        
+        I(Currentmask) = Inner(mask(patchsize*(i-1)+1 : patchsize*i , patchsize*(j-1)+1 : patchsize*j));
+        
+    end
+end
+
+
+toc;
     
 
 % You need to do the image reconstruction using the known image information
