@@ -11,7 +11,7 @@ I = I .* mask;
 % OUTPUT
 % I_rec = Reconstructed image 
 
-radius = 2;
+radius = 1;
 [height, width] = size(I);
 total = height * width;
 
@@ -24,8 +24,8 @@ border_mask((1+radius):(radius+height), (1+radius):(radius+width)) = mask;
 
 tile_size = (radius*2+1)*(radius*2+1);
 
-X = zeros(tile_size, total);
-maskX = zeros(tile_size, total);
+X = zeros(tile_size, total*tile_size);
+maskX = zeros(tile_size, total*tile_size);
 
 counter = 1;
 for x = (1+radius):(radius+width)
@@ -39,12 +39,17 @@ for x = (1+radius):(radius+width)
         small_counter = small_counter + 1;
       end
     end
+   
+    for p = 1:(tile_size-1)
+      X(:, counter+p) = circshift(X(:, counter), p);
+      maskX(:, counter+p) = circshift(maskX(:, counter), p);
+    end
     
-    counter = counter + 1;
+    counter = counter + tile_size;
   end
 end
 
-[z, U, score] = k_means(X, maskX, 20);
+[z, U, score] = k_means(X, maskX, 50);
 
 counter = 1;
 for x = (1+radius):(radius+width)
@@ -55,12 +60,13 @@ for x = (1+radius):(radius+width)
     %end
 
 %    if (~border_mask(y, x))
-      my_cluster = U(:, z(counter));
+      my_clusters = U(:, z(counter:(counter+tile_size-1)));
+      my_cluster = sum(my_clusters,2) / tile_size;
 
       border_out(y, x) = my_cluster(floor(tile_size/2+1));
 %    end
 
-    counter = counter + 1;
+    counter = counter + tile_size;
   end
 end
 
