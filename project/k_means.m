@@ -21,7 +21,7 @@ function [z, U, score] = k_means(data, mask, nClusters, varargin)
 
 % initializations
 threshold = 1e-4;
-maxIter = 100;
+maxIter = 10;
 [nDims, nExamples] = size(data);
 score = realmax;
 change = threshold+1;

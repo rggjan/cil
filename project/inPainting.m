@@ -6,7 +6,7 @@ I = I .* mask;
 
 % INPUT
 % I: (n x n) masked image
-% mask: (n x n) the mask hidding image information
+% mask: (n x n) the mask hiding image information
 %
 % OUTPUT
 % I_rec = Reconstructed image 
@@ -46,8 +46,6 @@ end
 
 [z, U, score] = k_means(X, maskX, 50);
 
-X = U*z;
-
 counter = 1;
 for x = (1+radius):(radius+width)
   for y = (1+radius):(radius+height)
@@ -56,9 +54,11 @@ for x = (1+radius):(radius+width)
      % border_out(y,x) = average;
     %end
 
-    my_cluster = X(:, counter);
+    if (~border_mask(y, x))
+      my_cluster = U(:, z(counter));
 
-    border_out(y, x) = my_cluster(floor(tile_size/2+1));
+      border_out(y, x) = my_cluster(floor(tile_size/2+1));
+    end
 
     counter = counter + 1;
   end
