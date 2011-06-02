@@ -44,7 +44,7 @@ for x = (1+radius):(radius+width)
   end
 end
 
-[z, U, score] = k_means(X, maskX, 50);
+[z, U, score] = k_means(X, maskX, 20);
 
 counter = 1;
 for x = (1+radius):(radius+width)
@@ -54,11 +54,11 @@ for x = (1+radius):(radius+width)
      % border_out(y,x) = average;
     %end
 
-    if (~border_mask(y, x))
+%    if (~border_mask(y, x))
       my_cluster = U(:, z(counter));
 
       border_out(y, x) = my_cluster(floor(tile_size/2+1));
-    end
+%    end
 
     counter = counter + 1;
   end

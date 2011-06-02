@@ -53,28 +53,50 @@ while (change>threshold && iterations < maxIter),
 
     % Assignment step: estimate class indices
     for(i=1:nExamples)
-      pointMat = repmat(data(:, i),1,nClusters);
+      % Get data
+      dataline = data(:, i);
+      maskline = mask(:, i);
+
+      % Get indices that can be used
+      indices = find(maskline==1);
+
+      % Get shorter version, repeat
+      masked_dataline = dataline(indices); 
+      pointMat = repmat(masked_dataline,1,nClusters);
+
+      masked_U = U(indices, :);
+
       % Calculate distance to each centroid
-      distance = (U - pointMat).^2;
+      distance = (masked_U - pointMat).^2;
+
       % Get smallest distance and assign to cluster
       [tilde, ind] = min(sum(distance));
       Z(ind,i) = 1;
     end
-    
     
     % Update step: estimate means
     
     % For each cluster, divide the '1's for all assigned points by the
     % total number of assigned points: Eliminates need to account for
     % denominator of cluster update function
-    Zbar = Z ./ repmat(sum(Z,2),1,nExamples);
+    for(i=1:nClusters)
+      list = Z(i, :);
+      indices = find(list==1);
+
+      my_items = data(:, indices);
+      my_masks = mask(:, indices);
+
+      U(:, i) = sum(my_items, 2)./ (sum(my_masks, 2) + eps);
+    end
+
+%    Zbar = Z ./ repmat(sum(Z,2),1,nExamples);
     
-    U = data * Zbar';
+%    U = data * Zbar';
 
     % estimate change
-    score_old = score;
-    score = sum(sum((data - U*Z).^2, 1));
-    change = score_old - score;
+    %score_old = score;
+    %score = sum(sum((data - U*Z).^2, 1));
+    %change = score_old - score;
 end
 
 % convert assignments to vector representation
