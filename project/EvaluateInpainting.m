@@ -13,6 +13,7 @@ Errors = []; % mean squared errors for each image would be stored here
 % UPDATE:
 % If available load the dictionary.mat file with dictionary U
 try 
+  global U;
   temp = load('dictionary.mat');
   U = temp.U;
 catch
