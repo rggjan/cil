@@ -35,6 +35,7 @@ mask_copy(val_indices) = 0;
 % Get patches of size neib x neib from the image and the mask and
 % convert each patch to 1D signal
 I_copy = gaussInterpolate(I_copy, mask_copy);
+I_orig_gauss = gaussInterpolate(I, mask);
 %I_rec = I;
 %return;
 
@@ -50,12 +51,21 @@ tic;
 IG = zeros(size(I_copy,1)+2*neighbourhood, size(I_copy,1)+2*neighbourhood);
 IG(neighbourhood+1 : neighbourhood+size(I,1), neighbourhood+1 : neighbourhood+size(I,1)) = I_copy;
 
+IG_orig = zeros(size(I,1)+2*neighbourhood, size(I,1)+2*neighbourhood);
+IG_orig(neighbourhood+1 : neighbourhood+size(I,1), neighbourhood+1 : neighbourhood+size(I,1)) = I_orig_gauss;
+
 %Fill borders
 for i=1:neighbourhood
   IG(:,i) = IG(:,neighbourhood+1);
   IG(:,end-i+1) = IG(:,end-neighbourhood);
   IG(i,:) = IG(neighbourhood+1,:);
   IG(end-i+1,:) = IG(end-neighbourhood,:);
+
+
+  IG_orig(:,i) = IG_orig(:,neighbourhood+1);
+  IG_orig(:,end-i+1) = IG_orig(:,end-neighbourhood);
+  IG_orig(i,:) = IG_orig(neighbourhood+1,:);
+  IG_orig(end-i+1,:) = IG_orig(end-neighbourhood,:);
 end
 
 % Create inverted mask (0=keep, 1=replace)
@@ -76,16 +86,10 @@ for i=1:numBlocks
 
         for perc=1:10
           F = fft2(block);
-
-          %before = length(find(F))
           F(abs(F) < perc) = 0;
-          %after = length(find(F))
 
           % Set reconstructed part to be inverse of FFT
           new_block = abs(ifft2(F));
-          %figure(2);
-          %imshow(new_block);
-
           new_block_small = new_block(neighbourhood+1:patchsize+neighbourhood, neighbourhood+1:patchsize+neighbourhood);
 
           diff = (val_mask_block.*new_block_small - ground_truth);
@@ -94,7 +98,7 @@ for i=1:numBlocks
 
           if (err < best_error)
             best_error = err;
-            best_block = new_block_small;
+            best_threshold = perc;
           end
         end
         %figure(1);
@@ -105,7 +109,17 @@ for i=1:numBlocks
         %Extract inner part
         %Currentmask = logical(zeros(size(mask)));
         %Currentmask(patchsize*(i-1)+1 : patchsize*i , patchsize*(j-1)+1 : patchsize*j) = mask(patchsize*(i-1)+1 : patchsize*i , patchsize*(j-1)+1 : patchsize*j);
-        I_copy(patchsize*(i-1)+1 : patchsize*i, patchsize*(j-1)+1:patchsize*j) = best_block;
+
+        block = IG_orig(patchsize*(i-1)+1 : patchsize*i + 2*neighbourhood , patchsize*(j-1)+1:patchsize*j+2*neighbourhood);
+
+        F = fft2(block);
+        F(abs(F) < best_threshold) = 0;
+
+        % Set reconstructed part to be inverse of FFT
+        new_block = abs(ifft2(F));
+        new_block_small = new_block(neighbourhood+1:patchsize+neighbourhood, neighbourhood+1:patchsize+neighbourhood);
+
+        I_copy(patchsize*(i-1)+1 : patchsize*i, patchsize*(j-1)+1:patchsize*j) = new_block_small;
         
         %I_copy(Currentmask) = best_block(mask(patchsize*(i-1)+1 : patchsize*i , patchsize*(j-1)+1 : patchsize*j));
 
@@ -123,4 +137,5 @@ toc;
 % and for the missing pixels use the reconstruction from the sparse coding.
 % The mask will help you to distinguish between these two parts.
 %I_rec = my_col2im(Z, neib, size(I, 1));
-I_rec = I.*mask + I_copy.*(1-mask);
+%I_rec = I.*mask + I_copy.*(1-mask);
+I_rec = I_copy;
