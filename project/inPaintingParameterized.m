@@ -55,7 +55,7 @@ for k = 1 : parameters.iterations
 			
 			mask_P = logical(zeros(size(mask)));
 			mask_P(range_i, range_j) = mask(range_i, range_j);
-			I_rec(mask_P) = P(mask(range_i, range_j));
+			I_rec(mask_P) = P_rec(mask(range_i, range_j));
 		end
 	end
 end
