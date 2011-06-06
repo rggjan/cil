@@ -15,7 +15,7 @@ I_rec = gaussInterpolate(I, mask, parameters);
 
 % Frame the original image by duplicating the first and last row respectively column.
 if mod(size(I, 1), parameters.patch_size) ~= 0
-	throw('The patch size does not divide the image size!'):
+	throw('The patch size does not divide the image size!');
 end
 
 num_patches = size(I, 1) / parameters.patch_size;
