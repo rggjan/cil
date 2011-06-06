@@ -19,16 +19,16 @@ if mod(size(I, 1), parameters.patch_size) ~= 0
 end
 
 num_patches = size(I, 1) / parameters.patch_size;
-num_pixels = size(I, 1) + 2 * parameters.frame;
+num_pixels = size(I, 1) + 2 * parameters.patch_frame;
 
 I_framed = zeros(num_pixels, num_pixels);
-I_framed(parameters.frame + 1 : parameters.frame + size(I, 1), parameters.frame + 1 : parameters.frame + size(I, 1)) = I;
+I_framed(parameters.patch_frame + 1 : parameters.patch_frame + size(I, 1), parameters.patch_frame + 1 : parameters.patch_frame + size(I, 1)) = I;
 
-for i = 1 : parameters.frame
-	I_framed(:, i) = I_framed(:, parameters.frame + 1);
-	I_framed(:, end - i + 1) = I_framed(:, end - parameters.frame);
-	I_framed(i, :) = I_framed(parameters.frame + 1, :);
-	I_framed(end - i + 1, :) = I_framed(end - parameters.frame, :);
+for i = 1 : parameters.patch_frame
+	I_framed(:, i) = I_framed(:, parameters.patch_frame + 1);
+	I_framed(:, end - i + 1) = I_framed(:, end - parameters.patch_frame);
+	I_framed(i, :) = I_framed(parameters.patch_frame + 1, :);
+	I_framed(end - i + 1, :) = I_framed(end - parameters.patch_frame, :);
 end
 
 % Invert the mask (0 = keep, 1 = replace)
@@ -38,8 +38,8 @@ mask = logical(1 - mask);
 for k = 1 : parameters.iterations
 	for i = 1 : num_patches
 		for j = 1 : num_patches
-			P_framed = I_framed(parameters.patch_size * (i - 1) + 1 : parameters.patch_size * i + 2 * parameters.frame, ...
-					parameters.patch_size * (j - 1) + 1 : parameters.patch_size * j + 2 * parameters.frame);
+			P_framed = I_framed(parameters.patch_size * (i - 1) + 1 : parameters.patch_size * i + 2 * parameters.patch_frame, ...
+					parameters.patch_size * (j - 1) + 1 : parameters.patch_size * j + 2 * parameters.patch_frame);
 			P_fft = fft2(P_framed);
 			P_abs = abs(P_fft);
 			
@@ -48,7 +48,7 @@ for k = 1 : parameters.iterations
 			P_fft(abs(P_fft) < perc) = 0;
 			P_ifft = abs(ifft2(P_fft));
 			
-			P_rec = P_ifft(parameters.frame + 1 : end - parameters.frame, parameters.frame + 1 : end - parameters.frame);
+			P_rec = P_ifft(parameters.patch_frame + 1 : end - parameters.patch_frame, parameters.patch_frame + 1 : end - parameters.patch_frame);
 			
 			range_i = parameters.patch_size * (i - 1) + 1 : parameters.patch_size * i;
 			range_j = parameters.patch_size * (j - 1) + 1 : parameters.patch_size * j;
