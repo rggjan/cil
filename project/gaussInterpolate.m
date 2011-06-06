@@ -3,7 +3,7 @@ function I_out = gaussInterpolate(I, mask)
 mask = double(mask);
 
 sigma = 0.8;
-gauss_size = 5;
+gauss_size = 10;
 
 h = fspecial('gaussian', gauss_size, sigma);
 I_masked = I.*mask;
