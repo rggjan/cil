@@ -61,7 +61,8 @@ while (change>threshold && iterations < maxIter),
       indices = find(maskline==1);
 
       % Get shorter version, repeat
-      masked_dataline = dataline(indices); 
+      masked_dataline = dataline(indices);
+      
       pointMat = repmat(masked_dataline,1,nClusters);
 
       masked_U = U(indices, :);
