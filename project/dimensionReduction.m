@@ -1,7 +1,6 @@
 function I_reduced = dimensionReduction(I, T, parameters)
 
 image_size = size(I, 1);
-  
 num_patches = image_size / parameters.patch_size;
 
 for i = 1 : num_patches
