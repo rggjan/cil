@@ -7,6 +7,7 @@ parameters.patch_size = 16;
 parameters.patch_frame_size = 8;
 
 parameters.validation = 0.5; % Fraction of pixels used for validating the threshold
-parameters.iterations = 4;
+parameters.iterative = true;
+parameters.max_iterations = 4;
 
 I_rec = inPaintingParameterized(I, mask, parameters);
