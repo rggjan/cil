@@ -16,11 +16,8 @@ for i = 1 : num_patches
 		  
     P_fft(abs(P_fft) < T(i, j)) = 0;
     P_ifft = abs(ifft2(P_fft));
-			
-    P_rec = P_ifft(parameters.patch_frame + 1 : ...
-                   end - parameters.patch_frame, ...
-                   parameters.patch_frame + 1 : ...
-                   end - parameters.patch_frame);
+		
+    P_rec = removeFrame(P_ifft, parameters);    
 			
     range_i = parameters.patch_size * (i-1) + 1 : parameters.patch_size * i;
     range_j = parameters.patch_size * (j-1) + 1 : parameters.patch_size * j;    
