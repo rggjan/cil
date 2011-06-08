@@ -41,6 +41,8 @@ if (parameters.iterative)
     [T, I_trained] = determineThresholds(I_training_framed, val_mask, I, parameters);
     I_training_framed = I_training_framed.*mask_training_framed + ...
                         (1-mask_training_framed).*I_trained;
+    diff = (removeFrame(I_training_framed, parameters) - I).*val_mask;
+    err = sum(sum(diff.*diff))
   end
   I_final = I_training_framed;
 else
@@ -49,11 +51,7 @@ else
   I_framed = gaussInterpolate(I_framed, mask_framed, parameters);
 
   [T, I_trained] = determineThresholds(I_training_framed, val_mask, I, parameters);
-  imshow(I_trained)
-  pause
   I_final = dimensionReduction(I_framed, T, parameters);
-  imshow(I_final)
-  pause
 end
 
 I_rec = I.*mask + (1-mask).*removeFrame(I_final, parameters);

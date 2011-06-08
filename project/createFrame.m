@@ -9,9 +9,9 @@ function I_framed = createFrame(I, parameters)
   
   for i = 1 : parameters.patch_frame_size
     % TODO optimize, use repmat
-    I_framed(:, i) = I_framed(:, parameters.patch_frame_size + 1);
-    I_framed(:, end - i + 1) = I_framed(:, end - parameters.patch_frame_size);
-    I_framed(i, :) = I_framed(parameters.patch_frame_size + 1, :);
-    I_framed(end - i + 1, :) = I_framed(end - parameters.patch_frame_size, :);
+    I_framed(:, i) = I_framed(:, 2*parameters.patch_frame_size - i+1);
+    I_framed(:, end - i + 1) = I_framed(:, end - 2*parameters.patch_frame_size + i);
+    I_framed(i, :) = I_framed(2*parameters.patch_frame_size - i+1, :);
+    I_framed(end - i + 1, :) = I_framed(end - 2*parameters.patch_frame_size + i, :);
   end
 end
