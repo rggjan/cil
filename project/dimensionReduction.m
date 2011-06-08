@@ -1,15 +1,18 @@
 function I_reduced = dimensionReduction(I, T, parameters)
 
+pfs = parameters.patch_frame_size;
+ps = parameters.patch_size;
+
 image_size = size(I, 1);
-num_patches = (image_size-2*parameters.patch_frame_size) / parameters.patch_size;
+num_patches = (image_size-2*pfs) / ps;
 I_reduced = I;
 
 for i = 1 : num_patches
   for j = 1 : num_patches
-    P_framed = I(parameters.patch_size * (i - 1) + 1 : ...
-                 parameters.patch_size * i + 2 * parameters.patch_frame_size, ...
-		 parameters.patch_size * (j - 1) + 1 : ...
-                 parameters.patch_size * j + 2 * parameters.patch_frame_size);
+    P_framed = I(ps * (i - 1) + 1 : ...
+                 ps * i + 2 * pfs, ...
+		 ps * (j - 1) + 1 : ...
+                 ps * j + 2 * pfs);
 
     P_fft = fft2(P_framed);
     P_abs = abs(P_fft);
@@ -19,8 +22,8 @@ for i = 1 : num_patches
 		
     P_rec = removeFrame(P_ifft, parameters);    
 			
-    range_i = parameters.patch_size * (i-1) + 1 : parameters.patch_size * i;
-    range_j = parameters.patch_size * (j-1) + 1 : parameters.patch_size * j;    
+    range_i = pfs + ps*(i-1) + 1 : pfs + ps * i;
+    range_j = pfs + ps*(j-1) + 1 : pfs + ps * j;
     I_reduced(range_i, range_j) = P_rec;
   end
 end

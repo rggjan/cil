@@ -30,7 +30,7 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, ...
                          ps * (j - 1) + 1 : ...
                          ps * j).*P_mask;
 
-      for t = 1:10 % TODO use gradient descent or something...
+      for t = 0:10 % TODO use gradient descent or something...
         P_reduced = removeFrame(dimensionReduction(P_framed, t, parameters), ...
                                 parameters);
         diff = P_reduced.*P_mask - P_validate;
@@ -44,8 +44,9 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, ...
       end
       T(i, j) = best_t;
 
-      range_i = ps * (i-1) + 1:ps * i;
-      range_j = ps * (j-1) + 1:ps * j;    
+      range_i = pfs + ps*(i-1) + 1 : pfs + ps * i;
+      range_j = pfs + ps*(j-1) + 1 : pfs + ps * j;
+
       I_trained(range_i, range_j) = best_P;
     end
   end
