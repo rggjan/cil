@@ -38,9 +38,12 @@ mask_training_framed = createFrame(mask_training, parameters);
 if (parameters.iterative)
   % TODO add stopping criterion based on validation set
   for i = 1:parameters.max_iterations
-    [T, I_trained] = determineThresholds(I_training_framed, val_mask, I);
-    I_training_framed = I_training_framed.*mask_traning_framed +
-                       (1-mask_training_framed).*I_trained;
+    [T, I_trained] = determineThresholds(I_training_framed, val_mask, I, parameters);
+    size(I_training_framed)
+    size(mask_training_framed)
+    size(I_trained)
+    I_training_framed = I_training_framed.*mask_training_framed + ...
+                        (1-mask_training_framed).*I_trained;
   end
   I_final = I_training_framed;
 else
@@ -48,7 +51,7 @@ else
   mask_framed = createFrame(mask, parameters);
   I_framed = gaussInterpolate(I_framed, mask_framed, parameters);
 
-  [T, I_trained] = determineThresholds(I_training_framed, val_mask, I);
+  [T, I_trained] = determineThresholds(I_training_framed, val_mask, I, parameters);
   I_final = dimensionReduction(I_framed, T, parameters);
 end
 

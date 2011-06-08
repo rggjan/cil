@@ -1,14 +1,15 @@
 function I_reduced = dimensionReduction(I, T, parameters)
 
 image_size = size(I, 1);
-num_patches = image_size / parameters.patch_size;
+num_patches = (image_size-2*parameters.patch_frame_size) / parameters.patch_size;
+I_reduced = I;
 
 for i = 1 : num_patches
   for j = 1 : num_patches
     P_framed = I(parameters.patch_size * (i - 1) + 1 : ...
-                 parameters.patch_size * i + 2 * parameters.patch_frame, ...
+                 parameters.patch_size * i + 2 * parameters.patch_frame_size, ...
 		 parameters.patch_size * (j - 1) + 1 : ...
-                 parameters.patch_size * j + 2 * parameters.patch_frame);
+                 parameters.patch_size * j + 2 * parameters.patch_frame_size);
 
     P_fft = fft2(P_framed);
     P_abs = abs(P_fft);
