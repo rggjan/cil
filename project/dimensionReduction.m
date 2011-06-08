@@ -15,13 +15,12 @@ for i = 1 : num_patches
                  ps * j + 2 * pfs);
 
     P_fft = fft2(P_framed);
-    P_abs = abs(P_fft);
-		  
+
     P_fft(abs(P_fft) < T(i, j)) = 0;
-    P_ifft = abs(ifft2(P_fft));
-		
-    P_rec = removeFrame(P_ifft, parameters);    
-			
+    P_ifft = ifft2(P_fft);
+
+    P_rec = removeFrame(P_ifft, parameters);
+
     range_i = pfs + ps*(i-1) + 1 : pfs + ps * i;
     range_j = pfs + ps*(j-1) + 1 : pfs + ps * j;
     I_reduced(range_i, range_j) = P_rec;
