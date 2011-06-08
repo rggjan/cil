@@ -10,32 +10,58 @@ function I_rec = inPaintingParameterized(I, mask, parameters)
 % OUTPUT
 % I_rec: Reconstructed image 
 
+% Split into validation and training set
+good_indices = find(mask);
+num_good = length(good_indices);
+perm = randperm(num_good);
+val_indices = good_indices(perm(1 : round(parameters.validation * num_good)));
+val_mask = zeros(size(mask));
+val_mask(val_indices) = 1;
+
+I_training = I;
+I_training(val_indices) = 0;
+
+mask_training = mask;
+mask_training(val_indices) = 0;
+
 % Interpolate the missing pixels with Gaussian weighting.
+I_training = gaussInterpolate(I_training, mask_training, parameters);
 I_rec = gaussInterpolate(I, mask, parameters);
 
-% Frame the original image by duplicating the first and last row respectively column.
-if mod(size(I, 1), parameters.patch_size) ~= 0
+image_size = size(I, 1);
+
+if mod(image_size, parameters.patch_size) ~= 0
 	throw('The patch size does not divide the image size!');
 end
 
-num_patches = size(I, 1) / parameters.patch_size;
-num_pixels = size(I, 1) + 2 * parameters.patch_frame;
+num_patches = image_size / parameters.patch_size;
+num_pixels = image_size + 2 * parameters.patch_frame;
 
-I_framed = zeros(num_pixels, num_pixels);
-I_framed(parameters.patch_frame + 1 : parameters.patch_frame + size(I, 1), parameters.patch_frame + 1 : parameters.patch_frame + size(I, 1)) = I;
-
-for i = 1 : parameters.patch_frame
-	I_framed(:, i) = I_framed(:, parameters.patch_frame + 1);
-	I_framed(:, end - i + 1) = I_framed(:, end - parameters.patch_frame);
-	I_framed(i, :) = I_framed(parameters.patch_frame + 1, :);
-	I_framed(end - i + 1, :) = I_framed(end - parameters.patch_frame, :);
-end
+I_rec_framed = zeros(num_pixels, num_pixels);
+I_training_framed = zeros(num_pixels, num_pixels);
 
 % Invert the mask (0 = keep, 1 = replace)
-mask = logical(1 - mask);
+imask = logical(1 - mask);
 
 % Repeat the dimension reduction in the Fourier domain k times.
 for k = 1 : parameters.iterations
+	
+	% Frame the image by duplicating the first and last row respectively column.
+	I_rec_framed(parameters.patch_frame + 1 : parameters.patch_frame + image_size, parameters.patch_frame + 1 : parameters.patch_frame + image_size) = I_rec;
+	I_training_framed(parameters.patch_frame + 1 : parameters.patch_frame + image_size, parameters.patch_frame + 1 : parameters.patch_frame + image_size) = I_training;
+	
+	for i = 1 : parameters.patch_frame
+		I_rec_framed(:, i) = I_rec_framed(:, parameters.patch_frame + 1);
+		I_rec_framed(:, end - i + 1) = I_rec_framed(:, end - parameters.patch_frame);
+		I_rec_framed(i, :) = I_rec_framed(parameters.patch_frame + 1, :);
+		I_rec_framed(end - i + 1, :) = I_rec_framed(end - parameters.patch_frame, :);
+	
+		I_training_framed(:, i) = I_training_framed(:, parameters.patch_frame + 1);
+		I_training_framed(:, end - i + 1) = I_training_framed(:, end - parameters.patch_frame);
+		I_training_framed(i, :) = I_training_framed(parameters.patch_frame + 1, :);
+		I_training_framed(end - i + 1, :) = I_training_framed(end - parameters.patch_frame, :);
+	end
+	
 	for i = 1 : num_patches
 		for j = 1 : num_patches
 			P_framed = I_framed(parameters.patch_size * (i - 1) + 1 : parameters.patch_size * i + 2 * parameters.patch_frame, ...
@@ -54,8 +80,8 @@ for k = 1 : parameters.iterations
 			range_j = parameters.patch_size * (j - 1) + 1 : parameters.patch_size * j;
 			
 			mask_P = logical(zeros(size(mask)));
-			mask_P(range_i, range_j) = mask(range_i, range_j);
-			I_rec(mask_P) = P_rec(mask(range_i, range_j));
+			mask_P(range_i, range_j) = imask(range_i, range_j);
+			I_rec(mask_P) = P_rec(imask(range_i, range_j));
 		end
 	end
 end
