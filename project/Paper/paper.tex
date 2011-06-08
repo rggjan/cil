@@ -8,7 +8,7 @@
 \usepackage[utf8]{inputenc} % To make umlauts and other symbols correct
 
 \begin{document}
-\title{Image restoration using dimension reduction in the Fourier domain}
+\title{Image restoration using dimensionality reduction in the Fourier domain}
 
 \author{
   Patrick Bänziger, Kaspar Etter, Jan Rüegg \\
@@ -32,9 +32,10 @@ the paper. The four points that should be covered~\cite{jones08}:
 
 \section{Introduction}
 In image inpainting, the aim is to restore an image from a disturbed source.
-These distortions may, for example, result from a transmission over a noisy channel.
-We distinguish inpainting from image 
-((( TODO )))
+These disturbances may, for example, result from a transmission over a noisy channel or from a degraded physical copy of the original image. Another application is object removal where a part of the image to be removed and the hole to be filled using inpainting.\\
+In our approach, we use an iterative scheme with dimensionality reduction in the Fourier domain. 
+((( TODO )))\\
+
 The aim of writing a paper is to infect the mind of your reader with
 the brilliance of your idea \cite{jones08}. 
 The hope is that after reading your
@@ -46,18 +47,43 @@ reader's head.
 \section{Methods}
 \subsection{Related work}
 ((( TODO )))
+
 \subsection{New approach}
+(((REWRITE)))
+We combine several ideas in our approach to obtain a inpainting algorithm that provides good results and fast performance.
+Our algorithm requires as input the image which shall be restored and a mask which indicates the pixels that shall be filled. Such a mask can be created by the user or automatically (((? checksum))).\\
+The main inspiration behind our algorithm is that we try to interpolate the pixels from its neighboring values. By this we add some noise compared to the original, undamaged image. We then try to use dimensionality reduction to filter out this generated noise to reconstruct the image.\\
+
+We use an iterative scheme to determine the right parameters used in our algorithm. For this, we use cross-validation: We randomly remove a percentage of pixels from the image as a test set. We then use this test set to test the accuracy of our parameters and determine the best set of parameters for this image.
+
+We then proceed to the main steps of the algorithm:
+\begin{enumerate}
+\label{algo}
+\item \label{algo:step1}
+We use a Gaussian to interpolate the missing pixels indicated by the mask, using a convolution operation. Both $\sigma$ and the size of the Gaussian matrix are determined by the cross-validation.
+This step is required by the Fourier transform which cannot ignore samples. (((Humm)))
+
+\item \label{algo:step2}
+We transform the image to the Fourier domain. In this domain we set the magnitudes of all frequencies to zero which are below the $n$-th percentile threshold. Again, $n$ is determined by cross-validation.
+(((EXPERIMENTAL: Validate, Rewrite))) We then repeat this step a certain number of times...
+
+\item \label{algo:step3}
+In this last step, we invert the Fourier transform and combine the reconstructed image with the undamaged part of the image, yielding our result.
+
+\end{enumerate}
+
+In our implementation, we use several tweaks to improve performance or quality:
+\begin{itemize}
+\item We use an extended neighborhood when ((( TODO )))
+\end{itemize}
+
+We use a 
 ((( TODO )))
 Describe your idea and how it was implemented to solve
   the problem. Survey the related work, giving credit where credit is
   due. 
-
-\section{Results}
- ((( TODO )))
-  Show evidence to support your claims made in the
-  introduction. 
   
-    The style in this section should read as if you were verbally
+  The style in this section should read as if you were verbally
 describing the conduct of the experiment. 
 The methods section is not a step-by-step, directive,
 protocol as you might see in your lab manual, but detailed enough such
@@ -91,6 +117,12 @@ structure the methods section by~\cite{kallet04methods}:
   the paper, but explain the key steps.
 \end{enumerate}
 
+
+\section{Results}
+ ((( TODO )))
+  Show evidence to support your claims made in the
+  introduction. 
+  
 Organize the results section based on the sequence of table and
 figures you include. Prepare the tables and figures as soon as all
 the data are analyzed and arrange them in the sequence that best
