@@ -27,7 +27,7 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask,
                          pfs * (j - 1) + 1 : ...
                          pfs * j).*P_mask;
 
-      for t = 1:10
+      for t = 1:10 % TODO use gradient descent or something...
         P_reduced = removeFrame(dimensionReduction(P_framed, t, parameters),
                                 parameters);
         diff = P_reduced.*P_mask - P_validate;
