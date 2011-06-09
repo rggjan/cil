@@ -51,10 +51,10 @@ reader's head.
 \subsection{New approach}
 (((REWRITE)))
 We combine several ideas in our approach to obtain a inpainting algorithm that provides good results and fast performance.
-Our algorithm requires as input the image which shall be restored and a mask which indicates the pixels that shall be filled. Such a mask can be created by the user or automatically (((? checksum))).\\
+Our algorithm requires as input the image which shall be restored and a mask which indicates the pixels that shall be filled. Such a mask can be created by the user or automatically (e.g. when a checksum algorithm detects faulty pixels).\\
 The main inspiration behind our algorithm is that we try to interpolate the pixels from its neighboring values. By this we add some noise compared to the original, undamaged image. We then try to use dimensionality reduction to filter out this generated noise to reconstruct the image.\\
 
-We use an iterative scheme to determine the right parameters used in our algorithm. For this, we use cross-validation: We randomly remove a percentage of pixels from the image as a test set. We then use this test set to test the accuracy of our parameters and determine the best set of parameters for this image.
+We use an iterative scheme to determine the right parameters used in our algorithm. For this, we use cross-validation: We randomly remove a percentage of pixels from the image as a validation set. (((STILL VALID?))) We then use this set to test the accuracy of our parameters and determine the best set of parameters for this image.
 
 We then proceed to the main steps of the algorithm:
 \begin{enumerate}
@@ -64,8 +64,7 @@ We use a Gaussian to interpolate the missing pixels indicated by the mask, using
 This step is required by the Fourier transform which cannot ignore samples. (((Humm)))
 
 \item \label{algo:step2}
-We transform the image to the Fourier domain. In this domain we set the magnitudes of all frequencies to zero which are below the $n$-th percentile threshold. Again, $n$ is determined by cross-validation.
-(((EXPERIMENTAL: Validate, Rewrite))) We then repeat this step a certain number of times...
+We transform the image to the Fourier domain. In this domain we set the magnitudes of all frequencies to zero which are below the $n$-th percentile threshold. Again, our ideal cutoff $n$ is determined by cross-validation using a loop.
 
 \item \label{algo:step3}
 In this last step, we invert the Fourier transform and combine the reconstructed image with the undamaged part of the image, yielding our result.
@@ -74,10 +73,8 @@ In this last step, we invert the Fourier transform and combine the reconstructed
 
 In our implementation, we use several tweaks to improve performance or quality:
 \begin{itemize}
-\item We use an extended neighborhood when ((( TODO )))
-\end{itemize}
-
-We use a 
+\item We perform the Fourier transform and thresholding on image patches to allow an individual threshold per patch.
+\item To avoid discontinuity at the boundary of the patches, we use a frame around the actual patch to capture more information. This frame is not filled in by the reconstructed patch from the Fourier step. (((IMAGE))) The frames of adjacent patches are overlapping, if the frame size is set to a value larger than zero.\end{itemize}
 ((( TODO )))
 Describe your idea and how it was implemented to solve
   the problem. Survey the related work, giving credit where credit is
@@ -119,6 +116,8 @@ structure the methods section by~\cite{kallet04methods}:
 
 
 \section{Results}
+We evaluated two versions of our algorithm: An iterative variant and a non-iterative variant.
+Our iterative variant repeats 
  ((( TODO )))
   Show evidence to support your claims made in the
   introduction. 
@@ -158,43 +157,6 @@ developed as part of the programming assignments.
   Discuss the strengths and weaknesses of your
   approach, based on the results. Point out the implications of your
   novel idea on the application concerned. (((( TODO ))))
-
-
-
-\section{The Structure of a Paper}
-\label{sec:structure-paper}
-
-Scientific papers usually begin with the description of the problem,
-justifying why the problem is interesting. Most importantly, it argues
-that the problem is still unsolved, or that the current solutions are
-unsatisfactory. This leads to the main gist of the paper, which is
-``the idea''. The authors then show evidence, using derivations or
-experiments, that the idea works. Since science does not occur in a
-vacuum, a proper comparison to the current state of the art is often
-part of the results. Following these ideas, papers usually have the
-following structure:
-\begin{description}
-\item[Abstract] \ \\
-  Short description of the whole paper, to help the
-  reader decide whether to read it.
-\item[Introduction] \ \\
-  Describe your problem and state your
-  contributions.
-\item[Methods] \ \\
-  Describe your idea and how it was implemented to solve
-  the problem. Survey the related work, giving credit where credit is
-  due.
-\item[Results] \ \\
-  Show evidence to support your claims made in the
-  introduction.
-\item[Discussion] \ \\
-  Discuss the strengths and weaknesses of your
-  approach, based on the results. Point out the implications of your
-  novel idea on the application concerned.
-\item[Summary] \ \\
-  Summarise your contributions in light of the new
-  results.
-\end{description}
 
 
 \subsection{Figures and Tables}
