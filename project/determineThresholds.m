@@ -37,12 +37,21 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, ...
       Ps = {};
       [errors(2), Ps{2}] = determineError(P_framed, middle, P_mask, P_validate, parameters);
       
+      %DEBUG
+      middles = [middle];
       while(stepsize > 0.01 && dev > 0.01) %% TODO Parameters
         
-        [errors(1), Ps{1}] = determineError(P_framed, middle-stepsize, P_mask, P_validate, parameters);
-        % We know the middle one, dont need to calculate it
         [errors(3), Ps{3}] = determineError(P_framed, middle+stepsize, P_mask, P_validate, parameters);
+        % We know the middle one, dont need to calculate it
         
+        if(middle ~= 0)
+          [errors(1), Ps{1}] = determineError(P_framed, middle-stepsize, P_mask, P_validate, parameters);
+        else
+          % Middle is 0 or smaller. Add eps so that it will not be chosen
+          % as minimum
+          errors(1) = errors(3)+eps;
+        end
+          
         dev = std(errors);
         if(dev>0)
           dev=10;
@@ -54,7 +63,14 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, ...
         
         % Calculate new middle
         middle = middle + (idx-2)*stepsize;
+        
+        % Assert
+        if(middle < 0)
+          throw('This should not happen!')
+        end
+        
         stepsize = stepsize / 2;
+        middles = [middles middle];
       end
       
       if(false)
@@ -78,7 +94,10 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, ...
         end
         figure(2);
         plot(steps,errors);
-        axis([0,20,0,2])
+        hold on;
+        plot(middles,ones(size(middles)), 'or');
+        axis([-10,20,0,1])
+        hold off;
         figure(1);
         imshow(P_reduced);
         pause
