@@ -39,7 +39,7 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, ...
       
       %DEBUG
       middles = [middle];
-      while(stepsize > 0.01 && dev > 0.0001) %% TODO Parameters
+      while(stepsize > parameters.td_abortbelow_stepsize && dev > parameters.td_abortbelow_stdev)
         
         [errors(3), Ps{3}] = determineError(P_framed, middle+stepsize, P_mask, P_validate, parameters);
         % We know the middle one, dont need to calculate it
