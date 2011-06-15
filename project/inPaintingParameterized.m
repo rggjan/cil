@@ -37,12 +37,18 @@ mask_training_framed = createFrame(mask_training, parameters);
 
 if (parameters.iterative)
   % TODO add stopping criterion based on validation set
+  previous_error = +Inf;
   for i = 1:parameters.max_iterations
     [T, I_trained] = determineThresholds(I_training_framed, val_mask, I, parameters);
     I_training_framed = I_training_framed.*mask_training_framed + ...
                         (1-mask_training_framed).*I_trained;
     diff = (removeFrame(I_training_framed, parameters) - I).*val_mask;
     err = sum(sum(diff.*diff))
+    if(1/previous_error*err > 1-parameters.abortbelow_change)
+      sprintf('No significant improvement anymore. Ending iteration');
+      break;
+    end
+    previous_error=err;
   end
   I_final = I_training_framed;
 else

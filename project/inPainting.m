@@ -7,7 +7,11 @@ parameters.patch_size = 16;
 parameters.patch_frame_size = 8;
 
 parameters.validation = 0.2; % Fraction of pixels used for validating the threshold
-parameters.iterative = true;
-parameters.max_iterations = 5;
+
+parameters.iterative = true;         % Enable or disable iterative scheme
+
+%Parameters for iterative scheme  
+parameters.max_iterations = 10;      % (Hard) abort criterion for iterations
+parameters.abortbelow_change = 0.05; % Minimal percentage change in error such that iterations continue. Tradeoff Speed-Accuracy
 
 I_rec = inPaintingParameterized(I, mask, parameters);
