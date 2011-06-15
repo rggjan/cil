@@ -29,29 +29,82 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, ...
                          ps * i, ...
                          ps * (j - 1) + 1 : ...
                          ps * j).*P_mask;
-
-      for t = 0:10 % TODO use gradient descent or something...
-        P_reduced = removeFrame(dimensionReduction(P_framed, t, parameters), ...
-                                parameters);
+          
+      dev = +Inf;
+      middle = 10;
+      stepsize = 10;
+      errors = [Inf, Inf, Inf];
+      Ps = {};
+      [errors(2), Ps{2}] = determineError(P_framed, middle, P_mask, P_validate, parameters);
+      
+      while(stepsize > 0.01 && dev > 0.01) %% TODO Parameters
         
-        % Make sure we do not fall outside the value range of an image
-        P_reduced = boundImageValues(P_reduced);
-                              
-        diff = P_reduced.*P_mask - P_validate;
-
-        new_error = sum(sum(diff.*diff));
-        if (new_error < best_error)
-          best_error = new_error;
-          best_t = t;
-          best_P = P_reduced;
+        [errors(1), Ps{1}] = determineError(P_framed, middle-stepsize, P_mask, P_validate, parameters);
+        % We know the middle one, dont need to calculate it
+        [errors(3), Ps{3}] = determineError(P_framed, middle+stepsize, P_mask, P_validate, parameters);
+        
+        dev = std(errors);
+        if(dev>0)
+          dev=10;
         end
+        
+        
+        [errors(2), idx] = min(errors);
+        Ps{2} = Ps{idx};
+        
+        % Calculate new middle
+        middle = middle + (idx-2)*stepsize;
+        stepsize = stepsize / 2;
       end
-      T(i, j) = best_t;
+      
+      if(false)
+        %DEBUG
+        errors = [];
+        steps=[];
+        for t = 0:0.1:20 % TODO use gradient descent or something...
+          P_reduced = removeFrame(dimensionReduction(P_framed, t, parameters), ...
+                                  parameters);
+
+          % Make sure we do not fall outside the value range of an image
+          P_reduced = boundImageValues(P_reduced);
+
+          diff = P_reduced.*P_mask - P_validate;
+
+          new_error = sum(sum(diff.*diff));
+
+          errors = [errors, new_error];
+          steps = [steps, t];
+          
+        end
+        figure(2);
+        plot(steps,errors);
+        axis([0,20,0,2])
+        figure(1);
+        imshow(P_reduced);
+        pause
+      end
+      
+      T(i, j) = middle;
 
       range_i = pfs + ps*(i-1) + 1 : pfs + ps * i;
       range_j = pfs + ps*(j-1) + 1 : pfs + ps * j;
 
-      I_trained(range_i, range_j) = best_P;
+      I_trained(range_i, range_j) = Ps{2};
     end
   end
 end
+
+function [err, P_reduced] = determineError(P_framed, t, P_mask, P_validate, parameters)
+
+  P_reduced = removeFrame(dimensionReduction(P_framed, t, parameters), ...
+                          parameters);
+
+  % Make sure we do not fall outside the value range of an image
+  P_reduced = boundImageValues(P_reduced);
+
+  diff = P_reduced.*P_mask - P_validate;
+  err = sum(sum(diff.*diff));
+
+end
+
+
