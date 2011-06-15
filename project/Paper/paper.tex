@@ -32,8 +32,8 @@ the paper. The four points that should be covered~\cite{jones08}:
 
 \section{Introduction}
 In image inpainting, the aim is to restore an image from a disturbed source.
-These disturbances may, for example, result from a transmission over a noisy channel or from a degraded physical copy of the original image. Another application is object removal where a part of the image to be removed and the hole to be filled using inpainting.\\
-In our approach, we use an iterative scheme with dimensionality reduction in the Fourier domain. 
+These disturbances may, for example, result from a transmission over a noisy channel or from a degraded physical copy of the original image. Another application is object removal where a part of the image to be removed and the hole to be filled using inpainting. (((EXPAND)))\\
+Our approach focuses on the first inpainting application. We use an iterative algorithm with dimensionality reduction in the Fourier domain paired with several adaptations to improve speed and reduce artifacts in the output.
 ((( TODO )))\\
 
 The aim of writing a paper is to infect the mind of your reader with
@@ -60,7 +60,7 @@ We then proceed to the main steps of the algorithm:
 \begin{enumerate}
 \label{algo}
 \item \label{algo:step1}
-We use a Gaussian to interpolate the missing pixels indicated by the mask, using a convolution operation. Both $\sigma$ and the size of the Gaussian matrix are determined by the cross-validation.
+We use a Gaussian to interpolate the missing pixels indicated by the mask, using a convolution operation. Both $\sigma$ and the size of the Gaussian matrix are determined by the cross-validation. (((TODO?!)))
 This step is required by the Fourier transform which cannot ignore samples. (((Humm)))
 
 \item \label{algo:step2}
@@ -74,7 +74,7 @@ In this last step, we invert the Fourier transform and combine the reconstructed
 In our implementation, we use several tweaks to improve performance or quality:
 \begin{itemize}
 \item We perform the Fourier transform and thresholding on image patches to allow an individual threshold per patch.
-\item To avoid discontinuity at the boundary of the patches, we use a frame around the actual patch to capture more information. This frame is not filled in by the reconstructed patch from the Fourier step. (((IMAGE))) The frames of adjacent patches are overlapping, if the frame size is set to a value larger than zero.\end{itemize}
+\item To avoid discontinuity at the boundary of the patches, we use a frame around the actual patch to capture more information. (Image \ref{fig:framing}) This frame is not filled in by the reconstructed patch from the Fourier step. The frames of adjacent patches are overlapping if the frame size is set to a value larger than zero. At the image boundaries, we replicate the outermost pixels to provide a sufficient frame.\end{itemize}
 ((( TODO )))
 Describe your idea and how it was implemented to solve
   the problem. Survey the related work, giving credit where credit is
@@ -119,6 +119,16 @@ structure the methods section by~\cite{kallet04methods}:
 We evaluated two versions of our algorithm: An iterative variant and a non-iterative variant.
 Our iterative variant repeats 
  ((( TODO )))
+ 
+ We compare our algorithm with the following two baseline algorithms:
+ \begin{enumerate}
+ \item A simple inpainting algorithm using (((TODO )))
+ \item A matching pursuit algorithm with a dictionary consisting of (((TODO)))
+ \end{enumerate}
+ 
+ We tested our algorithm and the two baselines on a set of natural images and further on a set of artificially created ones. (((TODO More than 1))) 
+ 
+ ((( TODO )))
   Show evidence to support your claims made in the
   introduction. 
   
@@ -155,7 +165,7 @@ developed as part of the programming assignments.
 
 \section{Discussion}
   Discuss the strengths and weaknesses of your
-  approach, based on the results. Point out the implications of your
+  approach, based on the results. Point out the implications of your  
   novel idea on the application concerned. (((( TODO ))))
 
 
@@ -163,9 +173,9 @@ developed as part of the programming assignments.
 
 \begin{figure}[tbp]
   \centering
-  \includegraphics[width=\columnwidth]{images/denoised_signal_1d}
-  \caption{Signal compression and denoising using the Fourier basis.}
-  \label{fig:denoise-fourier}
+  \includegraphics[width=\columnwidth]{images/imageFraming}
+  \caption{Only the inner patch (marked red) is reconstructed in one step while the frame only provides additional signal. (Undistorted image shown) }
+  \label{fig:framing}
 \end{figure}
 \begin{figure}[htbp]
   \centering
@@ -175,7 +185,7 @@ developed as part of the programming assignments.
 \end{figure}
 
 Use examples and illustrations to clarify ideas and results. For
-example, by comparing Figure~\ref{fig:denoise-fourier} and
+example, by comparing Figure~\ref{fig:framing} and
 Figure~\ref{fig:denoise-wavelet}, we can see the two different
 situations where Fourier and wavelet basis perform well. 
 
@@ -186,6 +196,8 @@ situations where Fourier and wavelet basis perform well.
   
 
 \section*{Acknowledgements}
+We would like to recognize and thank the following individuals or groups for their contribution to this work:\\
+Our implementation is based on the inpainting and evaluation framework provided by the course "Computer Intelligence Lab" held by Prof. Joachim Buhmann at ETH Zürich.
 (((( TODO ))))
 
 \bibliographystyle{IEEEtran}
