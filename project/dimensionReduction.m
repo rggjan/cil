@@ -19,7 +19,9 @@ for i = 1 : num_patches
     P_fft(abs(P_fft) < T(i, j)) = 0;
     P_ifft = ifft2(P_fft);
 
+    % Make sure we do not fall outside the value range of an image
     P_rec = removeFrame(P_ifft, parameters);
+    P_rec = boundImageValues(P_rec);
 
     range_i = pfs + ps*(i-1) + 1 : pfs + ps * i;
     range_j = pfs + ps*(j-1) + 1 : pfs + ps * j;

@@ -33,6 +33,10 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, ...
       for t = 0:10 % TODO use gradient descent or something...
         P_reduced = removeFrame(dimensionReduction(P_framed, t, parameters), ...
                                 parameters);
+        
+        % Make sure we do not fall outside the value range of an image
+        P_reduced = boundImageValues(P_reduced);
+                              
         diff = P_reduced.*P_mask - P_validate;
 
         new_error = sum(sum(diff.*diff));
