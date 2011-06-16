@@ -3,12 +3,15 @@ function I_rec = inPainting(I, mask)
 parameters.gauss_size = 10;
 parameters.gauss_sigma = 0.8;
 
-parameters.patch_size = 16;
+% Is the exponent of the power of two
+% due to the optimize script
+parameters.patch_size = 4;
 parameters.patch_frame_size = 8;
 
 % Parameters for determining thresholds in Fourier
 parameters.td_abortbelow_stdev = 0.0001;
 parameters.td_abortbelow_stepsize = 0.01;
+parameters.td_middle = 10;
 
 parameters.validation = 0.2; % Fraction of pixels used for validating the threshold
 

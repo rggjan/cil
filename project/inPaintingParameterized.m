@@ -14,10 +14,11 @@ function I_rec = inPaintingParameterized(I, mask, parameters)
   % Round floating point values that come from optimizing
   parameters.gauss_size = round(parameters.gauss_size);
   %parameters.gauss_sigma = 0.8;
-  %parameters.patch_size = round(parameters.patch_size);
-  %parameters.patch_frame_size = round(parameters.patch_frame_size);
+  parameters.patch_size = 2^round(parameters.patch_size);
+  parameters.patch_frame_size = round(parameters.patch_frame_size);
   %parameters.td_abortbelow_stdev = 0.0001;
   %parameters.td_abortbelow_stepsize = 0.01;
+  %parameters.td_abortbelow_middle = 0.01;
   %parameters.validation = 0.2; 
   %parameters.iterative = true; 
   parameters.max_iterations = round(parameters.max_iterations); 
