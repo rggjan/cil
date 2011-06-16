@@ -14,8 +14,8 @@ function optimizeInpainting()
   parameters.td_abortbelow_stepsize = 2;
   parameters.td_middle = 10;
   parameters.validation = 0.2; 
-  parameters.iterative = true; 
-  parameters.max_iterations = 1; 
+  parameters.iterative = false; 
+  parameters.max_iterations = 5;
   parameters.abortbelow_change = 0.15; 
   
   % Result set
