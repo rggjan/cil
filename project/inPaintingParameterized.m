@@ -58,7 +58,7 @@ if (parameters.iterative)
     I_training_framed = I_training_framed.*mask_training_framed + ...
                         (1-mask_training_framed).*I_trained;
     diff = (removeFrame(I_training_framed, parameters) - I).*val_mask;
-    err = sum(sum(diff.*diff))
+    err = sum(sum(diff.*diff));
     if(1/previous_error*err > 1-parameters.abortbelow_change)
       sprintf('No significant improvement anymore. Ending iteration');
       break;

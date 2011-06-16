@@ -43,8 +43,8 @@ function cost = EvaluateInpaintingParameterized(parameters)
     k = k+1;
   end
   
-  Errors
-  Times
+  Errors;
+  Times;
 
   timemax = 90;
   errormax = 0.001;

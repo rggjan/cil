@@ -42,8 +42,8 @@ function optimizeInpainting()
         stepsize = -1*(new_cost_plus-new_cost_minus)/2*learning_rate;
         final_parameters.abortbelow_change = getNextAbortBelowChange(parameters.abortbelow_change,stepsize);
         fprintf('Changing %g abortbelow_change with stepsize %g',parameters.abortbelow_change,stepsize)
-        pause
     end
+    %pause;
 
     % gauss_size
     % Case +1
@@ -60,12 +60,12 @@ function optimizeInpainting()
         stepsize = -1*(new_cost_plus-new_cost_minus)/2*learning_rate;
         final_parameters.gauss_size = getNextGaussSize(parameters.gauss_size,stepsize);
         fprintf('Changing %g gauss_size with stepsize %g',parameters.gauss_size,stepsize)
-        pause
     end
+    %pause;
     
-    parameters = final_parameters;
+    parameters = final_parameters
+    %pause;
     cost = EvaluateInpaintingParameterized(parameters);
-    
   end
 
 end
