@@ -24,8 +24,8 @@ function optimizeInpainting()
 
     %Working copy
     new_parameters = parameters;
-    
-    
+   
+    % abortbelow_change
     % Case +1
     new_parameters.abortbelow_change = getNextAbortBelowChange(parameters.abortbelow_change,1);
     new_cost_plus = EvaluateInpaintingParameterized(new_parameters) - cost;
@@ -41,6 +41,20 @@ function optimizeInpainting()
         final_parameters.abortbelow_change = getNextAbortBelowChange(parameters.abortbelow_change,stepsize);
         fprintf('Changing %g parameter with stepsize %g',parameters.abortbelow_change,stepsize)
     end
+
+    % gauss_size
+    % Case +1
+    new_parameters.gauss_size = getNextGaussSize(parameters.gauss_size,1);
+    new_cost_plus = EvaluateInpaintingParameterized(new_parameters) - cost;
+    % Case -1
+    new_parameters.gauss_size = getNextGaussSize(parameters.gauss_size,-1);
+    new_cost_minus = EvaluateInpaintingParameterized(new_parameters) - cost;
+
+    if(new_cost_plus > 0 && new_cost_minus > 0)
+        %Keep the old setting
+    else
+        final_parameters.gauss_size = getNextGaussSize(parameters.gauss_size,-1*(new_cost_plus-new_cost_minus)/2);
+    end
     
     parameters = final_parameters;
     cost = EvaluateInpaintingParameterized(parameters);
@@ -50,7 +64,10 @@ function optimizeInpainting()
 end
 
 function new = getNextGaussSize(Value, Stepsize)
-  
+  new = round(Value + Stepsize);
+  if(new < 2)
+    new = 2;
+  end
 end
 
 function new = getNextPatchSize(Value, Stepsize)
