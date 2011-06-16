@@ -4,6 +4,8 @@ function optimizeInpainting()
   % Set random seet to get reproducable results
   rand('seed', 12345);
 
+  learning_rate = 1;
+
   % Initial parameters
   parameters.gauss_size = 10;
   parameters.gauss_sigma = 0.8;
@@ -37,7 +39,7 @@ function optimizeInpainting()
         %Keep the old setting
         sprintf('Not changing parameter')
     else
-        stepsize = -1*(new_cost_plus-new_cost_minus)/2;
+        stepsize = -1*(new_cost_plus-new_cost_minus)/2*learning_rate;
         final_parameters.abortbelow_change = getNextAbortBelowChange(parameters.abortbelow_change,stepsize);
         fprintf('Changing %g parameter with stepsize %g',parameters.abortbelow_change,stepsize)
     end
