@@ -37,8 +37,10 @@ function optimizeInpainting()
     final_parameters.td_middle              = gradientDescent(7, @getNextTDMiddle, parameters, cost);
     final_parameters.validation             = gradientDescent(8, @getNextValidation, parameters, cost);
     %Dont iterate over bool 'iterative'
-    final_parameters.max_iterations         = gradientDescent(10, @getNextMaxIterations, parameters, cost);
-    final_parameters.abortbelow_change      = gradientDescent(11, @getNextAbortBelowChange, parameters, cost);
+    if parameters.iterative
+      final_parameters.max_iterations         = gradientDescent(10, @getNextMaxIterations, parameters, cost);
+      final_parameters.abortbelow_change      = gradientDescent(11, @getNextAbortBelowChange, parameters, cost);
+    end
   end
 
 end
