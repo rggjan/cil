@@ -43,13 +43,10 @@ function cost = EvaluateInpaintingParameterized(parameters)
     k = k+1;
   end
   
-  Times
   Errors
-  cost = costfunc(Errors, Times)
-end
+  Times
 
-function s = costfunc(error, time) 
-
-  s = exp(mean(error/30))+exp(mean(time*1e-5/30));
-
+  timemax = 90;
+  errormax = 0.001;
+  cost = 1/-log(mean(Errors)/errormax) + 1/-log(mean(Times)/timemax)
 end
