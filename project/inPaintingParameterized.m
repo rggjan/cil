@@ -16,6 +16,8 @@ function I_rec = inPaintingParameterized(I, mask, parameters)
   parameters.patch_size = 2^round(parameters.patch_size);
   parameters.patch_frame_size = round(parameters.patch_frame_size);
   parameters.max_iterations = round(parameters.max_iterations); 
+  parameters.td_abortbelow_stdev = 10^-(parameters.td_abortbelow_stdev);
+  parameters.td_abortbelow_stepsize = 10^-(parameters.td_abortbelow_stepsize);
   parameters.abortbelow_change = 0.15; 
 
 

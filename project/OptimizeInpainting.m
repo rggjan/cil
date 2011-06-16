@@ -10,8 +10,8 @@ function optimizeInpainting()
   parameters.gauss_sigma = 0.8;
   parameters.patch_size = 4;
   parameters.patch_frame_size = 8;
-  parameters.td_abortbelow_stdev = 0.0001;
-  parameters.td_abortbelow_stepsize = 0.01;
+  parameters.td_abortbelow_stdev = 4;
+  parameters.td_abortbelow_stepsize = 2;
   parameters.td_middle = 10;
   parameters.validation = 0.2; 
   parameters.iterative = true; 
@@ -97,7 +97,7 @@ function new = getNextGaussSize(Value, Stepsize)
 end
 
 function new = getNextGaussSigma(Value, Stepsize)
-  new = getNextPositiveRealNumber(Value, Stepsize);  
+  new = getNextPositiveRealNumber(Value, Stepsize/10);
 end
 
 function new = getNextPatchSize(Value, Stepsize)

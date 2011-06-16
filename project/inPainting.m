@@ -9,10 +9,12 @@ parameters.patch_size = 4;
 parameters.patch_frame_size = 8;
 
 % Parameters for determining thresholds in Fourier
-parameters.td_abortbelow_stdev = 0.0001;
-parameters.td_abortbelow_stepsize = 0.01;
-parameters.td_middle = 10;
+% Is the negative exponent of the power of 10
+% due to the optimize script
+parameters.td_abortbelow_stdev = 4;
+parameters.td_abortbelow_stepsize = 2;
 
+parameters.td_middle = 10;
 parameters.validation = 0.2; % Fraction of pixels used for validating the threshold
 
 parameters.iterative = true;         % Enable or disable iterative scheme
