@@ -48,5 +48,5 @@ function cost = EvaluateInpaintingParameterized(parameters)
 
   timemax = 90;
   errormax = 0.001;
-  cost = 1/-log(mean(Errors)/errormax) + 1/-log(mean(Times)/timemax)
+  cost = exp(mean(Errors)/errormax) + exp(mean(Times)/timemax)
 end
