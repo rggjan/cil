@@ -8,7 +8,7 @@ function optimizeInpainting()
   parameters = struct;
   parameters.gauss_size = 10;
   parameters.gauss_sigma = 0.8;
-  parameters.patch_size = 16;
+  parameters.patch_size = 4;
   parameters.patch_frame_size = 8;
   parameters.td_abortbelow_stdev = 0.0001;
   parameters.td_abortbelow_stepsize = 0.01;
@@ -24,9 +24,21 @@ function optimizeInpainting()
   
   while(true)
     % gauss_size
-    final_parameters.gauss_size = gradientDescent(1, @getNextGaussSize, parameters, cost);
-    final_parameters.abortbelow_change = gradientDescent(10, @getNextAbortBelowChange, parameters, cost);
+    final_parameters.gauss_size             = gradientDescent(1, @getNextGaussSize, parameters, cost);
+    final_parameters.gauss_sigma            = gradientDescent(2, @getNextGaussSigma, parameters, cost);
+    final_parameters.patch_size             = gradientDescent(3, @getNextPatchSize, parameters, cost);
+    final_parameters.patch_frame_size       = gradientDescent(4, @getNextFrameSize, parameters, cost);
+    final_parameters.td_abortbelow_stdev    = gradientDescent(5, @getNextTDAbortBelowStdev, parameters, cost);
+    final_parameters.td_abortbelow_stepsize = gradientDescent(6, @getNextTDAbortBelowStep, parameters, cost);
+    final_parameters.td_middle              = gradientDescent(7, @getNextTDMiddle, parameters, cost);
+    final_parameters.validation             = gradientDescent(8, @getNextValidation, parameters, cost);
+    %Dont iterate over bool
+    final_parameters.max_iterations         = gradientDescent(10, @getNextMaxIterations, parameters, cost);
+    final_parameters.abortbelow_change      = gradientDescent(11, @getNextAbortBelowChange, parameters, cost);
 
+
+    
+    
     parameters = final_parameters
     cost = EvaluateInpaintingParameterized(parameters);
   end
@@ -82,8 +94,12 @@ function new = getNextGaussSize(Value, Stepsize)
   end
 end
 
+function new = getNextGaussSigma(Value, Stepsize)
+  new = getNextPositiveRealNumber(Value, Stepsize);  
+end
+
 function new = getNextPatchSize(Value, Stepsize)
-  new = getNextPositiveRealNumber(Value, StepSize);
+  new = getNextPositiveRealNumber(Value, Stepsize);
   % Patchsize must divide image size (const: 512)
   % Here we work with the exponent of the power of two
   if(new > 9)
@@ -92,23 +108,23 @@ function new = getNextPatchSize(Value, Stepsize)
 end
 
 function new = getNextFrameSize(Value, Stepsize)
-  new = getNextPositiveRealNumber(Value, StepSize);  
+  new = getNextPositiveRealNumber(Value, Stepsize);  
 end
 
 function new = getNextTDAbortBelowStep(Value, Stepsize)
- new = getNextPositiveRealNumber(Value, StepSize);
+ new = getNextPositiveRealNumber(Value, Stepsize);
 end
 
 function new = getNextTDAbortBelowStdev(Value, Stepsize)
-  new = getNextPositiveRealNumber(Value, StepSize);
+  new = getNextPositiveRealNumber(Value, Stepsize);
 end
 
 function new = getNextTDMiddle(Value, Stepsize)
-  new = getNextPositiveRealNumber(Value, StepSize);
+  new = getNextPositiveRealNumber(Value, Stepsize);
 end
 
 function new = getNextMaxIterations(Value, Stepsize)
-  new = getNextPositiveRealNumber(Value, StepSize);
+  new = getNextPositiveRealNumber(Value, Stepsize);
   if(new<1)
     new = 1;
   end
@@ -132,7 +148,7 @@ function new = getNextPercentage(Value, Stepsize)
   end
 end
 
-function new = getPositiveRealNumber(Value, StepSize)
+function new = getNextPositiveRealNumber(Value, Stepsize)
     new = Value + Stepsize;
   if (new <= 0)
     new = eps;
