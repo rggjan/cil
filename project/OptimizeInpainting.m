@@ -6,17 +6,19 @@ function optimizeInpainting()
 
   % Initial parameters
   parameters = struct;
-  parameters.gauss_size = 10;
+  parameters.gauss_size = 7.2;
   parameters.gauss_sigma = 0.8;
-  parameters.patch_size = 4;
-  parameters.patch_frame_size = 8;
-  parameters.td_abortbelow_stdev = 4;
-  parameters.td_abortbelow_stepsize = 2;
-  parameters.td_middle = 10;
+  parameters.patch_size = 7.5;
+  parameters.patch_frame_size = 7.5;
+  parameters.td_abortbelow_stdev = 2.2;
+  parameters.td_abortbelow_stepsize = 1.2;
+  parameters.td_middle = 18.5;
   parameters.validation = 0.2; 
-  parameters.iterative = false; 
+  parameters.iterative = true; 
   parameters.max_iterations = 5;
   parameters.abortbelow_change = 0.15; 
+
+  old = zeros(11, 1);
   
   % Result set
   final_parameters = parameters;
@@ -28,25 +30,26 @@ function optimizeInpainting()
     fprintf('=> cost %g\n\n', cost);
 
     % gauss_size
-    final_parameters.gauss_size             = gradientDescent(1, @getNextGaussSize, parameters, cost);
-    final_parameters.gauss_sigma            = gradientDescent(2, @getNextGaussSigma, parameters, cost);
-    final_parameters.patch_size             = gradientDescent(3, @getNextPatchSize, parameters, cost);
-    final_parameters.patch_frame_size       = gradientDescent(4, @getNextFrameSize, parameters, cost);
-    final_parameters.td_abortbelow_stdev    = gradientDescent(5, @getNextTDAbortBelowStdev, parameters, cost);
-    final_parameters.td_abortbelow_stepsize = gradientDescent(6, @getNextTDAbortBelowStep, parameters, cost);
-    final_parameters.td_middle              = gradientDescent(7, @getNextTDMiddle, parameters, cost);
-    final_parameters.validation             = gradientDescent(8, @getNextValidation, parameters, cost);
+    [final_parameters.gauss_size, old]             = gradientDescent(1, @getNextGaussSize, parameters, old, cost);
+    [final_parameters.gauss_sigma, old]            = gradientDescent(2, @getNextGaussSigma, parameters, old, cost);
+    [final_parameters.patch_size, old]             = gradientDescent(3, @getNextPatchSize, parameters, old, cost);
+    [final_parameters.patch_frame_size, old]       = gradientDescent(4, @getNextFrameSize, parameters, old, cost);
+    [final_parameters.td_abortbelow_stdev, old]    = gradientDescent(5, @getNextTDAbortBelowStdev, parameters, old, cost);
+    [final_parameters.td_abortbelow_stepsize, old] = gradientDescent(6, @getNextTDAbortBelowStep, parameters, old, cost);
+    [final_parameters.td_middle, old]              = gradientDescent(7, @getNextTDMiddle, parameters, old, cost);
+    [final_parameters.validation, old]             = gradientDescent(8, @getNextValidation, parameters, old, cost);
     %Dont iterate over bool 'iterative'
     if parameters.iterative
-      final_parameters.max_iterations         = gradientDescent(10, @getNextMaxIterations, parameters, cost);
-      final_parameters.abortbelow_change      = gradientDescent(11, @getNextAbortBelowChange, parameters, cost);
+      [final_parameters.max_iterations, old]         = gradientDescent(10, @getNextMaxIterations, parameters, old, cost);
+      [final_parameters.abortbelow_change, old]      = gradientDescent(11, @getNextAbortBelowChange, parameters, old, cost);
     end
   end
 
 end
 
-function new_value = gradientDescent(index, getNext, parameters, cost);
-  learning_rate = 10;
+function [new_value, next_old] = gradientDescent(index, getNext, parameters, old, cost);
+  learning_rate = 30;
+  alpha = 0.9;
 
   fields = {'gauss_size', ...
             'gauss_sigma', ...
@@ -84,11 +87,16 @@ function new_value = gradientDescent(index, getNext, parameters, cost);
 %      new_value = param_cell{index};
 %  else
       stepsize = -1*(new_cost_plus-new_cost_minus)/2*learning_rate;
-      new_value = getNext(param_cell{index}, stepsize);
+      old_stepsize = old(index);
+      new_stepsize = old_stepsize*alpha + (1-alpha)*stepsize;
+      fprintf('steps(old/new/together): %g/%g/%g\n', old_stepsize, stepsize, new_stepsize)
+      old(index) = new_stepsize;
+      new_value = getNext(param_cell{index}, new_stepsize);
       
-      fprintf('%s: %g => %g (step %g)\n\n', fields{index}, param_cell{index}, new_value, stepsize)
+      fprintf('%s: %g => %g\n\n', fields{index}, param_cell{index}, new_value)
 %  end
   %pause;
+  next_old = old;
 end
 
 function new = getNextGaussSize(Value, Stepsize)
@@ -116,11 +124,11 @@ function new = getNextFrameSize(Value, Stepsize)
 end
 
 function new = getNextTDAbortBelowStep(Value, Stepsize)
- new = getNextPositiveRealNumber(Value, Stepsize);
+ new = getNextPositiveRealNumber(Value, Stepsize/5);
 end
 
 function new = getNextTDAbortBelowStdev(Value, Stepsize)
-  new = getNextPositiveRealNumber(Value, Stepsize);
+  new = getNextPositiveRealNumber(Value, Stepsize/5);
 end
 
 function new = getNextTDMiddle(Value, Stepsize)
@@ -143,7 +151,7 @@ function new = getNextAbortBelowChange(Value, Stepsize)
 end
 
 function new = getNextPercentage(Value, Stepsize)
-  new = Value + Stepsize/20;
+  new = Value + Stepsize/100;
   if(new >= 1)
     new = 1-eps;
   end
