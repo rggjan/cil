@@ -1,7 +1,10 @@
-function optimizeInpainting()
 % Optimize the parameters of inPainting.
+function optimizeInpainting()
 
-  %Initial parameters
+  % Set random seet to get reproducable results
+  rand('seed', 12345);
+
+  % Initial parameters
   parameters.gauss_size = 10;
   parameters.gauss_sigma = 0.8;
   parameters.patch_size = 16;

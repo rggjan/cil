@@ -29,7 +29,7 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, ...
                          ps * i, ...
                          ps * (j - 1) + 1 : ...
                          ps * j).*P_mask;
-          
+
       dev = +Inf;
       middle = 10;
       stepsize = 10;
@@ -49,6 +49,8 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, ...
         else
           % Middle is 0 or smaller. Add eps so that it will not be chosen
           % as minimum
+
+          % TODO does not seem to work quite yet
           errors(1) = errors(3)+eps;
           if(errors(1) == errors(3))
             errors(3)
@@ -76,7 +78,7 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, ...
         stepsize = stepsize / 2;
         middles = [middles middle];
       end
-      
+
       if(false)
         %DEBUG
         errors = [];
