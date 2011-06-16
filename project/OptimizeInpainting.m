@@ -64,25 +64,27 @@ function new_value = gradientDescent(index, getNext, parameters, cost);
   param_cell = struct2cell(parameters);
   param_cell{index} = getNext(param_cell{index}, 1);
   new_parameters = cell2struct(param_cell, fields, 1);
+  fprintf('%s: %g +1 ...', fields{index}, param_cell{index})
   new_cost_plus = EvaluateInpaintingParameterized(new_parameters) - cost;
 
   % Case -1
   param_cell = struct2cell(parameters);
   param_cell{index} = getNext(param_cell{index}, -1);
   new_parameters = cell2struct(param_cell, fields, 1);
+  fprintf('%s: %g -1 ...', fields{index}, param_cell{index})
   new_cost_minus = EvaluateInpaintingParameterized(new_parameters) - cost;
 
   param_cell = struct2cell(parameters);
   if(new_cost_plus > 0 && new_cost_minus > 0)
       %Keep the old setting
-      fprintf('Not changing %s', fields{index})
+      fprintf('%s: %g --', fields{index})
 
       new_value = param_cell{index};
   else
       stepsize = -1*(new_cost_plus-new_cost_minus)/2*learning_rate;
       new_value = getNext(param_cell{index}, stepsize);
       
-      fprintf('Changing %s from %g with step %g', fields{index}, param_cell{index}, stepsize)
+      fprintf('%s: %g => %g (%g)', fields{index}, param_cell{index}, new_value, stepsize)
   end
   %pause;
 end
