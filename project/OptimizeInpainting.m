@@ -35,8 +35,11 @@ function optimizeInpainting()
 
     if(new_cost_plus > 0 && new_cost_minus > 0)
         %Keep the old setting
+        sprintf('Not changing parameter')
     else
-        final_parameters.abortbelow_change = getNextAbortBelowChange(parameters.abortbelow_change,-1*(new_cost_plus-new_cost_minus)/2);
+        stepsize = -1*(new_cost_plus-new_cost_minus)/2;
+        final_parameters.abortbelow_change = getNextAbortBelowChange(parameters.abortbelow_change,stepsize);
+        fprintf('Changing %g parameter with stepsize %g',parameters.abortbelow_change,stepsize)
     end
     
     parameters = final_parameters;
