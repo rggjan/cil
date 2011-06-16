@@ -10,6 +10,20 @@ function I_rec = inPaintingParameterized(I, mask, parameters)
 % OUTPUT
 % I_rec: Reconstructed image 
 
+  % Make sure that parameters do have possible values
+  % Round floating point values that come from optimizing
+  parameters.gauss_size = round(parameters.gauss_size);
+  %parameters.gauss_sigma = 0.8;
+  %parameters.patch_size = round(parameters.patch_size);
+  %parameters.patch_frame_size = round(parameters.patch_frame_size);
+  %parameters.td_abortbelow_stdev = 0.0001;
+  %parameters.td_abortbelow_stepsize = 0.01;
+  %parameters.validation = 0.2; 
+  %parameters.iterative = true; 
+  %parameters.max_iterations = round(parameters.max_iterations); 
+  parameters.abortbelow_change = 0.15; 
+
+
 % Split into validation and training set
 good_indices = find(mask);
 num_good = length(good_indices);
@@ -36,10 +50,11 @@ I_training_framed = createFrame(I_training, parameters);
 mask_training_framed = createFrame(mask_training, parameters);
 
 if (parameters.iterative)
-  % TODO add stopping criterion based on validation set
   previous_error = +Inf;
   for i = 1:parameters.max_iterations
+    % TODO Abort if gauss is fine anyway?
     [T, I_trained] = determineThresholds(I_training_framed, val_mask, I, parameters);
+    
     I_training_framed = I_training_framed.*mask_training_framed + ...
                         (1-mask_training_framed).*I_trained;
     diff = (removeFrame(I_training_framed, parameters) - I).*val_mask;
