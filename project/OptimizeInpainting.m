@@ -24,11 +24,11 @@ function optimizeInpainting()
     
     
     % Case +1
-    new_parameters.abortbelow_change = getNextAbortBelowChange(parameters.abortbelow_change,1)
-    new_cost_plus = EvaluateInpaintingParameterized(new_parameters) - cost
+    new_parameters.abortbelow_change = getNextAbortBelowChange(parameters.abortbelow_change,1);
+    new_cost_plus = EvaluateInpaintingParameterized(new_parameters) - cost;
     % Case -1
-    new_parameters.abortbelow_change = getNextAbortBelowChange(parameters.abortbelow_change,-1)
-    new_cost_minus = EvaluateInpaintingParameterized(new_parameters) - cost
+    new_parameters.abortbelow_change = getNextAbortBelowChange(parameters.abortbelow_change,-1);
+    new_cost_minus = EvaluateInpaintingParameterized(new_parameters) - cost;
 
     if(new_cost_plus > 0 && new_cost_minus > 0)
         %Keep the old setting
@@ -36,8 +36,8 @@ function optimizeInpainting()
         final_parameters.abortbelow_change = getNextAbortBelowChange(parameters.abortbelow_change,-1*(new_cost_plus-new_cost_minus)/2);
     end
     
-    parameters = final_parameters
-    cost = EvaluateInpaintingParameterized(parameters)
+    parameters = final_parameters;
+    cost = EvaluateInpaintingParameterized(parameters);
     
   end
 
