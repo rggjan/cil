@@ -23,7 +23,6 @@ function optimizeInpainting()
   cost = EvaluateInpaintingParameterized(parameters);
   
   while(true)
-    % gauss_size
     final_parameters.gauss_size             = gradientDescent(1, @getNextGaussSize, parameters, cost);
     final_parameters.gauss_sigma            = gradientDescent(2, @getNextGaussSigma, parameters, cost);
     final_parameters.patch_size             = gradientDescent(3, @getNextPatchSize, parameters, cost);
@@ -32,12 +31,9 @@ function optimizeInpainting()
     final_parameters.td_abortbelow_stepsize = gradientDescent(6, @getNextTDAbortBelowStep, parameters, cost);
     final_parameters.td_middle              = gradientDescent(7, @getNextTDMiddle, parameters, cost);
     final_parameters.validation             = gradientDescent(8, @getNextValidation, parameters, cost);
-    %Dont iterate over bool
+    %Dont iterate over bool 'iterative'
     final_parameters.max_iterations         = gradientDescent(10, @getNextMaxIterations, parameters, cost);
-    final_parameters.abortbelow_change      = gradientDescent(11, @getNextAbortBelowChange, parameters, cost);
-
-
-    
+    final_parameters.abortbelow_change      = gradientDescent(11, @getNextAbortBelowChange, parameters, cost);    
     
     parameters = final_parameters
     cost = EvaluateInpaintingParameterized(parameters);
