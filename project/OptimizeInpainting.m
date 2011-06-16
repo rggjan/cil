@@ -4,7 +4,7 @@ function optimizeInpainting()
   % Set random seet to get reproducable results
   rand('seed', 12345);
 
-  learning_rate = 1;
+  learning_rate = 100;
 
   % Initial parameters
   parameters.gauss_size = 10;
@@ -23,11 +23,27 @@ function optimizeInpainting()
   cost = EvaluateInpaintingParameterized(parameters);
   
   while(true)
-
-    %Working copy
+    % gauss_size
     new_parameters = parameters;
-   
+    % Case +1
+    new_parameters.gauss_size = getNextGaussSize(parameters.gauss_size,1);
+    new_cost_plus = EvaluateInpaintingParameterized(new_parameters) - cost;
+    % Case -1
+    new_parameters.gauss_size = getNextGaussSize(parameters.gauss_size,-1);
+    new_cost_minus = EvaluateInpaintingParameterized(new_parameters) - cost;
+
+    if(new_cost_plus > 0 && new_cost_minus > 0)
+        %Keep the old setting
+        sprintf('Not changing gauss_size')
+    else
+        stepsize = -1*(new_cost_plus-new_cost_minus)/2*learning_rate;
+        final_parameters.gauss_size = getNextGaussSize(parameters.gauss_size,stepsize);
+        fprintf('Changing %g gauss_size with stepsize %g',parameters.gauss_size,stepsize)
+    end
+    %pause;
+
     % abortbelow_change
+    new_parameters = parameters;
     % Case +1
     new_parameters.abortbelow_change = getNextAbortBelowChange(parameters.abortbelow_change,1);
     new_cost_plus = EvaluateInpaintingParameterized(new_parameters) - cost;
@@ -45,23 +61,6 @@ function optimizeInpainting()
     end
     %pause;
 
-    % gauss_size
-    % Case +1
-    new_parameters.gauss_size = getNextGaussSize(parameters.gauss_size,1);
-    new_cost_plus = EvaluateInpaintingParameterized(new_parameters) - cost;
-    % Case -1
-    new_parameters.gauss_size = getNextGaussSize(parameters.gauss_size,-1);
-    new_cost_minus = EvaluateInpaintingParameterized(new_parameters) - cost;
-
-    if(new_cost_plus > 0 && new_cost_minus > 0)
-        %Keep the old setting
-        sprintf('Not changing gauss_size')
-    else
-        stepsize = -1*(new_cost_plus-new_cost_minus)/2*learning_rate;
-        final_parameters.gauss_size = getNextGaussSize(parameters.gauss_size,stepsize);
-        fprintf('Changing %g gauss_size with stepsize %g',parameters.gauss_size,stepsize)
-    end
-    %pause;
     
     parameters = final_parameters
     %pause;
