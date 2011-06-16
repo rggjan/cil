@@ -141,7 +141,7 @@ function new = getNextAbortBelowChange(Value, Stepsize)
 end
 
 function new = getNextPercentage(Value, Stepsize)
-  new = Value + Stepsize/100;
+  new = Value + Stepsize/20;
   if(new >= 1)
     new = 1-eps;
   end
