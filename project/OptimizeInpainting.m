@@ -81,28 +81,33 @@ function new = getNextGaussSize(Value, Stepsize)
 end
 
 function new = getNextPatchSize(Value, Stepsize)
-
-  
+  new = getNextPositiveRealNumber(Value, StepSize);
+  % Patchsize must divide image size (const: 512)
+  % Here we work with the exponent of the power of two
+  if(new > 9)
+    new = 9;
+  end
 end
 
 function new = getNextFrameSize(Value, Stepsize)
-
-  
+  new = getNextPositiveRealNumber(Value, StepSize);  
 end
 
 function new = getNextTDAbortBelowStep(Value, Stepsize)
-
-  
+ new = getNextPositiveRealNumber(Value, StepSize);
 end
 
 function new = getNextTDAbortBelowStdev(Value, Stepsize)
+  new = getNextPositiveRealNumber(Value, StepSize);
+end
 
-  
+function new = getNextTDMiddle(Value, Stepsize)
+  new = getNextPositiveRealNumber(Value, StepSize);
 end
 
 function new = getNextMaxIterations(Value, Stepsize)
-  new = Value + Stepsize;
-  if (new <= 1)
+  new = getNextPositiveRealNumber(Value, StepSize);
+  if(new<1)
     new = 1;
   end
 end
@@ -121,6 +126,13 @@ function new = getNextPercentage(Value, Stepsize)
     new = 1-eps;
   end
   if(new <= 0)
+    new = eps;
+  end
+end
+
+function new = getPositiveRealNumber(Value, StepSize)
+    new = Value + Stepsize;
+  if (new <= 0)
     new = eps;
   end
 end
