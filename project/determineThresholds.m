@@ -51,18 +51,15 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, ...
           % as minimum
 
           % TODO does not seem to work quite yet
-          errors(1) = errors(3)+eps;
-          if(errors(1) == errors(3))
-            errors(3)
-            ME = MException('VerifyOutput:OutOfBounds', ...
-             'eps had no effect here!');
-            throw(ME)
-          end
+          errors(1) = errors(3);
         end
           
         dev = std(errors);
 
         [errors(2), idx] = min(errors);
+        if(middle==0 && idx == 1)
+          idx = 2;
+        end
         Ps{2} = Ps{idx};
         
         % Calculate new middle
