@@ -177,16 +177,10 @@ developed as part of the programming assignments.
   \caption{Only the inner patch (marked red) is reconstructed in one step while the frame only provides additional signal. (Undistorted image shown) }
   \label{fig:framing}
 \end{figure}
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=\columnwidth]{images/local_wdenoised_1d}
-  \caption{Signal compression and denoising using the Daubechies wavelet basis.}
-  \label{fig:denoise-wavelet}
-\end{figure}
 
 Use examples and illustrations to clarify ideas and results. For
 example, by comparing Figure~\ref{fig:framing} and
-Figure~\ref{fig:denoise-wavelet}, we can see the two different
+Figure~\ref{fig:flowchart}, we can see the two different
 situations where Fourier and wavelet basis perform well. 
 
 \section{Summary}
@@ -200,6 +194,16 @@ We would like to recognize and thank the following individuals or groups for the
 Our implementation is based on the inpainting and evaluation framework provided by the course "Computer Intelligence Lab" held by Prof. Joachim Buhmann at ETH Zürich.
 (((( TODO ))))
 
+
 \bibliographystyle{IEEEtran}
 \bibliography{biblio}
+
+\clearpage
+\section{Appendix}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{images/flowchart}
+  \caption{The algorithm as a flow chart}
+  \label{fig:flowchart}
+\end{figure}
 \end{document}
