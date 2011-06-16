@@ -49,7 +49,7 @@ function cost = EvaluateInpaintingParameterized(parameters)
   global mincost
   global best_params
 
-  cost = (1-exp(mean(Errors)/errormax))*(1-exp(mean(Times)/timemax));
+  cost = exp(mean(Errors)/errormax) + exp(mean(Times)/timemax);
   if (length(mincost) == 0 || cost < mincost)
     fprintf('\n-------------------------------\nFound new best params with cost %g', cost);
     mincost = cost;
