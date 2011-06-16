@@ -43,8 +43,8 @@ function cost = EvaluateInpaintingParameterized(parameters)
     k = k+1;
   end
   
-  sprintf('error: %f', mean(mean(Errors)))
-  sprintf('times: %f', mean(mean(Times)))
+  sprintf('error: %f', mean(mean(Errors)));
+  sprintf('times: %f', mean(mean(Times)));
 
   timemax = 90;
   errormax = 0.001;

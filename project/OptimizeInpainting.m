@@ -4,9 +4,8 @@ function optimizeInpainting()
   % Set random seet to get reproducable results
   rand('seed', 12345);
 
-  learning_rate = 100;
-
   % Initial parameters
+  parameters = struct;
   parameters.gauss_size = 10;
   parameters.gauss_sigma = 0.8;
   parameters.patch_size = 16;
@@ -24,49 +23,54 @@ function optimizeInpainting()
   
   while(true)
     % gauss_size
-    new_parameters = parameters;
-    % Case +1
-    new_parameters.gauss_size = getNextGaussSize(parameters.gauss_size,1);
-    new_cost_plus = EvaluateInpaintingParameterized(new_parameters) - cost;
-    % Case -1
-    new_parameters.gauss_size = getNextGaussSize(parameters.gauss_size,-1);
-    new_cost_minus = EvaluateInpaintingParameterized(new_parameters) - cost;
+    final_parameters.gauss_size = gradientDescent(1, @getNextGaussSize, parameters, cost);
+    final_parameters.abortbelow_change = gradientDescent(10, @getNextAbortBelowChange, parameters, cost);
 
-    if(new_cost_plus > 0 && new_cost_minus > 0)
-        %Keep the old setting
-        sprintf('Not changing gauss_size')
-    else
-        stepsize = -1*(new_cost_plus-new_cost_minus)/2*learning_rate;
-        final_parameters.gauss_size = getNextGaussSize(parameters.gauss_size,stepsize);
-        fprintf('Changing %g gauss_size with stepsize %g',parameters.gauss_size,stepsize)
-    end
-    %pause;
-
-    % abortbelow_change
-    new_parameters = parameters;
-    % Case +1
-    new_parameters.abortbelow_change = getNextAbortBelowChange(parameters.abortbelow_change,1);
-    new_cost_plus = EvaluateInpaintingParameterized(new_parameters) - cost;
-    % Case -1
-    new_parameters.abortbelow_change = getNextAbortBelowChange(parameters.abortbelow_change,-1);
-    new_cost_minus = EvaluateInpaintingParameterized(new_parameters) - cost;
-
-    if(new_cost_plus > 0 && new_cost_minus > 0)
-        %Keep the old setting
-        sprintf('Not changing abortbelow_change')
-    else
-        stepsize = -1*(new_cost_plus-new_cost_minus)/2*learning_rate;
-        final_parameters.abortbelow_change = getNextAbortBelowChange(parameters.abortbelow_change,stepsize);
-        fprintf('Changing %g abortbelow_change with stepsize %g',parameters.abortbelow_change,stepsize)
-    end
-    %pause;
-
-    
     parameters = final_parameters
-    %pause;
     cost = EvaluateInpaintingParameterized(parameters);
   end
 
+end
+
+function new_value = gradientDescent(index, getNext, parameters, cost);
+  learning_rate = 100;
+
+  fields = {'gauss_size', ...
+            'gauss_sigma', ...
+            'patch_size', ...
+            'patch_frame_size', ...
+            'td_abortbelow_stdev', ...
+            'td_abortbelow_stepsize', ...
+            'validation', ...
+            'iterative', ...
+            'max_iterations', ...
+            'abortbelow_change'};
+
+  % Case +1
+  param_cell = struct2cell(parameters);
+  param_cell{index} = getNext(param_cell{index}, 1);
+  new_parameters = cell2struct(param_cell, fields, 1);
+  new_cost_plus = EvaluateInpaintingParameterized(new_parameters) - cost;
+
+  % Case -1
+  param_cell = struct2cell(parameters);
+  param_cell{index} = getNext(param_cell{index}, -1);
+  new_parameters = cell2struct(param_cell, fields, 1);
+  new_cost_minus = EvaluateInpaintingParameterized(new_parameters) - cost;
+
+  param_cell = struct2cell(parameters);
+  if(new_cost_plus > 0 && new_cost_minus > 0)
+      %Keep the old setting
+      fprintf('Not changing %s', fields{index})
+
+      new_value = param_cell{index};
+  else
+      stepsize = -1*(new_cost_plus-new_cost_minus)/2*learning_rate;
+      new_value = getNext(param_cell{index}, stepsize);
+      
+      fprintf('Changing %s from %g with step %g', fields{index}, param_cell{index}, stepsize)
+  end
+  %pause;
 end
 
 function new = getNextGaussSize(Value, Stepsize)
@@ -96,20 +100,27 @@ function new = getNextTDAbortBelowStdev(Value, Stepsize)
   
 end
 
-function new = getNextValidation(Value, Stepsize)
-
+function new = getNextMaxIterations(Value, Stepsize)
+  new = Value + Stepsize;
+  if (new <= 1)
+    new = 1;
+  end
 end
 
-function new = getNextMaxIterations(Value, Stepsize)
-
+function new = getNextValidation(Value, Stepsize)
+  new = getNextPercentage(Value, Stepsize);
 end
 
 function new = getNextAbortBelowChange(Value, Stepsize)
+  new = getNextPercentage(Value, Stepsize);
+end
+
+function new = getNextPercentage(Value, Stepsize)
   new = Value + Stepsize/100;
   if(new >= 1)
     new = 1-eps;
   end
   if(new <= 0)
-      new = eps;
+    new = eps;
   end
 end

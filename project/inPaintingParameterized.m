@@ -20,7 +20,7 @@ function I_rec = inPaintingParameterized(I, mask, parameters)
   %parameters.td_abortbelow_stepsize = 0.01;
   %parameters.validation = 0.2; 
   %parameters.iterative = true; 
-  %parameters.max_iterations = round(parameters.max_iterations); 
+  parameters.max_iterations = round(parameters.max_iterations); 
   parameters.abortbelow_change = 0.15; 
 
 
