@@ -31,8 +31,8 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, ...
                          ps * j).*P_mask;
 
       dev = +Inf;
-      middle = 10;
-      stepsize = 10;
+      middle = parameters.td_middle;
+      stepsize = middle;
       errors = [Inf, Inf, Inf];
       Ps = {};
       [errors(2), Ps{2}] = determineError(P_framed, middle, P_mask, P_validate, parameters);
