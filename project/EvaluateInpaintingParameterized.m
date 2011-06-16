@@ -1,6 +1,8 @@
 % Measure approximation error for several images.
 
 function cost = EvaluateInpaintingParameterized(parameters)
+  parameters;
+
   file_list = dir(); 
   k = 1;
 
@@ -46,13 +48,5 @@ function cost = EvaluateInpaintingParameterized(parameters)
 
   timemax = 90;
   errormax = 0.001;
-  global mincost
-  global best_params
   cost = exp(mean(Errors)/errormax) + exp(mean(Times)/timemax);
-
-  if (cost < mincost)
-    fprintf('Found new best params with cost %g', cost);
-    mincost = cost;
-    best_params = parameters
-  end
 end
