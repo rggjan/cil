@@ -20,9 +20,13 @@ function optimizeInpainting()
   
   % Result set
   final_parameters = parameters;
-  cost = EvaluateInpaintingParameterized(parameters);
   
   while(true)
+    fprintf('========== Starting new round ===========\n')
+    parameters = final_parameters
+    cost = EvaluateInpaintingParameterized(parameters);
+    fprintf('=> cost %g\n\n', cost);
+
     % gauss_size
     final_parameters.gauss_size             = gradientDescent(1, @getNextGaussSize, parameters, cost);
     final_parameters.gauss_sigma            = gradientDescent(2, @getNextGaussSigma, parameters, cost);
@@ -35,15 +39,12 @@ function optimizeInpainting()
     %Dont iterate over bool
     final_parameters.max_iterations         = gradientDescent(10, @getNextMaxIterations, parameters, cost);
     final_parameters.abortbelow_change      = gradientDescent(11, @getNextAbortBelowChange, parameters, cost);
-
-    parameters = final_parameters;
-    cost = EvaluateInpaintingParameterized(parameters);
   end
 
 end
 
 function new_value = gradientDescent(index, getNext, parameters, cost);
-  learning_rate = 1;
+  learning_rate = 10;
 
   fields = {'gauss_size', ...
             'gauss_sigma', ...
@@ -76,7 +77,7 @@ function new_value = gradientDescent(index, getNext, parameters, cost);
   param_cell = struct2cell(parameters);
   if(new_cost_plus > 0 && new_cost_minus > 0)
       %Keep the old setting
-      fprintf('%s: %g --\n', fields{index})
+      fprintf('%s: %g --\n', fields{index}, param_cell{index})
 
       new_value = param_cell{index};
   else
