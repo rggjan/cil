@@ -54,8 +54,6 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, ...
           
         dev = std(errors);
 
-        
-        
         [errors(2), idx] = min(errors);
         Ps{2} = Ps{idx};
         

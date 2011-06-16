@@ -1,6 +1,7 @@
 % Measure approximation error for several images.
 
 function cost = EvaluateInpaintingParameterized(parameters)
+  parameters
 
   file_list = dir(); 
   k = 1;
@@ -41,13 +42,14 @@ function cost = EvaluateInpaintingParameterized(parameters)
 
     k = k+1;
   end
-
-  cost = costfunc(Errors, Times);
-
+  
+  Times
+  Errors
+  cost = costfunc(Errors, Times)
 end
 
 function s = costfunc(error, time) 
 
-  s = exp(mean(error))+exp(mean(time*1e-5));
+  s = exp(mean(error/30))+exp(mean(time*1e-5/30));
 
 end
