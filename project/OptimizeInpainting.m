@@ -77,17 +77,17 @@ function new_value = gradientDescent(index, getNext, parameters, cost);
   fprintf('cost %g\n', new_cost_minus);
 
   param_cell = struct2cell(parameters);
-  if(new_cost_plus > 0 && new_cost_minus > 0)
+%  if(new_cost_plus > 0 && new_cost_minus > 0)
       %Keep the old setting
-      fprintf('%s: %g --\n\n', fields{index}, param_cell{index})
+%      fprintf('%s: %g --\n\n', fields{index}, param_cell{index})
 
-      new_value = param_cell{index};
-  else
+%      new_value = param_cell{index};
+%  else
       stepsize = -1*(new_cost_plus-new_cost_minus)/2*learning_rate;
       new_value = getNext(param_cell{index}, stepsize);
       
       fprintf('%s: %g => %g (step %g)\n\n', fields{index}, param_cell{index}, new_value, stepsize)
-  end
+%  end
   %pause;
 end
 
