@@ -27,7 +27,7 @@ function optimizeInpainting()
     final_parameters.gauss_size = gradientDescent(1, @getNextGaussSize, parameters, cost);
     final_parameters.abortbelow_change = gradientDescent(10, @getNextAbortBelowChange, parameters, cost);
 
-    parameters = final_parameters
+    parameters = final_parameters;
     cost = EvaluateInpaintingParameterized(parameters);
   end
 
