@@ -52,6 +52,12 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, ...
 
           % TODO does not seem to work quite yet
           errors(1) = errors(3)+eps;
+          if(errors(1) == errors(3))
+            errors(3)
+            ME = MException('VerifyOutput:OutOfBounds', ...
+             'eps had no effect here!');
+            throw(ME)
+          end
         end
           
         dev = std(errors);
