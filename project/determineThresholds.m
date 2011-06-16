@@ -64,7 +64,9 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, ...
         
         % Assert
         if(middle < 0)
-          throw('This should not happen!')
+          ME = MException('VerifyOutput:OutOfBounds', ...
+             'Middle is below the allowable limit (below zero)');
+          throw(ME)
         end
         
         stepsize = stepsize / 2;
