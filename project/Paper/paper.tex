@@ -109,6 +109,21 @@ structure the methods section by~\cite{kallet04methods}:
 In the algorithm as described above, we have many different parameters that are required to be tuned
 
 \subsection{Offline parameter estimation}
+As shown in table \ref{parameters}, there are a total of 10 parameters in our algorithm that can be set.
+For many of them, it is quite clear what values should be used. For example, the size of the gauss kernel
+should be a bit larger than the biggest assumed hole in the image. For others, like the maximum number of
+iterations, it is not so clear. And yet others have a clear speed / accuracy tradeoff, like the stopping
+conditions of the online threshold estimation.
+
+Because we thought it not feasable to tune all the parameters by hand, we wrote a program to
+do the offline parameter estimation. The idea is to do this once for a few representative images, and get
+parameters that can model as closely as possible many of the images we are interested in.
+Our proposed method combines a gradient descent method with ideas from cross-validation, and tunes our
+10-dimensional parameter-space, maximising time and accuracy.
+
+\subsubsection{Error function}
+
+\subsubsection{Gradient descent}
 
 
 \section{Results}
