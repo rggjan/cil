@@ -6,19 +6,27 @@ function optimizeInpainting()
   % Set random seet to get reproducable results
   rand('seed', 12345);
 
+  % Load parameters and best_cost from (binary) file
+  load('params.mat');
+
+  % Store best value in global variable, for usage in Evaluation script
+  global global_best_cost;
+  global_best_cost = best_cost;
+  fprintf('\nStarting optimization, current best cost is %g\n\n', best_cost);
+
   % Initial parameters
-  parameters = struct;
-  parameters.gauss_size = 5;
-  parameters.gauss_sigma = 2;
-  parameters.patch_size = 5;
-  parameters.patch_frame_size = 4;
-  parameters.td_abortbelow_stdev = 5;
-  parameters.td_abortbelow_stepsize = 5;
-  parameters.td_middle = 4;
-  parameters.validation = 0.5; 
-  parameters.iterative = true; 
-  parameters.max_iterations = 8; 
-  parameters.abortbelow_change = 0.32; 
+  % parameters = struct;
+  % parameters.gauss_size = 9.3;
+  % parameters.gauss_sigma = 0.7;
+  % parameters.patch_size = 7.9;
+  % parameters.patch_frame_size = 8.9;
+  % parameters.td_abortbelow_stdev = 3.8;
+  % parameters.td_abortbelow_stepsize = 2.3;
+  % parameters.td_middle = 8.1;
+  % parameters.validation = 0.05; 
+  % parameters.iterative = true; 
+  % parameters.max_iterations = 4.9; 
+  % parameters.abortbelow_change = 0.18; 
   old = zeros(11, 1);
   
   % Result set

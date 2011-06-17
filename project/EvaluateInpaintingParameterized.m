@@ -45,15 +45,16 @@ function [cost, avgQErr] = EvaluateInpaintingParameterized(parameters, missing_p
   end
   
   avgQErr = mean(Errors);
-  
-  global mincost
-  global best_params
+ 
+  global global_best_cost 
 
   cost = 10000 * mean(Errors) + 0.01 * mean(Times);
-  if (length(mincost) == 0 || cost < mincost)
-    fprintf('\n-------------------------------\nFound new best params with cost %g', cost);
-    mincost = cost;
-    best_params = parameters
-    fprintf('-------------------------------\n\n')
+  if (cost < global_best_cost)
+    fprintf('\n-------------------------------\nFound new best params with cost %g\n', cost);
+    global_best_cost = cost;
+    best_cost = cost;
+    parameters
+    save('params.mat', 'best_cost', 'parameters');
+    fprintf('-------------------------------\n')
   end
 end
