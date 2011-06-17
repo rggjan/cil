@@ -99,7 +99,11 @@ function [new_value, next_old] = gradientDescent(index, getNext, parameters, old
 %  else
       stepsize = -1*(new_cost_plus-new_cost_minus)/2*learning_rate;
       old_stepsize = old(index);
-      new_stepsize = old_stepsize*alpha + (1-alpha)*stepsize;
+      if (old_stepsize ~= 0)
+        new_stepsize = old_stepsize*alpha + (1-alpha)*stepsize;
+      else
+        new_stepsize = stepsize;
+      end
       fprintf('steps(old/new/together): %g/%g/%g\n', old_stepsize, stepsize, new_stepsize)
       old(index) = new_stepsize;
       new_value = getNext(param_cell{index}, new_stepsize);
