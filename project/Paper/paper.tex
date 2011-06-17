@@ -3,15 +3,15 @@
 %\usepackage{times}
 %\usepackage{balance}
 \usepackage{url}
-\usepackage{graphicx}	% For figure environment
+\usepackage{graphicx}
 \usepackage[pdftex]{hyperref}
-\usepackage[utf8]{inputenc} % To make umlauts and other symbols correct
+\usepackage[utf8]{inputenc}
 
 \begin{document}
-\title{Image restoration using dimensionality reduction in the Fourier domain}
+\title{Inpainting with dimensionality reduction in the Fourier domain}
 
 \author{
-  Patrick Bänziger, Kaspar Etter, Jan Rüegg \\
+  Patrick Bänziger, Kaspar Etter, Jan Rüegg\\
   Department of Computer Science, ETH Zurich, Switzerland
 }
 
@@ -31,18 +31,9 @@ the paper. The four points that should be covered~\cite{jones08}:
 \end{abstract}
 
 \section{Introduction}
-In image inpainting, the aim is to restore an image from a disturbed source.
-These disturbances may, for example, result from a transmission over a noisy channel or from a degraded physical copy of the original image. Another application is object removal where a part of the image to be removed and the hole to be filled using inpainting. (((EXPAND)))\\
-Our approach focuses on the first inpainting application. We use an iterative algorithm with dimensionality reduction in the Fourier domain paired with several adaptations to improve speed and reduce artifacts in the output.
-((( TODO )))\\
-
-The aim of writing a paper is to infect the mind of your reader with
-the brilliance of your idea \cite{jones08}. 
-The hope is that after reading your
-paper, the audience will be convinced to try out your idea. In other
-words, it is the medium to transport the idea from your head to your
-reader's head. 
-
+Inpainting is about reconstructing missing spots of an image by guessing the correct values. The quality of such a restoration method can be evaluated by masking an image and comparing the result with the original.\\
+Our approach is based on the assumption that (natural) images have some underlying characteristic that can be distinguished from noise. The computed pixels can be viewed as a disturbed version of the genuine ones, hence the goal is to get rid of this noise. We do so by analyzing image patches in the Fourier space, removing the weak frequencies that capture the noise and thereby recovering the intrinsic signal.\\
+We use an iterative algorithm with dimensionality reduction in the Fourier domain paired with several adaptations to improve speed and reduce artifacts in the output.
 
 \section{Methods}
 \subsection{Related work}
