@@ -1,5 +1,5 @@
 % Optimize the parameters of inPainting.
-function optimizeInpainting()
+function OptimizeInpainting()
 
   missing_pixels = 0.6;
 
@@ -39,24 +39,24 @@ function optimizeInpainting()
     fprintf('=> cost %g\n\n', cost);
 
     % gauss_size
-    [final_parameters.gauss_size, old]             = gradientDescent(1, @getNextGaussSize, parameters, old, cost);
-    [final_parameters.gauss_sigma, old]            = gradientDescent(2, @getNextGaussSigma, parameters, old, cost);
-    [final_parameters.patch_size, old]             = gradientDescent(3, @getNextPatchSize, parameters, old, cost);
-    [final_parameters.patch_frame_size, old]       = gradientDescent(4, @getNextFrameSize, parameters, old, cost);
-    [final_parameters.td_abortbelow_stdev, old]    = gradientDescent(5, @getNextTDAbortBelowStdev, parameters, old, cost);
-    [final_parameters.td_abortbelow_stepsize, old] = gradientDescent(6, @getNextTDAbortBelowStep, parameters, old, cost);
-    [final_parameters.td_middle, old]              = gradientDescent(7, @getNextTDMiddle, parameters, old, cost);
-    [final_parameters.validation, old]             = gradientDescent(8, @getNextValidation, parameters, old, cost);
+    [final_parameters.gauss_size, old]             = gradientDescent(1, @getNextGaussSize, parameters, old, cost, missing_pixels);
+    [final_parameters.gauss_sigma, old]            = gradientDescent(2, @getNextGaussSigma, parameters, old, cost, missing_pixels);
+    [final_parameters.patch_size, old]             = gradientDescent(3, @getNextPatchSize, parameters, old, cost, missing_pixels);
+    [final_parameters.patch_frame_size, old]       = gradientDescent(4, @getNextFrameSize, parameters, old, cost, missing_pixels);
+    [final_parameters.td_abortbelow_stdev, old]    = gradientDescent(5, @getNextTDAbortBelowStdev, parameters, old, cost, missing_pixels);
+    [final_parameters.td_abortbelow_stepsize, old] = gradientDescent(6, @getNextTDAbortBelowStep, parameters, old, cost, missing_pixels);
+    [final_parameters.td_middle, old]              = gradientDescent(7, @getNextTDMiddle, parameters, old, cost, missing_pixels);
+    [final_parameters.validation, old]             = gradientDescent(8, @getNextValidation, parameters, old, cost, missing_pixels);
     %Dont iterate over bool 'iterative'
     if parameters.iterative
-      [final_parameters.max_iterations, old]         = gradientDescent(10, @getNextMaxIterations, parameters, old, cost);
-      [final_parameters.abortbelow_change, old]      = gradientDescent(11, @getNextAbortBelowChange, parameters, old, cost);
+      [final_parameters.max_iterations, old]         = gradientDescent(10, @getNextMaxIterations, parameters, old, cost, missing_pixels);
+      [final_parameters.abortbelow_change, old]      = gradientDescent(11, @getNextAbortBelowChange, parameters, old, cost, missing_pixels);
     end
   end
 
 end
 
-function [new_value, next_old] = gradientDescent(index, getNext, parameters, old, cost);
+function [new_value, next_old] = gradientDescent(index, getNext, parameters, old, cost, missing_pixels);
   learning_rate = 5;
   alpha = 0.9;
 
