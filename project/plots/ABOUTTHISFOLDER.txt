@@ -1,0 +1,4 @@
+The script 'CreatePaperPlots.m' will generate the plots used in the paper into this folder.
+
+Secondary: This file is needed to check the directory into git.
+Empty directories are not accepted...
