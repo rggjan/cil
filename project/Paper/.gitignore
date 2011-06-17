@@ -5,3 +5,7 @@
 *.log
 *.bbl
 *.blg
+*.make
+*.temp
+*.d
+*.fls
