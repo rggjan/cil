@@ -74,7 +74,7 @@ In this last step, we invert the Fourier transform and combine the reconstructed
 In our implementation, we use several tweaks to improve performance or quality:
 \begin{itemize}
 \item We perform the Fourier transform and thresholding on image patches to allow an individual threshold per patch.
-\item To avoid discontinuity at the boundary of the patches, we use a frame around the actual patch to capture more information. (Image \ref{fig:framing}) This frame is not filled in by the reconstructed patch from the Fourier step. The frames of adjacent patches are overlapping if the frame size is set to a value larger than zero. At the image boundaries, we replicate the outermost pixels to provide a sufficient frame.\end{itemize}
+\item To avoid discontinuity (Image \ref{fig:boundaryArtifacts}) at the boundary of the patches, we use a frame around the actual patch to capture more information. (Image \ref{fig:framing}) This frame is not filled in by the reconstructed patch from the Fourier step. The frames of adjacent patches are overlapping if the frame size is set to a value larger than zero. At the image boundaries, we replicate the outermost pixels to provide a sufficient frame.\end{itemize}
 ((( TODO )))
 Describe your idea and how it was implemented to solve
   the problem. Survey the related work, giving credit where credit is
@@ -171,12 +171,22 @@ developed as part of the programming assignments.
 
 \subsection{Figures and Tables}
 
+
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=\columnwidth]{images/boundaryArtifact_noframe}
+  \caption{Artifacts that occur without a frame (frame size = 0). The patches are recognizable in the reconstruction}
+  \label{fig:boundaryArtifacts}
+\end{figure}
+
 \begin{figure}[tbp]
   \centering
   \includegraphics[width=\columnwidth]{images/imageFraming}
   \caption{Only the inner patch (marked red) is reconstructed in one step while the frame only provides additional signal. (Undistorted image shown) }
   \label{fig:framing}
 \end{figure}
+
+((( TODO: Plot missingPixel\% vs. accuracy (vs. speed?) )))
 
 Use examples and illustrations to clarify ideas and results. For
 example, by comparing Figure~\ref{fig:framing} and
