@@ -6,18 +6,17 @@ function optimizeInpainting()
 
   % Initial parameters
   parameters = struct;
-  parameters.gauss_size = 7.2;
-  parameters.gauss_sigma = 0.8;
-  parameters.patch_size = 7.5;
-  parameters.patch_frame_size = 7.5;
-  parameters.td_abortbelow_stdev = 2.2;
-  parameters.td_abortbelow_stepsize = 1.2;
-  parameters.td_middle = 18.5;
-  parameters.validation = 0.2; 
+  parameters.gauss_size = 9.3;
+  parameters.gauss_sigma = 0.7;
+  parameters.patch_size = 7.9;
+  parameters.patch_frame_size = 8.9;
+  parameters.td_abortbelow_stdev = 3.8;
+  parameters.td_abortbelow_stepsize = 2.3;
+  parameters.td_middle = 8.1;
+  parameters.validation = 0.05; 
   parameters.iterative = true; 
-  parameters.max_iterations = 5;
-  parameters.abortbelow_change = 0.15; 
-
+  parameters.max_iterations = 4.9; 
+  parameters.abortbelow_change = 0.18; 
   old = zeros(11, 1);
   
   % Result set
@@ -48,7 +47,7 @@ function optimizeInpainting()
 end
 
 function [new_value, next_old] = gradientDescent(index, getNext, parameters, old, cost);
-  learning_rate = 30;
+  learning_rate = 5;
   alpha = 0.9;
 
   fields = {'gauss_size', ...

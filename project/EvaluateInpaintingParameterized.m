@@ -41,15 +41,10 @@ function cost = EvaluateInpaintingParameterized(parameters)
     k = k+1;
   end
   
-  sprintf('error: %f', mean(mean(Errors)));
-  sprintf('times: %f', mean(mean(Times)));
-
-  timemax = 90;
-  errormax = 0.001;
   global mincost
   global best_params
 
-  cost = exp(mean(Errors)/errormax) + exp(mean(Times)/timemax);
+  cost = 10000 * mean(Errors) + 0.01 * mean(Times);
   if (length(mincost) == 0 || cost < mincost)
     fprintf('\n-------------------------------\nFound new best params with cost %g', cost);
     mincost = cost;
