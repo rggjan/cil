@@ -1,6 +1,8 @@
 % Optimize the parameters of inPainting.
 function optimizeInpainting()
 
+  missing_pixels = 0.6;
+
   % Set random seet to get reproducable results
   rand('seed', 12345);
 
@@ -25,7 +27,6 @@ function optimizeInpainting()
   % parameters.iterative = true; 
   % parameters.max_iterations = 4.9; 
   % parameters.abortbelow_change = 0.18; 
-
   old = zeros(11, 1);
   
   % Result set
@@ -34,7 +35,7 @@ function optimizeInpainting()
   while(true)
     fprintf('========== Starting new round ===========\n')
     parameters = final_parameters
-    cost = EvaluateInpaintingParameterized(parameters);
+    cost = EvaluateInpaintingParameterized(parameters, missing_pixels);
     fprintf('=> cost %g\n\n', cost);
 
     % gauss_size
@@ -76,7 +77,7 @@ function [new_value, next_old] = gradientDescent(index, getNext, parameters, old
   param_cell{index} = getNext(param_cell{index}, 1);
   new_parameters = cell2struct(param_cell, fields, 1);
   fprintf('%s: %g ... ', fields{index}, param_cell{index})
-  new_cost_plus = EvaluateInpaintingParameterized(new_parameters) - cost;
+  new_cost_plus = EvaluateInpaintingParameterized(new_parameters, missing_pixels) - cost;
   fprintf('cost %g\n', new_cost_plus);
 
   % Case -1
@@ -84,7 +85,7 @@ function [new_value, next_old] = gradientDescent(index, getNext, parameters, old
   param_cell{index} = getNext(param_cell{index}, -1);
   new_parameters = cell2struct(param_cell, fields, 1);
   fprintf('%s: %g ... ', fields{index}, param_cell{index})
-  new_cost_minus = EvaluateInpaintingParameterized(new_parameters) - cost;
+  new_cost_minus = EvaluateInpaintingParameterized(new_parameters, missing_pixels) - cost;
   fprintf('cost %g\n', new_cost_minus);
 
   param_cell = struct2cell(parameters);

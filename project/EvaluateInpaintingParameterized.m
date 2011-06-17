@@ -1,6 +1,7 @@
 % Measure approximation error for several images.
 
-function cost = EvaluateInpaintingParameterized(parameters)
+function cost = EvaluateInpaintingParameterized(parameters, missing_pixels_fract)  
+
   file_list = dir(); 
   k = 1;
 
@@ -17,16 +18,18 @@ function cost = EvaluateInpaintingParameterized(parameters)
     elseif ( max(file_name(end-4:end) ~= '2.png'))
       continue;
     end
-    mask_name = [file_name(1:end-4) '_mask.png'];
 
     % Read image, convert to double precision and map to [0,1] interval
     I = imread(file_name);
     I = double(I) / 255;
 
-    % Read the respective binary mask
-    % EVALUATION IS DONE WITH A FIXED MASK
-    mask = imread(mask_name);
-
+    % Generate mask at random, with 60% missing pixels
+    mask = ones(size(I));
+    numpixels = size(I,1)*size(I,2);
+    holes = randperm(floor(missing_pixels_fract*numpixels));
+    mask(holes) = 0;
+    
+    
     I_mask = I;
     I_mask(~mask) = 0;
 
