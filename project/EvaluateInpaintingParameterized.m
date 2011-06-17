@@ -3,13 +3,17 @@
 function [cost, avgQErr] = EvaluateInpaintingParameterized(parameters, missing_pixels_fract)  
 
   file_list = dir(); 
-  k = 1;
+  rep=3;
+  
+  dir_length = length(dir);
 
-  Errors = []; % mean squared errors for each image
-  Times = [];
+  Errors_final = [];
+  Times_final = [];
 
-  for r = 1 : 3
-     for i = 3 : length(dir) % running through the folder
+  parfor r = 1 : rep
+     Errors = []; % mean squared errors for each image
+     Times = [];
+     for i = 3 : dir_length  % running through the folder
 
         file_name = file_list(i).name; % get current filename
 
@@ -38,20 +42,20 @@ function [cost, avgQErr] = EvaluateInpaintingParameterized(parameters, missing_p
         % Call the main inPainting function
         tic;
         I_rec = inPaintingParameterized(I_mask, mask, parameters);
-        Times(k) = toc;
+        Times = [Times toc];
 
         % Measure approximation error
-        Errors(k) = mean(mean(mean( ((I - I_rec) ).^2)));
-
-        k = k+1;
+        Errors = [Errors mean(mean(mean( ((I - I_rec) ).^2)))];
      end
+     Errors_final = [Errors_final Errors];
+     Times_final = [Times_final Times];
   end
   
-  avgQErr = mean(Errors);
+  avgQErr = mean(Errors_final);
  
   global global_best_cost 
 
-  cost = 10000 * mean(Errors) + 0.01 * mean(Times);
+  cost = 10000 * mean(Errors_final) + 0.001 * mean(Times_final);
   if (cost < global_best_cost)
     fprintf('\n-------------------------------\nFound new best params with cost %g\n', cost);
     global_best_cost = cost;
