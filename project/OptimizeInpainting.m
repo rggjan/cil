@@ -1,22 +1,32 @@
 % Optimize the parameters of inPainting.
-function optimizeInpainting()
+function OptimizeInpainting()
+
+  missing_pixels = 0.6;
 
   % Set random seet to get reproducable results
   rand('seed', 12345);
 
+  % Load parameters and best_cost from (binary) file
+  load('params.mat');
+
+  % Store best value in global variable, for usage in Evaluation script
+  global global_best_cost;
+  global_best_cost = best_cost;
+  fprintf('\nStarting optimization, current best cost is %g\n\n', best_cost);
+
   % Initial parameters
-  parameters = struct;
-  parameters.gauss_size = 9.3;
-  parameters.gauss_sigma = 0.7;
-  parameters.patch_size = 7.9;
-  parameters.patch_frame_size = 8.9;
-  parameters.td_abortbelow_stdev = 3.8;
-  parameters.td_abortbelow_stepsize = 2.3;
-  parameters.td_middle = 8.1;
-  parameters.validation = 0.05; 
-  parameters.iterative = true; 
-  parameters.max_iterations = 4.9; 
-  parameters.abortbelow_change = 0.18; 
+  % parameters = struct;
+  % parameters.gauss_size = 9.3;
+  % parameters.gauss_sigma = 0.7;
+  % parameters.patch_size = 7.9;
+  % parameters.patch_frame_size = 8.9;
+  % parameters.td_abortbelow_stdev = 3.8;
+  % parameters.td_abortbelow_stepsize = 2.3;
+  % parameters.td_middle = 8.1;
+  % parameters.validation = 0.05; 
+  % parameters.iterative = true; 
+  % parameters.max_iterations = 4.9; 
+  % parameters.abortbelow_change = 0.18; 
   old = zeros(11, 1);
   
   % Result set
@@ -25,30 +35,30 @@ function optimizeInpainting()
   while(true)
     fprintf('========== Starting new round ===========\n')
     parameters = final_parameters
-    cost = EvaluateInpaintingParameterized(parameters);
+    [cost, unused] = EvaluateInpaintingParameterized(parameters, missing_pixels);
     fprintf('=> cost %g\n\n', cost);
 
     % gauss_size
-    [final_parameters.gauss_size, old]             = gradientDescent(1, @getNextGaussSize, parameters, old, cost);
-    [final_parameters.gauss_sigma, old]            = gradientDescent(2, @getNextGaussSigma, parameters, old, cost);
-    [final_parameters.patch_size, old]             = gradientDescent(3, @getNextPatchSize, parameters, old, cost);
-    [final_parameters.patch_frame_size, old]       = gradientDescent(4, @getNextFrameSize, parameters, old, cost);
-    [final_parameters.td_abortbelow_stdev, old]    = gradientDescent(5, @getNextTDAbortBelowStdev, parameters, old, cost);
-    [final_parameters.td_abortbelow_stepsize, old] = gradientDescent(6, @getNextTDAbortBelowStep, parameters, old, cost);
-    [final_parameters.td_middle, old]              = gradientDescent(7, @getNextTDMiddle, parameters, old, cost);
-    [final_parameters.validation, old]             = gradientDescent(8, @getNextValidation, parameters, old, cost);
+    [final_parameters.gauss_size, old]             = gradientDescent(1, @getNextGaussSize, parameters, old, cost, missing_pixels);
+    [final_parameters.gauss_sigma, old]            = gradientDescent(2, @getNextGaussSigma, parameters, old, cost, missing_pixels);
+    [final_parameters.patch_size, old]             = gradientDescent(3, @getNextPatchSize, parameters, old, cost, missing_pixels);
+    [final_parameters.patch_frame_size, old]       = gradientDescent(4, @getNextFrameSize, parameters, old, cost, missing_pixels);
+    [final_parameters.td_abortbelow_stdev, old]    = gradientDescent(5, @getNextTDAbortBelowStdev, parameters, old, cost, missing_pixels);
+    [final_parameters.td_abortbelow_stepsize, old] = gradientDescent(6, @getNextTDAbortBelowStep, parameters, old, cost, missing_pixels);
+    [final_parameters.td_middle, old]              = gradientDescent(7, @getNextTDMiddle, parameters, old, cost, missing_pixels);
+    [final_parameters.validation, old]             = gradientDescent(8, @getNextValidation, parameters, old, cost, missing_pixels);
     %Dont iterate over bool 'iterative'
     if parameters.iterative
-      [final_parameters.max_iterations, old]         = gradientDescent(10, @getNextMaxIterations, parameters, old, cost);
-      [final_parameters.abortbelow_change, old]      = gradientDescent(11, @getNextAbortBelowChange, parameters, old, cost);
+      [final_parameters.max_iterations, old]         = gradientDescent(10, @getNextMaxIterations, parameters, old, cost, missing_pixels);
+      [final_parameters.abortbelow_change, old]      = gradientDescent(11, @getNextAbortBelowChange, parameters, old, cost, missing_pixels);
     end
   end
 
 end
 
-function [new_value, next_old] = gradientDescent(index, getNext, parameters, old, cost);
+function [new_value, next_old] = gradientDescent(index, getNext, parameters, old, cost, missing_pixels);
   learning_rate = 5;
-  alpha = 0.9;
+  alpha = 0.5;
 
   fields = {'gauss_size', ...
             'gauss_sigma', ...
@@ -67,7 +77,8 @@ function [new_value, next_old] = gradientDescent(index, getNext, parameters, old
   param_cell{index} = getNext(param_cell{index}, 1);
   new_parameters = cell2struct(param_cell, fields, 1);
   fprintf('%s: %g ... ', fields{index}, param_cell{index})
-  new_cost_plus = EvaluateInpaintingParameterized(new_parameters) - cost;
+  [new_cost, unused] = EvaluateInpaintingParameterized(new_parameters, missing_pixels);
+  new_cost_plus = new_cost - cost;
   fprintf('cost %g\n', new_cost_plus);
 
   % Case -1
@@ -75,7 +86,8 @@ function [new_value, next_old] = gradientDescent(index, getNext, parameters, old
   param_cell{index} = getNext(param_cell{index}, -1);
   new_parameters = cell2struct(param_cell, fields, 1);
   fprintf('%s: %g ... ', fields{index}, param_cell{index})
-  new_cost_minus = EvaluateInpaintingParameterized(new_parameters) - cost;
+  [new_cost, unused] = EvaluateInpaintingParameterized(new_parameters, missing_pixels);
+  new_cost_minus = new_cost - cost;
   fprintf('cost %g\n', new_cost_minus);
 
   param_cell = struct2cell(parameters);
@@ -87,7 +99,11 @@ function [new_value, next_old] = gradientDescent(index, getNext, parameters, old
 %  else
       stepsize = -1*(new_cost_plus-new_cost_minus)/2*learning_rate;
       old_stepsize = old(index);
-      new_stepsize = old_stepsize*alpha + (1-alpha)*stepsize;
+      if (old_stepsize ~= 0)
+        new_stepsize = old_stepsize*alpha + (1-alpha)*stepsize;
+      else
+        new_stepsize = stepsize;
+      end
       fprintf('steps(old/new/together): %g/%g/%g\n', old_stepsize, stepsize, new_stepsize)
       old(index) = new_stepsize;
       new_value = getNext(param_cell{index}, new_stepsize);
