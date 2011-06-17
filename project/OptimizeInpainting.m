@@ -58,7 +58,7 @@ end
 
 function [new_value, next_old] = gradientDescent(index, getNext, parameters, old, cost, missing_pixels);
   learning_rate = 5;
-  alpha = 0.9;
+  alpha = 0.5;
 
   fields = {'gauss_size', ...
             'gauss_sigma', ...
