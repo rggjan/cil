@@ -26,10 +26,11 @@ function [cost, avgQErr] = EvaluateInpaintingParameterized(parameters, missing_p
     % Generate mask at random, with 60% missing pixels
     mask = ones(size(I));
     numpixels = size(I,1)*size(I,2);
-    holes = randperm(floor(missing_pixels_fract*numpixels));
+    holes = randperm(numpixels);
+    holes = holes(1:floor(missing_pixels_fract*numpixels));
     mask(holes) = 0;
     
-    
+
     I_mask = I;
     I_mask(~mask) = 0;
 
