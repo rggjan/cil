@@ -27,7 +27,7 @@ function optimizeInpainting()
   while(true)
     fprintf('========== Starting new round ===========\n')
     parameters = final_parameters
-    cost = EvaluateInpaintingParameterized(parameters, missing_pixels);
+    [cost, unused] = EvaluateInpaintingParameterized(parameters, missing_pixels);
     fprintf('=> cost %g\n\n', cost);
 
     % gauss_size
@@ -69,7 +69,8 @@ function [new_value, next_old] = gradientDescent(index, getNext, parameters, old
   param_cell{index} = getNext(param_cell{index}, 1);
   new_parameters = cell2struct(param_cell, fields, 1);
   fprintf('%s: %g ... ', fields{index}, param_cell{index})
-  new_cost_plus = EvaluateInpaintingParameterized(new_parameters, missing_pixels) - cost;
+  [new_cost, unused] = EvaluateInpaintingParameterized(new_parameters, missing_pixels);
+  new_cost_plus = new_cost - cost;
   fprintf('cost %g\n', new_cost_plus);
 
   % Case -1
@@ -77,7 +78,8 @@ function [new_value, next_old] = gradientDescent(index, getNext, parameters, old
   param_cell{index} = getNext(param_cell{index}, -1);
   new_parameters = cell2struct(param_cell, fields, 1);
   fprintf('%s: %g ... ', fields{index}, param_cell{index})
-  new_cost_minus = EvaluateInpaintingParameterized(new_parameters, missing_pixels) - cost;
+  [new_cost, unused] = EvaluateInpaintingParameterized(new_parameters, missing_pixels);
+  new_cost_minus = new_cost - cost;
   fprintf('cost %g\n', new_cost_minus);
 
   param_cell = struct2cell(parameters);

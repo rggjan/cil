@@ -1,6 +1,6 @@
 % Measure approximation error for several images.
 
-function cost = EvaluateInpaintingParameterized(parameters, missing_pixels_fract)  
+function [cost, avgQErr] = EvaluateInpaintingParameterized(parameters, missing_pixels_fract)  
 
   file_list = dir(); 
   k = 1;
@@ -43,6 +43,8 @@ function cost = EvaluateInpaintingParameterized(parameters, missing_pixels_fract
 
     k = k+1;
   end
+  
+  avgQErr = mean(Errors);
   
   global mincost
   global best_params
