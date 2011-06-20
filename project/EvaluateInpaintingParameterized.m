@@ -55,7 +55,13 @@ function [cost, avgQErr] = EvaluateInpaintingParameterized(parameters, missing_p
  
   global global_best_cost 
 
-  cost = 10000 * mean(Errors_final) + 0.001 * mean(Times_final);
+  if (mean(Times) > 60)
+    times_error = exp((mean(Times)/60)-1)
+  else
+    times_error = 0;
+  end
+
+  cost = 10000 * mean(Errors) + times_error;
   if (cost < global_best_cost)
     fprintf('\n-------------------------------\nFound new best params with cost %g\n', cost);
     global_best_cost = cost;
