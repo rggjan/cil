@@ -1,7 +1,7 @@
 % Create Error vs. MissingPixels Plot
 % Requires parameters saved in a parameters.mat file
 
-load('params.mat');
+  load('params.mat');
 
   stepsize = 2;
   no_steps = floor(100/stepsize);
@@ -47,7 +47,7 @@ load('params.mat');
   ylabel('Average squared error per missing pixel');
   plot(range, error_algo, 'r', range, error_base1,'b', range, error_base2, 'g');
   legend('New algorithm', 'Baseline 1 (linear)', 'Baseline 2 (Matching Pursuit)');
-  saveas(handle, 'plots/missingpixelsVsError.png');
+  saveas(handle, 'plots/missingpixelsVsError.fig');
   hold off;
   
   
