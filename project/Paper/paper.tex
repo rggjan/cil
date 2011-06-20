@@ -2,6 +2,7 @@
 
 %\usepackage{times}
 %\usepackage{balance}
+\usepackage{amsmath}
 \usepackage{url}
 \usepackage{graphicx}
 \usepackage[pdftex]{hyperref}
@@ -115,13 +116,42 @@ should be a bit larger than the biggest assumed hole in the image. For others, l
 iterations, it is not so clear. And yet others have a clear speed / accuracy tradeoff, like the stopping
 conditions of the online threshold estimation.
 
-Because we thought it not feasable to tune all the parameters by hand, we wrote a program to
+Because we thought it not feasable to tune all the parameters by hand, we wrote an algorithm to
 do the offline parameter estimation. The idea is to do this once for a few representative images, and get
 parameters that can model as closely as possible many of the images we are interested in.
 Our proposed method combines a gradient descent method with ideas from cross-validation, and tunes our
 10-dimensional parameter-space, maximising time and accuracy.
 
 \subsubsection{Error function}
+When doing a minimization of any kind, an error function is needed. Of course we already had the error function
+of the evaluation script, that gives a mean over the squared differences of the reconstructed to the original
+image. However, using only an error measure, the time would potentially grow to infinity to get the best accuracy possible during tuning.
+
+Therefore we tried different error function including both, the image error $E$, and the time $T$ spent. The image error here is the average
+squared error of a reconstructed pixel to the original pixel, scaled with a factor (usually about 10000), while the time is measured in seconds.
+
+\begin{table*}
+  \centering
+  \begin{tabular}{|l|p{5cm}|p{5cm}|}
+    \hline
+    Function&Advantages&Disadvantages\\
+    \hline
+    $\exp(E)+\exp(T)$ & Increases cost fast to avoid $E$ or $T$ over a certain threshold & Not enough gradient for very low $E$, $T$ values\\
+    \hline
+    $(1-\exp(E))*(1-\exp(T))$ & Makes it possible to have large times for very low errors & Works also the other way around, and optimization only minimizes time\\
+    \hline
+    $E + T$ & Everywhere a good gradient & Time from 60 to 59 seconds is same \textit{improvement} as time from 2 to 1 second\\
+    \hline
+    $\begin{cases}
+  \exp(E)  & \text{if }T<60\\
+  \exp(E)+\exp(T/60 - 1) - 1 & \text{else}
+\end{cases}$ & Optimizes for error only when time is low enough. Function still continous, penalizes high times. & None so far, this is the function used by us\\
+    \hline
+  \end{tabular}
+  \caption{Different combined error functions}
+  \label{error_function_table}
+\end{table*}
+
 
 \subsubsection{Gradient descent}
 
@@ -151,20 +181,6 @@ on a draft of each table or figure, the one or two key results you
 want to address in the text portion of the results.
 The information from the figures is
 summarized in Table~\ref{tab:fourier-wavelet}.
-
-\begin{table*}[htbp]
-  \centering
-  \begin{tabular}[c]{|l||l|l|l|}
-    \hline
-    Basis&Support&Suitable signals&Unsuitable signals\\
-    \hline
-    Fourier&global&sine like&localized\\
-    wavelet&local&localized&sine like\\
-    \hline
-  \end{tabular}
-  \caption{Characteristics of Fourier and wavelet basis.}
-  \label{tab:fourier-wavelet}
-\end{table*}
 
 When reporting computational or measurement results, always
 report the mean (average value) along with a measure of variablility
