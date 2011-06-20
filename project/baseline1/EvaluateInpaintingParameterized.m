@@ -1,18 +1,18 @@
 % Measure approximation error for several images.
 
-function [cost, avgQErr] = EvaluateInpaintingParameterized(parameters, missing_pixels_fract)  
+function [avgQErr] = EvaluateInpaintingParameterized(missing_pixels_fract)  
 
-  file_list = dir(); 
+  file_list = dir('..'); 
   rep=3;
   
-  dir_length = length(dir);
+  dir_length = length(dir('..'));
 
   Errors_final = [];
-  Times_final = [];
+  LTimes_final = [];
 
   parfor r = 1 : rep
      Errors = []; % mean squared errors for each image
-     Times = [];
+     LTimes = [];
      for i = 3 : dir_length  % running through the folder
 
         file_name = file_list(i).name; % get current filename
@@ -25,7 +25,7 @@ function [cost, avgQErr] = EvaluateInpaintingParameterized(parameters, missing_p
         end
 
         % Read image, convert to double precision and map to [0,1] interval
-        I = imread(file_name);
+        I = imread(strcat('../',file_name));
         I = double(I) / 255;
 
         % Generate mask at random, with 60% missing pixels
@@ -41,33 +41,17 @@ function [cost, avgQErr] = EvaluateInpaintingParameterized(parameters, missing_p
 
         % Call the main inPainting function
         tic;
-        I_rec = inPaintingParameterized(I_mask, mask, parameters);
-        Times = [Times toc];
+        I_rec = inPainting(I_mask, mask);
+        LTimes = [LTimes toc];
 
         % Measure approximation error
         Errors = [Errors mean(mean(mean( ((I - I_rec) ).^2)))];
      end
      Errors_final = [Errors_final Errors];
-     Times_final = [Times_final Times];
+     LTimes_final = [LTimes_final LTimes];
   end
   
   avgQErr = mean(Errors_final);
- 
-  global global_best_cost 
 
-  if (mean(Times_final) > 60)
-    times_error = exp((mean(Times_final)/60)-1) - 1
-  else
-    times_error = 0;
-  end
 
-  cost = 10000 * mean(Errors_final) + times_error;
-  if (cost < global_best_cost)
-    fprintf('\n-------------------------------\nFound new best params with cost %g\n', cost);
-    global_best_cost = cost;
-    best_cost = cost;
-    parameters
-    save('params.mat', 'best_cost', 'parameters');
-    fprintf('-------------------------------\n')
-  end
 end
