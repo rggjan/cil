@@ -19,10 +19,8 @@
 \maketitle
 
 \begin{abstract}
-  This paper suggests a novel approach to restore noisy images.
-  ((( TODO )))
-  The abstract should really be written last, along with the title of
-the paper. The four points that should be covered:
+The abstract should really be written last, along with the title of
+the paper. The four points that should be covered~\cite{jones08}:
 \begin{enumerate}
 \item State the problem.
 \item Say why it is an interesting problem.
@@ -46,77 +44,17 @@ Before entering the iterative part of our algorithm, the following three steps a
 \begin{enumerate}
 \item In order to guide the elimination of frequencies by finding the optimal threshold (as described below), we first remove additional pixels from the image and use them as the validation set. The fraction of additional pixels to be removed is a global parameter, which we optimized using gradient descent (as explained in section ??).
 \item Since our reduction in the Fourier space works best with framed patches, we frame the complete image by mirroring its margin. (The size of the frame is another optimizable global parameter.)
-\item ...
+\item For obtaining an initial reconstruction of the image, we compute a weighted sum over all the neighboring pixels that are known. By setting all unknown pixels in the image to zero and encoding known values with 1s in the mask, elementwise division of the filtered image by the similarly filtered mask results in a normalized sum weighted by the filtering kernel. (This procedure, which we call Gaussian interpolation, allows us to use MATLAB's fast native functions and to fill holes up to the kernel size, which is another global parameter.)
 \end{enumerate}
 
-
----------------------------\\
-
-
-We use an iterative scheme to determine the right parameters used in our algorithm. For this, we use cross-validation: We randomly remove a percentage of pixels from the image as a validation set. (((STILL VALID?))) We then use this set to test the accuracy of our parameters and determine the best set of parameters for this image.
-
-We then proceed to the main steps of the algorithm:
+After these preparing steps, we start to iteratively improve the reconstructed image with the following steps:
 \begin{enumerate}
-\label{algo}
-\item \label{algo:step1}
-We use a Gaussian to interpolate the missing pixels indicated by the mask, using a convolution operation. Both $\sigma$ and the size of the Gaussian matrix are determined by the cross-validation. (((TODO?!)))
-This step is required by the Fourier transform which cannot ignore samples. (((Humm)))
-
-\item \label{algo:step2}
-We transform the image to the Fourier domain. In this domain we set the magnitudes of all frequencies to zero which are below the $n$-th percentile threshold. Again, our ideal cutoff $n$ is determined by cross-validation using a loop.
-
-\item \label{algo:step3}
-In this last step, we invert the Fourier transform and combine the reconstructed image with the undamaged part of the image, yielding our result.
-
+\item Using the abovementioned validation set, we evaluate several thresholds for every patch and keep for each the best one: After calculating a fast Fourier transform for every patch, frequencies weaker then the threshold are suppressed by setting them to 0. Since profiling showed that the Fourier transform with its inverse is by far the most time-consuming part of our algorithm, we try to perform as few threshold evaluations as possible. For this purpose, we iteratively evaluate two new thresholds around a center threshold, taking the best one as the new center and decreasing the offset. For this optimization as well as for the whole iteration, we have both a number- and a convergence-based termination criterion.
+\item Having stored the reconstruction of every patch with its best threshold, all that remains to do is copying the newly estimated missing pixels (including those of the validation set) back into the reconstructed image.
 \end{enumerate}
+Finally, the frame added in the beginning is removed again and the pixels of the validation set are overwritten by the original ones. A variant of the presented method is to do it non-iteratively and revert to the original data after determining the thresholds, such that the Gaussian interpolation and the thresholding in the Fourier space is performed without the validation set.
 
-In our implementation, we use several tweaks to improve performance or quality:
-\begin{itemize}
-\item We perform the Fourier transform and thresholding on image patches to allow an individual threshold per patch.
-\item To avoid discontinuity (Image \ref{fig:boundaryArtifacts}) at the boundary of the patches, we use a frame around the actual patch to capture more information. (Image \ref{fig:framing}) This frame is not filled in by the reconstructed patch from the Fourier step. The frames of adjacent patches are overlapping if the frame size is set to a value larger than zero. At the image boundaries, we replicate the outermost pixels to provide a sufficient frame.\end{itemize}
-((( TODO )))
-Describe your idea and how it was implemented to solve
-  the problem. Survey the related work, giving credit where credit is
-  due. 
-  
-  The style in this section should read as if you were verbally
-describing the conduct of the experiment. 
-The methods section is not a step-by-step, directive,
-protocol as you might see in your lab manual, but detailed enough such
-that an interested reader can reproduce your
-work.
-The methods
-section should describe what was
-done to answer the research question, describe how it was done,
-justify the experimental design, and
-explain how the results were analyzed.
-
-The methods section of a research paper provides the information by
-which a study's validity is judged.
-Therefore, it requires a clear and precise description of how an
-experiment was done, and the rationale
-for why specific experimental procedures were chosen.
-It is usually helpful to
-structure the methods section by:
-\begin{enumerate}
-\item Describing the algorithms used in the study, briefly including
-  details such as hyperparameter values (e.g. thresholds), and
-  preprocessing steps (e.g. normalizing the data to have mean value of
-  zero).
-\item Explaining how the materials were prepared, for example the
-  images used and their resolution.
-\item Describing the research protocol, for example which examples
-  were used for estimating the parameters (training) and which were
-  used for computing performance.
-\item Explaining how measurements were made and what
-  calculations were performed. Do not reproduce the full source code in
-  the paper, but explain the key steps.
-\end{enumerate}
-
-\subsection{Online threshold estimation}
-In the algorithm as described above, we have many different parameters that are required to be tuned
-
-\subsection{Offline parameter estimation}
+\subsection{Global parameter estimation}
 As shown in table \ref{parameters}, there are a total of 10 parameters in our algorithm that can be set.
 For many of them, it is quite clear what values should be used. For example, the size of the gauss kernel
 should be a bit larger than the biggest assumed hole in the image. For others, like the maximum number of
@@ -220,7 +158,7 @@ developed as part of the programming assignments.
 \subsection{Figures and Tables}
 
 \paragraph{Note}
-All plots in this paper were created with MATLAB$\textsuperscript{\textregistered}$ and can be reproduced using the script 'CreatePaperPlots.m' in our submission.\\
+All plots in this paper were created with MATLAB and can be reproduced using the script 'CreatePaperPosts.m' in our submission.\\
 
 \begin{figure}[tbp]
   \centering
