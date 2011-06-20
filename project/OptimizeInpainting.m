@@ -132,7 +132,7 @@ function [new_value, next_old] = gradientDescent(index, getNext, parameters, old
   next_old = old;
 
   global parameter_list
-  parameter_list(index, rounds_done) = new_value;
+  parameter_list(index, rounds_done+1) = new_value;
   figure(index);
   plot(parameter_list(index, :));
   title(sprintf('%s during optimization', fields{index}), 'Interpreter', 'none');

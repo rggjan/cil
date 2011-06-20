@@ -8,6 +8,9 @@
 \usepackage[pdftex]{hyperref}
 \usepackage[utf8]{inputenc}
 
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+
 \begin{document}
 \title{Inpainting with controlled dimensionality reduction in the Fourier domain}
 
@@ -39,6 +42,57 @@ We repeat this procedure with the newly determined values until the error of a r
 Without actually knowing the broad field of research about inpainting (also known as image interpolation), we could not find any papers covering similar concepts as ours. Most methods are based on partial differential equations or some form of texture synthesis.
 
 \subsection{New approach}
+
+% Define block styles
+\tikzstyle{decision} = [diamond, draw, fill=blue!20, 
+    text width=4.5em, text badly centered, inner sep=0pt]
+
+\tikzstyle{block} = [rectangle, draw, fill=blue!20, 
+    text width=7em, text centered, rounded corners, minimum height=4em]
+
+\tikzstyle{line} = [draw, -latex']
+
+\tikzstyle{cloud} = [draw, ellipse,fill=red!20,
+    minimum height=2em]
+    
+\begin{tikzpicture}[node distance = 2cm, auto]
+  % Place nodes
+  \node [cloud] (node1) {Start};
+  \node [block, right of=node1, node distance = 3.1cm] (node2) {Remove validation set};
+  \node [block, below of=node2] (node3) {Frame image};
+  \node [block, below of=node3] (node4) {Gaussian interpolation};
+  \node [decision, below of=node4] (node5) {Iterative?};
+  \node [block, right of=node5, node distance = 3.1cm, fill=green!20] (node6) {Find best threshold};
+  \node [block, below of=node6, fill=green!20] (node7) {Reset known values except validation set};
+
+  \node [block, left of=node5, node distance = 3.1cm] (node8) {Find best threshold};
+  \node [block, below of=node8] (node9) {Gaussian interpolation on original data};
+  \node [block, below of=node9] (node10) {Apply best threshold};
+
+  \node [block, right of=node10, node distance = 3.1cm] (node11) {Unframe image};
+  \node [block, below of=node11] (node12) {Reset known values};
+  \node [cloud, right of=node12, node distance = 3.1cm] (node13) {End};
+
+  % Draw edges
+  \path [line] (node1) -- (node2);
+  \path [line] (node2) -- (node3);
+  \path [line] (node3) -- (node4);
+  \path [line] (node4) -- (node5);
+  \path [line] (node5) -- node[above]{yes} (node6);
+  \path [line] (node5) -- node[above]{no} (node8);
+
+  \draw [->] (node6) to [bend left=20] (node7);
+  \draw [->] (node7) to [bend left=20] (node6);
+
+  \path [line] (node8) -- (node9);
+  \path [line] (node9) -- (node10);
+  \path [line] (node10) -- (node11);
+  \path [line] (node11) -- (node12);
+  \path [line] (node12) -- (node13);
+
+  \path [line] (node7) |- (node11);
+\end{tikzpicture}
+
 As outlined in the introduction, we combined several ideas for obtaining an inpainting algorithm that provides both good results and fast performance. The input of our algorithm is the image to be restored together with a mask that indicates its unknown spots.\\
 Before entering the iterative part of our algorithm, the following three steps are performed (as seen in figure ??):
 \begin{enumerate}
