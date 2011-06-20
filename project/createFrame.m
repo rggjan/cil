@@ -1,9 +1,11 @@
 function I_framed = createFrame(I, parameters)
+  %CREATEFRAME Create a frame around the image
+  %Size of the frame depending on the parameters. The frame is a mirrored
+  %version of the outermost rows/columns.
   image_size = size(I, 1);
 
   I_framed = zeros(image_size + 2*parameters.patch_frame_size);
 
-  % Frame the image by duplicating the first and last row respectively column.
   I_framed(parameters.patch_frame_size + 1 : parameters.patch_frame_size + image_size, ...
            parameters.patch_frame_size + 1 : parameters.patch_frame_size + image_size) = I;
   

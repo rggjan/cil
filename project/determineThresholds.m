@@ -1,5 +1,7 @@
 function [T, I_trained] = determineThresholds(I_training_framed, val_mask, ...
                                               val_I, parameters)
+  %DETERMINETHRESHOLDS Determines the best thresholds, reconstruction for each patch
+  
   image_size = size(val_I, 1);
   num_patches = image_size / parameters.patch_size;
   pfs = parameters.patch_frame_size;
@@ -8,12 +10,14 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, ...
   T = zeros(num_patches);
   I_trained = I_training_framed;
 
+  %Iterate over all patches
   for i = 1 : num_patches
     for j = 1 : num_patches
       best_t = 1;
       best_error = +Inf;
       best_P = 0;
 
+      %Extract patches from image / mask / validation mask
       P_framed = I_training_framed( ...
                             ps * (i - 1) + 1 : ...
                             ps * i + 2 * pfs, ...
@@ -30,36 +34,45 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, ...
                          ps * (j - 1) + 1 : ...
                          ps * j).*P_mask;
 
+      %Prepare iteration
       dev = +Inf;
       middle = parameters.td_middle;
       stepsize = middle;
       errors = [Inf, Inf, Inf];
+      %Ps: Reconstructed patches.
       Ps = {};
+      % Calculate middle value once before loop.
       [errors(2), Ps{2}] = determineError(P_framed, middle, P_mask, P_validate, parameters);
       
-      %DEBUG
+      %DEBUG / Visualization
       middles = [middle];
+      
+      %Find best threshold iteratively
       while(stepsize > parameters.td_abortbelow_stepsize && dev > parameters.td_abortbelow_stdev)
         
+        % Right value
         [errors(3), Ps{3}] = determineError(P_framed, middle+stepsize, P_mask, P_validate, parameters);
         % We know the middle one, dont need to calculate it
         
         if(middle ~= 0)
+          % Left value - only if the middle isn't already at 0. 
           [errors(1), Ps{1}] = determineError(P_framed, middle-stepsize, P_mask, P_validate, parameters);
         else
-          % Middle is 0 or smaller. Add eps so that it will not be chosen
-          % as minimum
-
-          % TODO does not seem to work quite yet
+          % Middle is 0 or smaller. 
           errors(1) = errors(3);
         end
           
+        % Standard deviation to decide termination later.
         dev = std(errors);
 
+        % Where do we go? To the minimum of the error
         [errors(2), idx] = min(errors);
         if(middle==0 && idx == 1)
+          % We don't go left if we are at 0. Stay at 0.
           idx = 2;
         end
+        % New middle = Best error position found.
+        % Save our best calculated patch for later
         Ps{2} = Ps{idx};
         
         % Calculate new middle
@@ -72,12 +85,14 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, ...
           throw(ME)
         end
         
+        % We half the step size
         stepsize = stepsize / 2;
+        %DEBUG / Visualization
         middles = [middles middle];
       end
 
       if(false)
-        %DEBUG
+        %DEBUG Turn on if you want to see the evolution of the threshold
         errors = [];
         steps=[];
         for t = 0:0.1:20 % TODO use gradient descent or something...
@@ -106,24 +121,29 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, ...
         pause
       end
       
+      % Save the threshold for this patch
       T(i, j) = middle;
 
       range_i = pfs + ps*(i-1) + 1 : pfs + ps * i;
       range_j = pfs + ps*(j-1) + 1 : pfs + ps * j;
-
+      % Fit the reconstructed patch back into the image
       I_trained(range_i, range_j) = Ps{2};
     end
   end
 end
 
 function [err, P_reduced] = determineError(P_framed, t, P_mask, P_validate, parameters)
-
+  % DETERMINEERROR Determine the error and reconstruction for given
+  % parameters, image and mask
+  
+  % Reconstruct, remove the frame
   P_reduced = removeFrame(dimensionReduction(P_framed, t, parameters), ...
                           parameters);
 
-  % Make sure we do not fall outside the value range of an image
+  % Make sure we do not fall outside the value range of an image [0,1]
   P_reduced = boundImageValues(P_reduced);
 
+  % Calculate error
   diff = P_reduced.*P_mask - P_validate;
   err = sum(sum(diff.*diff));
 
