@@ -57,8 +57,8 @@ function OptimizeInpainting()
 end
 
 function [new_value, next_old] = gradientDescent(index, getNext, parameters, old, cost, missing_pixels);
-  learning_rate = 5;
-  alpha = 0.5;
+  learning_rate = 20;
+  alpha = 0.8;
 
   fields = {'gauss_size', ...
             'gauss_sigma', ...
