@@ -12,3 +12,4 @@ I_out = (I_filtered .* (1-mask)) + (I_masked .* (mask));
 %Make sure we eliminate NaNs that may occur,
 %when gauss is too small and we have a large hole
 I_out(isnan(I_out)) = mean(mean(I(logical(mask))));
+

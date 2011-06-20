@@ -1,12 +1,13 @@
 % Create Error vs. MissingPixels Plot
 % Requires parameters saved in a parameters.mat file
 
-load('params.mat');
+  load('params.mat');
 
   stepsize = 2;
   no_steps = floor(100/stepsize);
   error_algo = zeros(no_steps, 1);
   error_base1 = zeros(no_steps, 1);
+  error_base2 = zeros(no_steps, 1);
   
   main_path = pwd;
   
@@ -25,19 +26,28 @@ load('params.mat');
   cd('baseline1/')
   parfor k=0:no_steps
     %Baseline 1
-    error_base1(k+1) = feval('EvaluateInpaintingParametrized', stepsize*k/100);
+    error_base1(k+1) = feval('EvaluateInpaintingParameterized', stepsize*k/100);
+  end
+  cd(main_path)
+  
+  fprintf('1C) Baseline 1\n')
+  cd('baseline2/')
+  parfor k=0:no_steps
+    %Baseline 1
+    error_base2(k+1) = feval('EvaluateInpaintingParameterized', stepsize*k/100);
   end
   cd(main_path)
 
+  fprintf('1) Plotting\n')
   
   handle = figure;
   range = 0:stepsize:100;
   hold on;
   xlabel('Missing pixels (%)');
   ylabel('Average squared error per missing pixel');
-  plot(range, error_algo, 'r', range, error_base1,'b');
-  legend('New algorithm', 'Baseline 1');
-  saveas(handle, 'plots/missingpixelsVsError.png');
+  plot(range, error_algo, 'r', range, error_base1,'b', range, error_base2, 'g');
+  legend('New algorithm', 'Baseline 1 (linear)', 'Baseline 2 (Matching Pursuit)');
+  saveas(handle, 'plots/missingpixelsVsError.fig');
   hold off;
   
   

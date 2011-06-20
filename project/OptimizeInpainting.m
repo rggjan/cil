@@ -1,6 +1,5 @@
 % Optimize the parameters of inPainting.
-function OptimizeInpainting()
-
+function OptimizeInpainting(rounds)
   missing_pixels = 0.6;
 
   % Set random seet to get reproducable results
@@ -31,39 +30,51 @@ function OptimizeInpainting()
   
   % Result set
   final_parameters = parameters;
-  
-  while(true)
-    fprintf('========== Starting new round ===========\n')
+  rounds_done = 1;
 
-    global parameter_list
-    parameter_list = [parameter_list, final_parameters];
+  global parameter_list
+  parameter_list = cell2mat(struct2cell(parameters));
+
+  global cost_list
+  cost_list = [];
+
+  while(rounds_done <= rounds || rounds == 0)
+    fprintf('========== Starting round %g ===========\n', rounds_done)
 
     parameters = final_parameters
     [cost, unused] = EvaluateInpaintingParameterized(parameters, missing_pixels);
     fprintf('=> cost %g\n\n', cost);
 
-    global cost_list
-    cost_list = [cost_list, cost];
-
     % gauss_size
-    [final_parameters.gauss_size, old]             = gradientDescent(1, @getNextGaussSize, parameters, old, cost, missing_pixels);
-    [final_parameters.gauss_sigma, old]            = gradientDescent(2, @getNextGaussSigma, parameters, old, cost, missing_pixels);
-    [final_parameters.patch_size, old]             = gradientDescent(3, @getNextPatchSize, parameters, old, cost, missing_pixels);
-    [final_parameters.patch_frame_size, old]       = gradientDescent(4, @getNextFrameSize, parameters, old, cost, missing_pixels);
-    [final_parameters.td_abortbelow_stdev, old]    = gradientDescent(5, @getNextTDAbortBelowStdev, parameters, old, cost, missing_pixels);
-    [final_parameters.td_abortbelow_stepsize, old] = gradientDescent(6, @getNextTDAbortBelowStep, parameters, old, cost, missing_pixels);
-    [final_parameters.td_middle, old]              = gradientDescent(7, @getNextTDMiddle, parameters, old, cost, missing_pixels);
-    [final_parameters.validation, old]             = gradientDescent(8, @getNextValidation, parameters, old, cost, missing_pixels);
+    [final_parameters.gauss_size, old]             = gradientDescent(1, @getNextGaussSize, parameters, old, cost, missing_pixels, rounds_done);
+    [final_parameters.gauss_sigma, old]            = gradientDescent(2, @getNextGaussSigma, parameters, old, cost, missing_pixels, rounds_done);
+    [final_parameters.patch_size, old]             = gradientDescent(3, @getNextPatchSize, parameters, old, cost, missing_pixels, rounds_done);
+    [final_parameters.patch_frame_size, old]       = gradientDescent(4, @getNextFrameSize, parameters, old, cost, missing_pixels, rounds_done);
+    [final_parameters.td_abortbelow_stdev, old]    = gradientDescent(5, @getNextTDAbortBelowStdev, parameters, old, cost, missing_pixels, rounds_done);
+    [final_parameters.td_abortbelow_stepsize, old] = gradientDescent(6, @getNextTDAbortBelowStep, parameters, old, cost, missing_pixels, rounds_done);
+    [final_parameters.td_middle, old]              = gradientDescent(7, @getNextTDMiddle, parameters, old, cost, missing_pixels, rounds_done);
+    [final_parameters.validation, old]             = gradientDescent(8, @getNextValidation, parameters, old, cost, missing_pixels, rounds_done);
     %Dont iterate over bool 'iterative'
     if parameters.iterative
-      [final_parameters.max_iterations, old]         = gradientDescent(10, @getNextMaxIterations, parameters, old, cost, missing_pixels);
-      [final_parameters.abortbelow_change, old]      = gradientDescent(11, @getNextAbortBelowChange, parameters, old, cost, missing_pixels);
+      [final_parameters.max_iterations, old]         = gradientDescent(10, @getNextMaxIterations, parameters, old, cost, missing_pixels, rounds_done);
+      [final_parameters.abortbelow_change, old]      = gradientDescent(11, @getNextAbortBelowChange, parameters, old, cost, missing_pixels, rounds_done);
     end
-  end
 
+    % Plot cost function
+    cost_list = [cost_list, cost];
+    figure(9);
+    plot(cost_list);
+    title('Cost during optimization');
+    xlabel('Steps');
+    ylabel('Cost function');
+    saveas(9, 'plots/cost_plot.fig');
+    drawnow
+
+    rounds_done = rounds_done + 1;
+  end
 end
 
-function [new_value, next_old] = gradientDescent(index, getNext, parameters, old, cost, missing_pixels);
+function [new_value, next_old] = gradientDescent(index, getNext, parameters, old, cost, missing_pixels, rounds_done);
   learning_rate = 20;
   alpha = 0.8;
 
@@ -119,6 +130,16 @@ function [new_value, next_old] = gradientDescent(index, getNext, parameters, old
 %  end
   %pause;
   next_old = old;
+
+  global parameter_list
+  parameter_list(index, rounds_done) = new_value;
+  figure(index);
+  plot(parameter_list(index, :));
+  title(sprintf('%s during optimization', fields{index}), 'Interpreter', 'none');
+  xlabel('Steps');
+  ylabel(sprintf('Value of %s', fields{index}), 'Interpreter', 'none');
+  saveas(index, sprintf('plots/%s_plot.fig', fields{index}));
+  drawnow;
 end
 
 function new = getNextGaussSize(Value, Stepsize)
