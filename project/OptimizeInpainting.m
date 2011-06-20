@@ -34,9 +34,16 @@ function OptimizeInpainting()
   
   while(true)
     fprintf('========== Starting new round ===========\n')
+
+    global parameter_list
+    parameter_list = [parameter_list, final_parameters];
+
     parameters = final_parameters
     [cost, unused] = EvaluateInpaintingParameterized(parameters, missing_pixels);
     fprintf('=> cost %g\n\n', cost);
+
+    global cost_list
+    cost_list = [cost_list, cost];
 
     % gauss_size
     [final_parameters.gauss_size, old]             = gradientDescent(1, @getNextGaussSize, parameters, old, cost, missing_pixels);
