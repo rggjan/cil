@@ -25,7 +25,7 @@ load('params.mat');
   cd('baseline1/')
   parfor k=0:no_steps
     %Baseline 1
-    error_base1(k+1) = feval('EvaluateInpaintingParametrized', stepsize*k/100);
+    error_base1(k+1) = feval('EvaluateInpaintingParameterized', stepsize*k/100);
   end
   cd(main_path)
 
