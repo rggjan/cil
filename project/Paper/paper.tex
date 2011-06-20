@@ -15,6 +15,7 @@
 \title{Inpainting with controlled dimensionality reduction in the Fourier domain}
 
 \author{
+  Group: NoobzRockz\\
   Patrick Bänziger, Kaspar Etter, Jan Rüegg\\
   Department of Computer Science, ETH Zurich, Switzerland
 }
@@ -55,6 +56,7 @@ Without actually knowing the broad field of research about inpainting (also know
 \tikzstyle{cloud} = [draw, ellipse,fill=red!20,
     minimum height=2em]
     
+\begin{figure}
 \begin{tikzpicture}[node distance = 2cm, auto]
   % Place nodes
   \node [cloud] (node1) {Start};
@@ -92,6 +94,8 @@ Without actually knowing the broad field of research about inpainting (also know
 
   \path [line] (node7) |- (node11);
 \end{tikzpicture}
+\caption{Our newly proposed algorithm as a flowchart.}
+\end{figure}
 
 As outlined in the introduction, we combined several ideas for obtaining an inpainting algorithm that provides both good results and fast performance. The input of our algorithm is the image to be restored together with a mask that indicates its unknown spots.\\
 Before entering the iterative part of our algorithm, the following three steps are performed (as seen in figure ??):
@@ -208,13 +212,6 @@ All plots in this paper were created with MATLAB and can be reproduced using the
   \label{fig:boundaryArtifacts}
 \end{figure}
 
-\begin{figure}[tbp]
-  \centering
-  \includegraphics[width=\columnwidth]{images/imageFraming.png}
-  \caption{Only the inner patch (marked red) is reconstructed in one step while the frame only provides additional signal. (Undistorted image shown) }
-  \label{fig:framing}
-\end{figure}
-
 ((( TODO: Insert plot MissingPixels vs. Accuracy )))
 
 Use examples and illustrations to clarify ideas and results. For
@@ -237,11 +234,4 @@ Our implementation is based on the inpainting and evaluation framework provided 
 \bibliographystyle{IEEEtran}
 \bibliography{biblio}
 
-
-\begin{figure*}[b]
-  \centering
-  \includegraphics[width= 400px]{images/flowchart}
-  \caption{The algorithm as a flow chart}
-  \label{fig:flowchart}
-\end{figure*}
 \end{document}
