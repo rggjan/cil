@@ -54,26 +54,13 @@ After these preparing steps, we start to iteratively improve the reconstructed i
 \end{enumerate}
 Finally, the frame added in the beginning is removed again and the pixels of the validation set are overwritten by the original ones. A variant of the presented method is to do it non-iteratively and revert to the original data after determining the thresholds, such that the Gaussian interpolation and the thresholding in the Fourier space is performed without the validation set.
 
-\subsection{Global parameter estimation}
-As shown in table \ref{parameters}, there are a total of 10 parameters in our algorithm that can be set.
-For many of them, it is quite clear what values should be used. For example, the size of the gauss kernel
-should be a bit larger than the biggest assumed hole in the image. For others, like the maximum number of
-iterations, it is not so clear. And yet others have a clear speed / accuracy tradeoff, like the stopping
-conditions of the online threshold estimation.
-
-Because we thought it not feasable to tune all the parameters by hand, we wrote an algorithm to
-do the offline parameter estimation. The idea is to do this once for a few representative images, and get
-parameters that can model as closely as possible many of the images we are interested in.
-Our proposed method combines a gradient descent method with ideas from cross-validation, and tunes our
-10-dimensional parameter-space, maximising time and accuracy.
+\subsection{Global parameter optimization}
+As shown in table \ref{parameters}, there are a total of 10 parameters in our algorithm that can be set. For many of them, it is quite clear what values should be used. For example, the size of the gauss kernel should be a bit larger than the biggest assumed hole in the image. For others, like the maximum number of iterations, it is not so clear. And yet others have a clear speed / accuracy tradeoff, like the stopping conditions of the threshold optimization.\\
+Because we thought it not feasable to tune all the parameters by hand, we wrote an algorithm to do the global parameter optimization. The idea is to do this once for a few representative images, and get parameters that can model as closely as possible many of the images we are interested in. Our proposed method combines a gradient descent method with ideas from cross-validation, and tunes our 10-dimensional parameter-space, minimizing time and maximizing accuracy.
 
 \subsubsection{Error function}
-When doing a minimization of any kind, an error function is needed. Of course we already had the error function
-of the evaluation script, that gives a mean over the squared differences of the reconstructed to the original
-image. However, using only an error measure, the time would potentially grow to infinity to get the best accuracy possible during tuning.
-
-Therefore we tried different error function including both, the image error $E$, and the time $T$ spent (see table \ref{error_function_table}). The image error here is the average
-squared error of a reconstructed pixel to the original pixel, scaled with a factor (usually about 10000), while the time is measured in seconds.
+When doing a minimization of any kind, an error function is needed. Of course we already had the error function of the evaluation script, that gives a mean over the squared differences of the reconstructed to the original image. However, using only an error measure, the time would potentially grow to infinity to get the best accuracy possible during tuning.\\
+Therefore we tried different error function including both, the image error $E$, and the time $T$ spent (see table \ref{error_function_table}). The image error here is the average squared error of a reconstructed pixel to the original pixel, scaled with a factor (usually about 10000), while the time is measured in seconds.
 
 \begin{table*}
   \centering
@@ -88,8 +75,8 @@ squared error of a reconstructed pixel to the original pixel, scaled with a fact
     $E + T$ & Everywhere a good gradient & Time from 60 to 59 seconds is same \textit{improvement} as time from 2 to 1 second\\
     \hline
     $\begin{cases}
-  \exp(E)  & \text{if }T<60\\
-  \exp(E)+\exp(T/60 - 1) - 1 & \text{else}
+  E  & \text{if }T<60\\
+  E+\exp(T/60 - 1) - 1 & \text{otherwise}
 \end{cases}$ & Optimizes for error only when time is low enough. Function still continous, penalizes high times. & None so far, this is the function used by us\\
     \hline
   \end{tabular}
