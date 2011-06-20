@@ -10,6 +10,16 @@ function I_rec = inPaintingParameterized(I, mask, parameters)
 % OUTPUT
 % I_rec: Reconstructed image 
 
+s = size(I, 1);
+if s ~= 512
+  error(sprintf('Wrong image size "%g"', s));
+end
+
+percent_unknown = sum(sum(~mask)) / (s*s);
+if percent_unknown > 0.65
+  error(sprintf('Too many unknowns "%g"', percent_unknown));
+end
+
   % Make sure that parameters do have possible values
   % Round floating point values that come from optimizing
   parameters.gauss_size = round(parameters.gauss_size);
