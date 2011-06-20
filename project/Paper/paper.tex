@@ -127,7 +127,7 @@ When doing a minimization of any kind, an error function is needed. Of course we
 of the evaluation script, that gives a mean over the squared differences of the reconstructed to the original
 image. However, using only an error measure, the time would potentially grow to infinity to get the best accuracy possible during tuning.
 
-Therefore we tried different error function including both, the image error $E$, and the time $T$ spent. The image error here is the average
+Therefore we tried different error function including both, the image error $E$, and the time $T$ spent (see table \ref{error_function_table}). The image error here is the average
 squared error of a reconstructed pixel to the original pixel, scaled with a factor (usually about 10000), while the time is measured in seconds.
 
 \begin{table*}
@@ -152,9 +152,19 @@ squared error of a reconstructed pixel to the original pixel, scaled with a fact
   \label{error_function_table}
 \end{table*}
 
+% TODO maybe add 3d plot for some of the error functions
 
 \subsubsection{Gradient descent}
+The idea behind our gradient descent is to optimize all the parameters at once, instead of fine-tuning each of them separately. For that, we
+calculate the derivative of the error function depending on one of our 10 parameters, and then move the parameter into the direction where the
+error decreases fastest. We also consider the slope, and make big changes if the derivative is big, and small changes if the derivative is small.
+Iteratively, we calculate all of the 10 derivatives, change all the parameters and start over again.
 
+Since the error and time are measured, we cannot algebraically determine the gradient of the error function. Instead, we do a discrete estimation,
+measuring the error with finite differences. The error for parameter values plus and minus a small delta, divided by two, gives us our estimated
+derivative.
+
+In figure \ref{}
 
 \section{Results}
 We evaluated two versions of our algorithm: An iterative variant and a non-iterative variant.
