@@ -174,15 +174,16 @@ derivative.
 In figure \ref{}
 
 \section{Results}
-We evaluated two versions of our algorithm: An iterative variant and a non-iterative variant.
-Our iterative variant repeats 
+
  ((( TODO )))
  
  We compare our algorithm with the following two baseline algorithms:
  \begin{enumerate}
 	 \item A simple linear inpainting algorithm using the nearest neighbor pixels.
-	 \item A matching pursuit algorithm \cite{matchingpursuit93} with an overcomplete dictionary consisting of Discrete Cosine transforms.
+	 \item A matching pursuit algorithm \cite{matchingpursuit93} with an overcomplete dictionary built with Discrete Cosine transforms.
  \end{enumerate}
+ 
+  Our algorithm is resistant to high percentages of missing pixels, the average error per missing pixel rises only slowly until ((( TODO level))). 
  
  We tested our algorithm and the two baselines on a set of natural images and further on a set of artificially created ones. (((TODO More than 1))) 
  
@@ -201,7 +202,7 @@ summarized in Table~\ref{tab:fourier-wavelet}.
 
 When reporting computational or measurement results, always
 report the mean (average value) along with a measure of variablility
-(standard deviation(s) or standard error of the mean).
+(standard deviation(s) or standard error of the mean). ((( TODO !!! )))
 
 You compare your novel algorithm to \emph{at least two baseline
   algorithms}. For the baselines, you can use the implementations you
