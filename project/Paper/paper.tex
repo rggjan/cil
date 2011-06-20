@@ -8,7 +8,7 @@
 \usepackage[utf8]{inputenc}
 
 \begin{document}
-\title{Inpainting with dimensionality reduction in the Fourier domain}
+\title{Inpainting with controlled dimensionality reduction in the Fourier domain}
 
 \author{
   Patrick Bänziger, Kaspar Etter, Jan Rüegg\\
@@ -31,19 +31,26 @@ the paper. The four points that should be covered~\cite{jones08}:
 \end{abstract}
 
 \section{Introduction}
-Inpainting is about reconstructing missing spots of an image by guessing the correct values. The quality of such a restoration method can be evaluated by masking an image and comparing the result with the original.\\
+Inpainting is about reconstructing the missing spots of an image by guessing the correct values. The quality of such a restoration method can be evaluated by masking an image and comparing the result with the original.\\
 Our approach is based on the assumption that (natural) images have some underlying characteristic that can be distinguished from noise. The computed pixels can be viewed as a disturbed version of the genuine ones, hence the goal is to get rid of this noise. We do so by analyzing image patches in the Fourier space, removing the weak frequencies that (hopefully) capture the noise and thereby recovering the intrinsic signal.\\
-We repeat this procedure with the newly determined values until the error of a randomly chosen validation set converges or the maximum number of iterations is reached. For a faster start, we initialize our reconstructed image with what we call Gaussian interpolation: Using MATLAB's filtering function, we compute a weighted sum over all the neighboring pixels that are known. In order to determine the best threshold for suppressing weaker frequencies, we randomly remove even more pixels from the image and use them as a validation set.
+We repeat this procedure with the newly determined values until the error of a randomly chosen validation set converges or the maximum number of iterations is reached. For a faster start, we initialize our reconstructed image with what we call Gaussian interpolation: Using MATLAB's filtering function, we compute a weighted sum over all the neighboring pixels that are known. In order to determine the best threshold for suppressing weaker frequencies, we randomly remove even more pixels from the image and use them as a validation set (for which we know the correct values).
 
 \section{Methods}
 \subsection{Related work}
-((( TODO )))
+Without actually knowing the broad field of research about inpainting (also known as image interpolation), we could not find any papers covering similar concepts as ours. Most methods are based on partial differential equations or some form of texture synthesis.
 
 \subsection{New approach}
-(((REWRITE)))
-We combine several ideas in our approach to obtain a inpainting algorithm that provides good results and fast performance.
-Our algorithm requires as input the image which shall be restored and a mask which indicates the pixels that shall be filled. Such a mask can be created by the user or automatically (e.g. when a checksum algorithm detects faulty pixels).\\
-The main inspiration behind our algorithm is that we try to interpolate the pixels from its neighboring values. By this we add some noise compared to the original, undamaged image. We then try to use dimensionality reduction to filter out this generated noise to reconstruct the image.\\
+As outlined in the introduction, we combined several ideas for obtaining an inpainting algorithm that provides both good results and fast performance. The input of our algorithm is the image to be restored together with a mask that indicates its unknown spots.\\
+Before entering the iterative part of our algorithm, the following three steps are performed (as seen in figure ??):
+\begin{enumerate}
+\item In order to guide the elimination of frequencies by finding the optimal threshold (as described below), we first remove additional pixels from the image and use them as the validation set. The fraction of additional pixels to be removed is a global parameter, which we optimized using gradient descent (as explained in section ??).
+\item Since our reduction in the Fourier space works best with framed patches, we frame the complete image by mirroring its margin. (The size of the frame is another optimizable global parameter.)
+\item ...
+\end{enumerate}
+
+
+---------------------------\\
+
 
 We use an iterative scheme to determine the right parameters used in our algorithm. For this, we use cross-validation: We randomly remove a percentage of pixels from the image as a validation set. (((STILL VALID?))) We then use this set to test the accuracy of our parameters and determine the best set of parameters for this image.
 
