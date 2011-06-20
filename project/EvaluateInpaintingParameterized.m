@@ -56,7 +56,7 @@ function [cost, avgQErr] = EvaluateInpaintingParameterized(parameters, missing_p
   global global_best_cost 
 
   if (mean(Times) > 60)
-    times_error = exp((mean(Times)/60)-1)
+    times_error = exp((mean(Times)/60)-1) - 1
   else
     times_error = 0;
   end
