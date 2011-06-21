@@ -170,36 +170,28 @@ E+\exp(T/60 - 1) - 1 & \text{otherwise}
 \end{table*}
 
 \subsubsection{Sample data}
-We used the three images provided for the last exercise (consisting of both natural and artificial images) to evaluate the accuracy and performance of the chosen parameters. Instead of using the supplied mask, however, we generate one randomly for every evaluation in order to prevent overfitting to a particular mask. 
+We used the three images provided for the last exercise and four additional ones (consisting of both natural and artificial images) to evaluate the accuracy and performance of the chosen parameters. Instead of using the supplied mask, however, we generate one randomly for every evaluation in order to prevent overfitting to a particular mask. 
 
 \subsubsection{Found values}
 Our observations during the optimization process can be split into three classes:
 \begin{itemize}
-\item Some parameters converged towards their expected value. The size of the Gaussian kernel, for example, has to be slightly bigger than the largest hole assumed in an image.
+\item Some parameters converged towards their estimated value. The size of the Gaussian kernel, for example, has to be slightly bigger than the largest hole assumed in an image.
 \item Some parameters have a clear speed vs. accuracy tradeoff, like the stopping conditions of the threshold optimization, which depend on our cost function and could not be foreseen.
 \item Some parameters assumed totally different values than anticipated: The patch size became much larger and the validation set decreased significantly.
 \end{itemize}
 
 \section{Results}
+We compared our algorithm with the following three baseline algorithms:
+\begin{enumerate}
+\item A simple linear inpainting algorithm using the nearest neighbor pixels.
+\item A matching pursuit algorithm \cite{matchingpursuit93} with an overcomplete dictionary built with Discrete Cosine transforms.
+\item Gaussian interpolation...
+\end{enumerate}
 
- ((( TODO )))
- 
- We compare our algorithm with the following two baseline algorithms:
- \begin{enumerate}
-	 \item A simple linear inpainting algorithm using the nearest neighbor pixels.
-	 \item A matching pursuit algorithm \cite{matchingpursuit93} with an overcomplete dictionary built with Discrete Cosine transforms.
- \end{enumerate}
- 
-  Our algorithm is resistant to high percentages of missing pixels, the average error per missing pixel rises only slowly until ((( TODO level))). 
  
 We tested our algorithm and the two baselines on a set of natural images and further on a set of artificially created ones. 
 For evaluation, we tested these algorithms with different levels of missing pixels from 0 to 100\% in 5\% steps.
 
-
-  
- ((( TODO )))
-  Show evidence to support your claims made in the
-  introduction. 
   
 Organize the results section based on the sequence of table and
 figures you include. Prepare the tables and figures as soon as all
@@ -207,33 +199,26 @@ the data are analyzed and arrange them in the sequence that best
 presents your findings in a logical way. A good strategy is to note,
 on a draft of each table or figure, the one or two key results you
 want to address in the text portion of the results.
-The information from the figures is
-summarized in Table~\ref{tab:fourier-wavelet}.
 
 When reporting computational or measurement results, always
 report the mean (average value) along with a measure of variablility
 (standard deviation(s) or standard error of the mean). ((( TODO !!! )))
 
-You compare your novel algorithm to \emph{at least two baseline
-  algorithms}. For the baselines, you can use the implementations you
-developed as part of the programming assignments.
+\paragraph{Note} All plots in this paper were created with MATLAB and can be reproduced using the script \emph{CreatePaperPlots.m} of our submission.
 
 \section{Discussion}
-  Discuss the strengths and weaknesses of your
-  approach, based on the results. Point out the implications of your  
-  novel idea on the application concerned. (((( TODO ))))
+Our algorithm is resistant to high percentages of missing pixels, the average error per missing pixel rises only slowly until ((( TODO level))). 
 
 
+Discuss the strengths and weaknesses of your approach, based on the results. Point out the implications of your novel idea on the application concerned. (((( TODO ))))
 
 
-\paragraph{Note}
-All plots in this paper were created with MATLAB and can be reproduced using the script 'CreatePaperPosts.m' in our submission.\\
 
 \begin{figure}[tbp]
-  \centering
-  \includegraphics[width=\columnwidth]{images/boundaryArtifact_noframe.png}
-  \caption{Artifacts that occur without a frame (frame size = 0). The patches are recognizable in the reconstruction}
-  \label{fig:boundaryArtifacts}
+\centering
+\includegraphics[width=\columnwidth]{images/boundaryArtifact_noframe.png}
+\caption{Artifacts that occur without a frame (frame size = 0). The patches are recognizable in the reconstruction}
+\label{boundaryArtifacts}
 \end{figure}
 
 ((( TODO: Insert plot MissingPixels vs. Accuracy )))
@@ -244,18 +229,25 @@ Figure~\ref{fig:flowchart}, we can see the two different
 situations where Fourier and wavelet basis perform well. 
 
 \section{Summary}
-(((( TODO ))))
-  Summarise your contributions in light of the new
-  results.
-  
+Summarise your contributions in light of the new results.
 
 \section*{Acknowledgements}
-We would like to recognize and thank the following individuals or groups for their contribution to this work:\\
-Our implementation is based on the inpainting and evaluation framework provided by the course "Computer Intelligence Lab" held by Prof. Joachim Buhmann at ETH Zürich.
-(((( TODO ))))
-
+Our implementation is based on the inpainting and evaluation framework provided by the course \emph{Computer Intelligence Lab} held by Prof. Joachim Buhmann at ETH Zurich.
 
 \bibliographystyle{IEEEtran}
 \bibliography{biblio}
 
 \end{document}
+
+% Plots:
+% - threshold optimization => algorithm
+% - Framing artifacts (with and w/o frame) => framing
+% - Parameter optimization (convergence) => gradient descent
+% 
+% - Missing pixels vs. error (baselines)
+% - stdev over n runs of EvaluateInpainting with rep = 1
+% 
+% - image with best error (and stdev)
+% - image with worst error (and stdev)
+% 
+% - Bar to illustrate edge reconstruction (patch size)
