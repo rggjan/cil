@@ -63,10 +63,16 @@ function [cost, avgQErr] = EvaluateInpaintingParameterized(parameters, missing_p
   % Following part is used for the optimization
   % Will store best found parameters into a file
   global global_best_cost 
+  global computer_speed
 
-  % Do not use time in cost function when below 60 seconds
-  if (mean(Times_final) > 60)
-    times_error = exp((mean(Times_final)/60)-1) - 1;
+  % Calculate speed of computer
+  if (length(computer_speed) == 0)
+    computer_speed = mean(Times_final)
+  end
+
+  % Do not use time in cost function when below 5 times starting speed seconds
+  if (mean(Times_final) > computer_speed*5)
+    times_error = exp((mean(Times_final)/(computer_speed*5))-1) - 1;
   else
     times_error = 0;
   end

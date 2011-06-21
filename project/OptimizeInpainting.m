@@ -13,7 +13,10 @@ function OptimizeInpainting(rounds)
   load('params.mat');
 
   % Store best value in global variable, for usage in Evaluation script
+  % Also reset computer_speed
   global global_best_cost;
+  global computer_speed;
+  computer_speed = [];
   global_best_cost = best_cost;
   fprintf('\nStarting optimization, current best cost is %g\n\n', best_cost);
 
