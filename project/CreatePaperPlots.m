@@ -7,6 +7,12 @@
 
 load('params.mat');
 
+% Generate strategy plots
+global debug_threshold_plot_number;
+debug_threshold_plot_number = 10;
+EvaluateInpaintingParameterized(parameters, 0.6);
+
+% Generate graphs
 stepsize = 2;
 no_steps = floor(100/stepsize);
 
