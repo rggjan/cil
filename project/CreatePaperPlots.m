@@ -6,18 +6,36 @@
 % Requires parameters saved in a parameters.mat file
 
 load('params.mat');
+main_path = pwd;
 
 % Generate strategy plots
 global debug_threshold_plot_number;
-fprintf('1) Creating Parameter evolution graphs')
+fprintf('1) Creating Parameter evolution graphs\n')
 debug_threshold_plot_number = 10;
 
-EvaluateInpaintingParameterized(parameters, 0.6, 1);
+[unused, error_a, stdev_a] = EvaluateInpaintingParameterized(parameters, 0.6, 1);
 
 for i = 1:10
   f = open(sprintf('plots/search_strategy_%g.fig', i));
   plotpdftex(f, sprintf('plots/search_strategy_%g', i));
 end
+
+fprintf('2) Evaluating performance at 60%% missing pixels\n');
+cd('baseline1/')
+    % Baseline 1
+    [error_b1, stdev_b1] = feval('EvaluateInpaintingParameterized', 0.6);
+cd(main_path)
+
+cd('baseline2/')
+    % Baseline 2
+    [error_b2, stdev_b2] = feval('EvaluateInpaintingParameterized', 0.6);
+cd(main_path)
+
+cd('baseline3/')
+    % Baseline 3
+    [error_b3, stdev_b3] = feval('EvaluateInpaintingParameterized', 0.6);
+cd(main_path)
+
 
 % Generate graphs
 stepsize = 2;
@@ -29,10 +47,9 @@ error_base1 = zeros(no_steps, 1);
 error_base2 = zeros(no_steps, 1);
 error_base3 = zeros(no_steps, 1);
 
-main_path = pwd;
 
-fprintf('2) Calculating error vs. missing pixels\n')
-fprintf('2A) New algorithm\n')
+fprintf('3) Calculating error vs. missing pixels\n')
+fprintf('3A) New algorithm\n')
 
 if(~exist('plots/error_A.mat', 'file'))
   % Use parallel computation for this, if available
@@ -47,7 +64,7 @@ else
   load('plots/error_A.mat');
 end
 
-fprintf('2B) Baseline 1\n')
+fprintf('3B) Baseline 1\n')
 if(~exist('plots/error_B1.mat', 'file'))    
   cd('baseline1/')
   parfor k=0:no_steps
@@ -61,7 +78,7 @@ else
   load('plots/error_B1.mat');
 end
 
-fprintf('2C) Baseline 2\n')
+fprintf('3C) Baseline 2\n')
 if(~exist('plots/error_B2.mat', 'file'))    
   cd('baseline2/')
   parfor k=0:no_steps
@@ -75,7 +92,7 @@ else
   load('plots/error_B2.mat');
 end
 
-  fprintf('2D) Baseline 3\n')
+  fprintf('3D) Baseline 3\n')
 if(~exist('plots/error_B3.mat', 'file'))    
   cd('baseline3/')
   parfor k=0:no_steps
@@ -89,7 +106,7 @@ else
   load('plots/error_B3.mat');
 end
 
-fprintf('2E) Plotting\n')
+fprintf('3E) Plotting\n')
 
 handle = figure;
 range = 0:stepsize:100;
