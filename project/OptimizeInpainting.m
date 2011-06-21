@@ -168,6 +168,7 @@ function new = getNextPatchSize(Value, Stepsize)
   % Here we work with the exponent of the power of two
   if(new > 9)
     new = 9;
+  end
   if(new < 2)
     new = 2;
   end
