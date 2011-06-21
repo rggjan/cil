@@ -1,4 +1,8 @@
-% Optimize the parameters of inPainting.
+% OptimizeInpainting
+% ==================
+% Optimize the parameters of inPainting using a gradient descent method
+% rounds gives the number of rounds after which to stop
+% Saves plots of the cost and the changes of parameters to the plots folder
 function OptimizeInpainting(rounds)
   missing_pixels = 0.6;
 
@@ -13,31 +17,20 @@ function OptimizeInpainting(rounds)
   global_best_cost = best_cost;
   fprintf('\nStarting optimization, current best cost is %g\n\n', best_cost);
 
-  % Initial parameters
-  % parameters = struct;
-  % parameters.gauss_size = 9.3;
-  % parameters.gauss_sigma = 0.7;
-  % parameters.patch_size = 7.9;
-  % parameters.patch_frame_size = 8.9;
-  % parameters.td_abortbelow_stdev = 3.8;
-  % parameters.td_abortbelow_stepsize = 2.3;
-  % parameters.td_middle = 8.1;
-  % parameters.validation = 0.05; 
-  % parameters.iterative = true; 
-  % parameters.max_iterations = 4.9; 
-  % parameters.abortbelow_change = 0.18; 
+  % Remember old values for the momentum term
   old = zeros(11, 1);
   
   % Result set
   final_parameters = parameters;
   rounds_done = 1;
 
+  % Save parameter_list and cost_list for plots
   global parameter_list
   parameter_list = cell2mat(struct2cell(parameters));
-
   global cost_list
   cost_list = [];
 
+  % Iterate
   while(rounds_done <= rounds || rounds == 0)
     fprintf('========== Starting round %g ===========\n', rounds_done)
 
@@ -45,7 +38,7 @@ function OptimizeInpainting(rounds)
     [cost, unused] = EvaluateInpaintingParameterized(parameters, missing_pixels);
     fprintf('=> cost %g\n\n', cost);
 
-    % gauss_size
+    % Optimize individual parameters
     [final_parameters.gauss_size, old]             = gradientDescent(1, @getNextGaussSize, parameters, old, cost, missing_pixels, rounds_done);
     [final_parameters.gauss_sigma, old]            = gradientDescent(2, @getNextGaussSigma, parameters, old, cost, missing_pixels, rounds_done);
     [final_parameters.patch_size, old]             = gradientDescent(3, @getNextPatchSize, parameters, old, cost, missing_pixels, rounds_done);
@@ -54,7 +47,7 @@ function OptimizeInpainting(rounds)
     [final_parameters.td_abortbelow_stepsize, old] = gradientDescent(6, @getNextTDAbortBelowStep, parameters, old, cost, missing_pixels, rounds_done);
     [final_parameters.td_middle, old]              = gradientDescent(7, @getNextTDMiddle, parameters, old, cost, missing_pixels, rounds_done);
     [final_parameters.validation, old]             = gradientDescent(8, @getNextValidation, parameters, old, cost, missing_pixels, rounds_done);
-    %Dont iterate over bool 'iterative'
+    % Dont iterate over bool 'iterative'
     if parameters.iterative
       [final_parameters.max_iterations, old]         = gradientDescent(10, @getNextMaxIterations, parameters, old, cost, missing_pixels, rounds_done);
       [final_parameters.abortbelow_change, old]      = gradientDescent(11, @getNextAbortBelowChange, parameters, old, cost, missing_pixels, rounds_done);
@@ -74,8 +67,18 @@ function OptimizeInpainting(rounds)
   end
 end
 
+% gradientDescent
+% ===============
+% Do the real gradient descent in a generic way.
+% Takes an input the index in the structure, a getNext function for getting a new value of a parameter,
+% the old struct with all the old values, a current cost, the percentage of missing pixels and the number
+% of rounds already finished.
+% Returns the new parameter + the updated old struct
 function [new_value, next_old] = gradientDescent(index, getNext, parameters, old, cost, missing_pixels, rounds_done);
+  % The learning rate: How much should we descent the gradient?
   learning_rate = 10;
+
+  % Alpha, the momentum term.
   alpha = 0.9;
 
   fields = {'gauss_size', ...
@@ -108,22 +111,27 @@ function [new_value, next_old] = gradientDescent(index, getNext, parameters, old
   new_cost_minus = new_cost - cost;
   fprintf('cost %g\n', new_cost_minus);
 
+  % Calculate the derivative
   param_cell = struct2cell(parameters);
   stepsize = -1*(new_cost_plus-new_cost_minus)/2*learning_rate;
   old_stepsize = old(index);
+
+  % Use the old stepsize together with the momentum to get a new value
   if (old_stepsize ~= 0)
     new_stepsize = old_stepsize*alpha + (1-alpha)*stepsize;
   else
     new_stepsize = stepsize;
   end
+
+  % Output to console
   fprintf('steps(old/new/together): %g/%g/%g\n', old_stepsize, stepsize, new_stepsize)
   old(index) = new_stepsize;
   new_value = getNext(param_cell{index}, new_stepsize);
-  
   fprintf('%s: %g => %g\n\n', fields{index}, param_cell{index}, new_value)
 
   next_old = old;
 
+  % Plot to graph
   global parameter_list
   parameter_list(index, rounds_done+1) = new_value;
   figure(index);
@@ -135,8 +143,13 @@ function [new_value, next_old] = gradientDescent(index, getNext, parameters, old
   drawnow;
 end
 
+% ================= %
+% getNext functions %
+% ================= %
+
 function new = getNextGaussSize(Value, Stepsize)
   new = Value + Stepsize;
+  % Must be at least 2
   if(new < 2)
     new = 2;
   end
