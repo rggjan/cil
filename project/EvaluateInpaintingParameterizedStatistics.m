@@ -1,13 +1,13 @@
 % Measure approximation error for several images.
 
-function [avgQErr, stdev] = EvaluateInpaintingParameterized(missing_pixels_fract)  
-
-  file_list = dir('..'); 
-  rep=3;
+function [avgQErr, stdev, stdev_runs, stdev_diff] = EvaluateInpaintingParameterizedStatistics(missing_pixels_fract, rep, inPainting)
+  file_list = dir('.'); 
   
-  dir_length = length(dir('..'));
+  dir_length = length(dir('.'));
 
   Errors_final = [];
+  Error_means = [];
+  stdev_diffs = [];
 
   parfor r = 1 : rep
      Errors = []; % mean squared errors for each image
@@ -23,7 +23,7 @@ function [avgQErr, stdev] = EvaluateInpaintingParameterized(missing_pixels_fract
         end
 
         % Read image, convert to double precision and map to [0,1] interval
-        I = imread(strcat('../',file_name));
+        I = imread(strcat('./',file_name));
         I = double(I) / 255;
 
         % Generate mask at random, with 60% missing pixels
@@ -44,6 +44,8 @@ function [avgQErr, stdev] = EvaluateInpaintingParameterized(missing_pixels_fract
         Errors = [Errors mean(mean(mean( ((I - I_rec) ).^2)))];
      end
      Errors_final = [Errors_final Errors];
+     Error_means = [Error_means mean(Errors)];
+     stdev_diffs = [stdev_diffs std(Errors)];
   end
   
   avgQErr = mean(Errors_final);
@@ -73,12 +75,13 @@ function [avgQErr, stdev] = EvaluateInpaintingParameterized(missing_pixels_fract
     for i=1:imc
       stdev{i,1} = std(Errors_final(i:imc:end));
     end
+    stdev_runs = std(Error_means);
   else
     % 1 Iteration - no deviation
     for i=1:imc
       stdev{i,1} = 0;
     end
+    stdev_runs = 0;
   end
-
-
+  stdev_diff = mean(stdev_diffs);
 end

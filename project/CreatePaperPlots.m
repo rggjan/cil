@@ -13,29 +13,24 @@ global debug_threshold_plot_number;
 fprintf('1) Creating Parameter evolution graphs\n')
 debug_threshold_plot_number = 10;
 
-[unused, error_a, stdev_a] = EvaluateInpaintingParameterized(parameters, 0.6, 1);
+%[unused, error_a, stdev_a] = EvaluateInpaintingParameterized(parameters, 0.6, 1);
 
-for i = 1:10
-  f = open(sprintf('plots/search_strategy_%g.fig', i));
-  plotpdftex(f, sprintf('plots/search_strategy_%g', i));
-end
+%for i = 1:10
+%  f = open(sprintf('plots/search_strategy_%g.fig', i));
+%  plotpdftex(f, sprintf('plots/search_strategy_%g', i));
+%end
+
+addpath('baseline1', 'baseline2', 'baseline3');
 
 fprintf('2) Evaluating performance at 60%% missing pixels\n');
-cd('baseline1/')
-    % Baseline 1
-    [error_b1, stdev_b1] = feval('EvaluateInpaintingParameterized', 0.6);
-cd(main_path)
-
-cd('baseline2/')
-    % Baseline 2
-    [error_b2, stdev_b2] = feval('EvaluateInpaintingParameterized', 0.6);
-cd(main_path)
-
-cd('baseline3/')
-    % Baseline 3
-    [error_b3, stdev_b3] = feval('EvaluateInpaintingParameterized', 0.6);
-cd(main_path)
-
+fprintf('Working in inPainting ...\n')
+[avgQErr, stdev, stdev_runs, stdev_diff] = EvaluateInpaintingParameterizedStatistics(0.6, 10, @inPainting)
+fprintf('Working in baseline1 ...\n')
+[avgQErr, stdev, stdev_runs, stdev_diff] = EvaluateInpaintingParameterizedStatistics(0.6, 10, @baseline1)
+fprintf('Working in baseline2 ...\n')
+[avgQErr, stdev, stdev_runs, stdev_diff] = EvaluateInpaintingParameterizedStatistics(0.6, 10, @baseline2)
+fprintf('Working in baseline3 ...\n')
+[avgQErr, stdev, stdev_runs, stdev_diff] = EvaluateInpaintingParameterizedStatistics(0.6, 10, @baseline3)
 
 % Generate graphs
 stepsize = 2;
@@ -55,7 +50,7 @@ if(~exist('plots/error_A.mat', 'file'))
   % Use parallel computation for this, if available
   parfor k=0:no_steps
     % Our algorithm
-    [unused, e, unused2] = EvaluateInpaintingParameterized(parameters,stepsize*k/100, 3);
+    e = EvaluateInpaintingParameterizedStatistics(stepsize*k/100, 3, @inPainting);
     error_algo(k+1) = e/(k*stepsize/100);% Normalized
   end
   save('plots/error_A.mat', 'error_algo');
@@ -66,12 +61,11 @@ end
 
 fprintf('3B) Baseline 1\n')
 if(~exist('plots/error_B1.mat', 'file'))    
-  cd('baseline1/')
   parfor k=0:no_steps
     % Baseline 1
-    [error_base1(k+1), unused] = feval('EvaluateInpaintingParameterized', stepsize*k/100);
+    e = EvaluateInpaintingParameterizedStatistics(stepsize*k/100, 3, @baseline1);
+    error_base1(k+1) = e/(k*stepsize/100);% Normalized
   end
-  cd(main_path)
   save('plots/error_B1.mat', 'error_base1');
 else
   fprintf('Found saved data file. Loading...\n')
@@ -80,12 +74,11 @@ end
 
 fprintf('3C) Baseline 2\n')
 if(~exist('plots/error_B2.mat', 'file'))    
-  cd('baseline2/')
   parfor k=0:no_steps
     % Baseline 2
-    [error_base2(k+1), unused] = feval('EvaluateInpaintingParameterized', stepsize*k/100);
+    e = EvaluateInpaintingParameterizedStatistics(stepsize*k/100, 3, @baseline2);
+    error_base2(k+1) = e/(k*stepsize/100);% Normalized
   end
-  cd(main_path)
   save('plots/error_B2.mat', 'error_base2');
 else
   fprintf('Found saved data file. Loading...\n')
@@ -94,12 +87,11 @@ end
 
   fprintf('3D) Baseline 3\n')
 if(~exist('plots/error_B3.mat', 'file'))    
-  cd('baseline3/')
   parfor k=0:no_steps
     % Baseline 3
-    [error_base3(k+1), unused] = feval('EvaluateInpaintingParameterized', stepsize*k/100);
+    e = EvaluateInpaintingParameterizedStatistics(stepsize*k/100, 3, @baseline3);
+    error_base3(k+1) = e/(k*stepsize/100);% Normalized
   end
-  cd(main_path)
   save('plots/error_B3.mat', 'error_base3');
 else
   fprintf('Found saved data file. Loading...\n')

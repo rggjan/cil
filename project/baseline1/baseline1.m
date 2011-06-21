@@ -1,5 +1,4 @@
 function I_rec = inPainting(I, mask)
-
 % Baseline 1: Perform linear inpainting of the image 
 
 % INPUT
