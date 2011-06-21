@@ -117,11 +117,19 @@ Before entering the iterative part of our algorithm, the following three steps a
 
 After these preparing steps, we start to iteratively improve the reconstructed image with the following steps:
 \begin{enumerate}
-\item Using the abovementioned validation set, we evaluate several thresholds for every patch and keep for each the best one: After calculating a fast Fourier transform for every patch, frequencies weaker then the threshold are suppressed by setting them to 0. Since profiling showed that the Fourier transform with its inverse is by far the most time-consuming part of our algorithm, we try to perform as few threshold evaluations as possible. For this purpose, we iteratively evaluate two new thresholds around a center threshold, taking the best one as the new center and decreasing the step size (see figure \ref{threshold_optimization}). For this optimization as well as for the whole iteration, we have both a number- and a convergence-based termination criterion.
+\item Using the above mentioned validation set, we evaluate several thresholds for every patch and keep for each the best one:
+After calculating a fast Fourier transform for every patch, frequencies weaker then the threshold are suppressed by setting them to 0.
+Since profiling showed that the Fourier transform with its inverse is by far the most time-consuming part of our algorithm, we try to
+perform as few threshold evaluations as possible.
+For this purpose, we iteratively evaluate two new thresholds around a center threshold, taking the best one as the new center and
+decreasing the step size by half (see figure \ref{threshold_optimization}). While this heuristic does not always reach the minimum,
+it works quite well for our error function, that appears to be very roughly convex.
+For this optimization as well as for the whole iteration, we have both a number- and a convergence-based termination criterion.
 
 \begin{figure}
 \centering
-\includegraphics[width=\columnwidth]{images/framing_artifacts.png}
+\includegraphics[width=\columnwidth]{../plots/search_strategy_1.pdf}
+\includegraphics[width=\columnwidth]{../plots/search_strategy_6.pdf}
 \caption{The threshold is optimized by iteratively taking the best one.}
 \label{threshold_optimization}
 \end{figure}
