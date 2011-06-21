@@ -23,6 +23,7 @@ debug_threshold_plot_number = 10;
 addpath('baseline1', 'baseline2', 'baseline3');
 
 fprintf('2) Evaluating performance at 60%% missing pixels\n');
+fprintf(' Note: Errors are NOT normalized\n')
 fprintf('Working in inPainting ...\n')
 [avgQErrA, stdevA, stdev_runsA, stdev_diffA] = EvaluateInpaintingParameterizedStatistics(0.6, 10, @inPainting)
 fprintf('Working in baseline1 ...\n')
