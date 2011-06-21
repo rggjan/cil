@@ -48,7 +48,7 @@ function [avgQErr, stdev] = EvaluateInpaintingParameterized(missing_pixels_fract
   
   avgQErr = mean(Errors_final);
   
-   % Determine mean and stdev per image
+  % Determine mean and stdev per image
   % Count images first
   imc = 0;
   filenames = {};
