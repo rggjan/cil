@@ -11,7 +11,13 @@ load('params.mat');
 global debug_threshold_plot_number;
 fprintf('1) Creating Parameter evolution graphs')
 debug_threshold_plot_number = 10;
+
 EvaluateInpaintingParameterized(parameters, 0.6, 1);
+
+for i = 1:10
+  f = open(sprintf('plots/search_strategy_%g.fig', i));
+  plotpdftex(f, sprintf('plots/search_strategy_%g', i));
+end
 
 % Generate graphs
 stepsize = 2;
