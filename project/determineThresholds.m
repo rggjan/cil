@@ -1,23 +1,28 @@
-function [T, I_trained] = determineThresholds(I_training_framed, val_mask, ...
-                                              val_I, parameters)
-  %DETERMINETHRESHOLDS Determines the best thresholds, reconstruction for each patch
-  
+% determineThresholds
+% ===================
+% Determines the best thresholds in the fourier domain for each patch.
+% The function takes a framed training image, a validation mask and a validation image (ground truth),
+% together with a set of paramateters. It then calculates the optimal thresholds in the fourier domain
+% for each of the patches
+
+function [T, I_trained] = determineThresholds(I_training_framed, val_mask, val_I, parameters)
   image_size = size(val_I, 1);
   num_patches = image_size / parameters.patch_size;
   pfs = parameters.patch_frame_size;
   ps = parameters.patch_size;
 
+  % Initialize training image, best thresholds
   T = zeros(num_patches);
   I_trained = I_training_framed;
 
-  %Iterate over all patches
+  % Iterate over all patches
   for i = 1 : num_patches
     for j = 1 : num_patches
       best_t = 1;
       best_error = +Inf;
       best_P = 0;
 
-      %Extract patches from image / mask / validation mask
+      % Extract patches from image / mask / validation mask
       P_framed = I_training_framed( ...
                             ps * (i - 1) + 1 : ...
                             ps * i + 2 * pfs, ...
@@ -34,22 +39,22 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, ...
                          ps * (j - 1) + 1 : ...
                          ps * j).*P_mask;
 
-      %Prepare iteration
+      % Prepare iteration
       dev = +Inf;
       middle = parameters.td_middle;
       stepsize = middle;
       errors = [Inf, Inf, Inf];
-      %Ps: Reconstructed patches.
+
+      % Ps: Reconstructed patches.
       Ps = {};
       % Calculate middle value once before loop.
       [errors(2), Ps{2}] = determineError(P_framed, middle, P_mask, P_validate, parameters);
       
-      %DEBUG / Visualization
+      % DEBUG / Visualization
       middles = [middle];
       
-      %Find best threshold iteratively
+      % Find best threshold iteratively
       while(stepsize > parameters.td_abortbelow_stepsize && dev > parameters.td_abortbelow_stdev)
-        
         % Right value
         [errors(3), Ps{3}] = determineError(P_framed, middle+stepsize, P_mask, P_validate, parameters);
         % We know the middle one, dont need to calculate it
@@ -71,6 +76,7 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, ...
           % We don't go left if we are at 0. Stay at 0.
           idx = 2;
         end
+
         % New middle = Best error position found.
         % Save our best calculated patch for later
         Ps{2} = Ps{idx};
@@ -87,15 +93,15 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, ...
         
         % We half the step size
         stepsize = stepsize / 2;
-        %DEBUG / Visualization
+        % DEBUG / Visualization
         middles = [middles middle];
       end
 
       if(false)
-        %DEBUG Turn on if you want to see the evolution of the threshold
+        % DEBUG Turn on if you want to see the evolution of the threshold
         errors = [];
         steps=[];
-        for t = 0:0.1:20 % TODO use gradient descent or something...
+        for t = 0:0.1:20
           P_reduced = removeFrame(dimensionReduction(P_framed, t, parameters), ...
                                   parameters);
 
@@ -110,6 +116,8 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, ...
           steps = [steps, t];
           
         end
+
+        % Plot
         figure(2);
         plot(steps,errors);
         hold on;
@@ -126,16 +134,17 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, ...
 
       range_i = pfs + ps*(i-1) + 1 : pfs + ps * i;
       range_j = pfs + ps*(j-1) + 1 : pfs + ps * j;
+
       % Fit the reconstructed patch back into the image
       I_trained(range_i, range_j) = Ps{2};
     end
   end
 end
 
+% determineError
+% ==============
+% Determine the error and reconstruction for given parameters, image and mask
 function [err, P_reduced] = determineError(P_framed, t, P_mask, P_validate, parameters)
-  % DETERMINEERROR Determine the error and reconstruction for given
-  % parameters, image and mask
-  
   % Reconstruct, remove the frame
   P_reduced = removeFrame(dimensionReduction(P_framed, t, parameters), ...
                           parameters);
@@ -146,7 +155,5 @@ function [err, P_reduced] = determineError(P_framed, t, P_mask, P_validate, para
   % Calculate error
   diff = P_reduced.*P_mask - P_validate;
   err = sum(sum(diff.*diff));
-
 end
-
 
