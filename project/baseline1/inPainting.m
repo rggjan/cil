@@ -28,7 +28,7 @@ for x=1:w
       s = 0;
 
       % Try-Catch to ignore boundary issues
-      for i=1:10
+      for i=1:w
         try
           if mask(x+i, y) ~= 0
             values = values + I(x+i, y)/i;
@@ -40,7 +40,7 @@ for x=1:w
         end
       end
 
-      for i=1:10
+      for i=1:h
         try
           if mask(x, y+i) ~= 0
             values = values + I(x, y+i)/i;
@@ -52,7 +52,7 @@ for x=1:w
         end
       end
 
-      for i=1:10
+      for i=1:h
         try
           if mask(x, y-i) ~= 0
             values = values + I(x, y-i)/i;
@@ -64,7 +64,7 @@ for x=1:w
         end
       end
 
-      for i=1:10
+      for i=1:w
         try
           if mask(x-i, y) ~= 0
             values = values + I(x-i, y)/i;
