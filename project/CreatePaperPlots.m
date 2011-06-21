@@ -80,7 +80,7 @@ if(~exist('plots/error_B3.mat', 'file'))
   cd('baseline3/')
   parfor k=0:no_steps
     % Baseline 3
-    error_base3(k+1) = feval('EvaluateInpaintingParameterized', stepsize*k/100);
+    [error_base3(k+1), unused] = feval('EvaluateInpaintingParameterized', stepsize*k/100);
   end
   cd(main_path)
   save('plots/error_B3.mat', 'error_base3');
