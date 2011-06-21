@@ -5,6 +5,7 @@
 % Saves plots of the cost and the changes of parameters to the plots folder
 function OptimizeInpainting(rounds)
   missing_pixels = 0.6;
+  repetition_evaluation = 2;
 
   % Set random seet to get reproducable results
   rand('seed', 12345);
@@ -38,7 +39,7 @@ function OptimizeInpainting(rounds)
     fprintf('========== Starting round %g ===========\n', rounds_done)
 
     parameters = final_parameters
-    [cost, unused] = EvaluateInpaintingParameterized(parameters, missing_pixels);
+    [cost, unused] = EvaluateInpaintingParameterized(parameters, missing_pixels, repetition_evaluation);
     fprintf('=> cost %g\n\n', cost);
 
     % Optimize individual parameters
@@ -101,7 +102,7 @@ function [new_value, next_old] = gradientDescent(index, getNext, parameters, old
   param_cell{index} = getNext(param_cell{index}, 1);
   new_parameters = cell2struct(param_cell, fields, 1);
   fprintf('%s: %g ... ', fields{index}, param_cell{index})
-  [new_cost, unused] = EvaluateInpaintingParameterized(new_parameters, missing_pixels);
+  [new_cost, unused] = EvaluateInpaintingParameterized(new_parameters, missing_pixels, repetition_evaluation);
   new_cost_plus = new_cost - cost;
   fprintf('cost %g\n', new_cost_plus);
 
@@ -110,7 +111,7 @@ function [new_value, next_old] = gradientDescent(index, getNext, parameters, old
   param_cell{index} = getNext(param_cell{index}, -1);
   new_parameters = cell2struct(param_cell, fields, 1);
   fprintf('%s: %g ... ', fields{index}, param_cell{index})
-  [new_cost, unused] = EvaluateInpaintingParameterized(new_parameters, missing_pixels);
+  [new_cost, unused] = EvaluateInpaintingParameterized(new_parameters, missing_pixels, repetition_evaluation);
   new_cost_minus = new_cost - cost;
   fprintf('cost %g\n', new_cost_minus);
 
