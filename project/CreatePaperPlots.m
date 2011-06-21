@@ -16,29 +16,48 @@
   
   fprintf('1) Calculating error vs. missing pixels\n')
   fprintf('1A) New algorithm\n')
-  %Use parallel computation for this, if available
-  parfor k=0:no_steps
-    % Our algorithm
-    [unused, e] = EvaluateInpaintingParameterized(parameters,stepsize*k/100);
-    error_algo(k+1) = e/(k*stepsize/100);% Normalized
-  end
   
+  if(~exist('plots/error_A.mat', 'file'))
+    %Use parallel computation for this, if available
+    parfor k=0:no_steps
+      % Our algorithm
+      [unused, e] = EvaluateInpaintingParameterized(parameters,stepsize*k/100);
+      error_algo(k+1) = e/(k*stepsize/100);% Normalized
+    end
+    save('plots/error_A.mat', 'error_algo');
+  else
+    fprintf('Found saved data file. Loading...')
+    load('plots/error_A.mat');
+  end
   
   fprintf('1B) Baseline 1\n')
-  cd('baseline1/')
-  parfor k=0:no_steps
-    %Baseline 1
-    error_base1(k+1) = feval('EvaluateInpaintingParameterized', stepsize*k/100);
+  if(~exist('plots/error_B1.mat', 'file'))    
+    cd('baseline1/')
+    parfor k=0:no_steps
+      %Baseline 1
+      error_base1(k+1) = feval('EvaluateInpaintingParameterized', stepsize*k/100);
+    end
+    cd(main_path)
+    save('plots/error_B1.mat', 'error_base1');
+  else
+    fprintf('Found saved data file. Loading...')
+    load('plots/error_B1.mat');
   end
-  cd(main_path)
   
   fprintf('1C) Baseline 2\n')
-  cd('baseline2/')
-  parfor k=0:no_steps
-    %Baseline 1
-    error_base2(k+1) = feval('EvaluateInpaintingParameterized', stepsize*k/100);
+  if(~exist('plots/error_B2.mat', 'file'))    
+    cd('baseline2/')
+    parfor k=0:no_steps
+      %Baseline 2
+      error_base2(k+1) = feval('EvaluateInpaintingParameterized', stepsize*k/100);
+    end
+    cd(main_path)
+    save('plots/error_B2.mat', 'error_base2');
+  else
+    fprintf('Found saved data file. Loading...')
+    load('plots/error_B2.mat');
   end
-  cd(main_path)
+  
 
   fprintf('1) Plotting\n')
   
