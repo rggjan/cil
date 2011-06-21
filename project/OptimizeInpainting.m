@@ -75,8 +75,8 @@ function OptimizeInpainting(rounds)
 end
 
 function [new_value, next_old] = gradientDescent(index, getNext, parameters, old, cost, missing_pixels, rounds_done);
-  learning_rate = 20;
-  alpha = 0.8;
+  learning_rate = 10;
+  alpha = 0.9;
 
   fields = {'gauss_size', ...
             'gauss_sigma', ...
@@ -109,26 +109,19 @@ function [new_value, next_old] = gradientDescent(index, getNext, parameters, old
   fprintf('cost %g\n', new_cost_minus);
 
   param_cell = struct2cell(parameters);
-%  if(new_cost_plus > 0 && new_cost_minus > 0)
-      %Keep the old setting
-%      fprintf('%s: %g --\n\n', fields{index}, param_cell{index})
+  stepsize = -1*(new_cost_plus-new_cost_minus)/2*learning_rate;
+  old_stepsize = old(index);
+  if (old_stepsize ~= 0)
+    new_stepsize = old_stepsize*alpha + (1-alpha)*stepsize;
+  else
+    new_stepsize = stepsize;
+  end
+  fprintf('steps(old/new/together): %g/%g/%g\n', old_stepsize, stepsize, new_stepsize)
+  old(index) = new_stepsize;
+  new_value = getNext(param_cell{index}, new_stepsize);
+  
+  fprintf('%s: %g => %g\n\n', fields{index}, param_cell{index}, new_value)
 
-%      new_value = param_cell{index};
-%  else
-      stepsize = -1*(new_cost_plus-new_cost_minus)/2*learning_rate;
-      old_stepsize = old(index);
-      if (old_stepsize ~= 0)
-        new_stepsize = old_stepsize*alpha + (1-alpha)*stepsize;
-      else
-        new_stepsize = stepsize;
-      end
-      fprintf('steps(old/new/together): %g/%g/%g\n', old_stepsize, stepsize, new_stepsize)
-      old(index) = new_stepsize;
-      new_value = getNext(param_cell{index}, new_stepsize);
-      
-      fprintf('%s: %g => %g\n\n', fields{index}, param_cell{index}, new_value)
-%  end
-  %pause;
   next_old = old;
 
   global parameter_list
