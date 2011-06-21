@@ -9,6 +9,7 @@ load('params.mat');
 
 % Generate strategy plots
 global debug_threshold_plot_number;
+fprintf('1) Creating Parameter evolution graphs')
 debug_threshold_plot_number = 10;
 EvaluateInpaintingParameterized(parameters, 0.6);
 for i = 1:10
@@ -28,8 +29,8 @@ error_base3 = zeros(no_steps, 1);
 
 main_path = pwd;
 
-fprintf('1) Calculating error vs. missing pixels\n')
-fprintf('1A) New algorithm\n')
+fprintf('2) Calculating error vs. missing pixels\n')
+fprintf('2A) New algorithm\n')
 
 if(~exist('plots/error_A.mat', 'file'))
   % Use parallel computation for this, if available
@@ -44,7 +45,7 @@ else
   load('plots/error_A.mat');
 end
 
-fprintf('1B) Baseline 1\n')
+fprintf('2B) Baseline 1\n')
 if(~exist('plots/error_B1.mat', 'file'))    
   cd('baseline1/')
   parfor k=0:no_steps
@@ -58,7 +59,7 @@ else
   load('plots/error_B1.mat');
 end
 
-fprintf('1C) Baseline 2\n')
+fprintf('2C) Baseline 2\n')
 if(~exist('plots/error_B2.mat', 'file'))    
   cd('baseline2/')
   parfor k=0:no_steps
@@ -72,7 +73,7 @@ else
   load('plots/error_B2.mat');
 end
 
-  fprintf('1D) Baseline 3\n')
+  fprintf('2D) Baseline 3\n')
 if(~exist('plots/error_B3.mat', 'file'))    
   cd('baseline3/')
   parfor k=0:no_steps
@@ -86,7 +87,7 @@ else
   load('plots/error_B3.mat');
 end
 
-fprintf('1) Plotting\n')
+fprintf('2E) Plotting\n')
 
 handle = figure;
 range = 0:stepsize:100;

@@ -3,9 +3,8 @@
 % Measure approximation error for several images.
 % Adjusted function of the framework thatrepeats the evaluation step to compensate
 % for randomness introduced by the random mask (fixed mask in the initially provided implementation)
-function [cost, avgQErr] = EvaluateInpaintingParameterized(parameters, missing_pixels_fract)  
+function [cost, avgQErr, stdev] = EvaluateInpaintingParameterized(parameters, missing_pixels_fract, rep)  
   file_list = dir(); 
-  rep=2;
   
   dir_length = length(dir);
 
@@ -57,6 +56,40 @@ function [cost, avgQErr] = EvaluateInpaintingParameterized(parameters, missing_p
     Errors_final = [Errors_final Errors];
     Times_final = [Times_final Times];
   end
+  
+  % Determine mean and stdev per image
+  % Count images first
+  imc = 0;
+  filenames = {};
+  for i = 3 : dir_length
+    file_name = file_list(i).name; % get current filename
+    % Only keep the images in the loop
+      if (length(file_name) < 5)
+       continue;
+      elseif ( max(file_name(end-4:end) ~= '2.png'))
+       continue;
+      end
+      %Count and save filenames for later
+      imc = imc+1;
+      filenames{imc} = {file_name};
+  end
+  
+  for i=1:imc
+    stdev{i,2} = filenames{i};
+  end
+  
+  if rep > 1
+    for i=1:imc
+      stdev{i,1} = std(Errors_final(i:imc:end));
+    end
+  else
+    % 1 Iteration - no deviation
+    for i=1:imc
+      stdev{i,1} = 0;
+    end
+  end
+  
+    
   
   avgQErr = mean(Errors_final);
  
