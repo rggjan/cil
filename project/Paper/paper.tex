@@ -216,8 +216,8 @@ Our observations during the optimization process can be split into three classes
 We compared our algorithm with the following three baseline algorithms (see figure \ref{baseline_algorithms}):
 \begin{enumerate}
 \item Vertical and horizontal linear interpolation,
-\item Matching pursuit~\cite{matchingpursuit93} with an overcomplete dictionary of discrete cosines and
-\item Gaussian interpolation as described in section \ref{gaussian_interpolation}.
+\item Gaussian interpolation as described in section \ref{gaussian_interpolation} and
+\item Matching pursuit~\cite{matchingpursuit93} with an overcomplete dictionary of discrete cosines.
 \end{enumerate}
 
 \begin{figure}
@@ -227,29 +227,48 @@ We compared our algorithm with the following three baseline algorithms (see figu
 \label{baseline_algorithms}
 \end{figure}
  
-We tested our algorithm and the two baselines on a set of natural images and further on a set of artificially created ones. 
-For evaluation, we tested these algorithms with different levels of missing pixels from 0 to 100\% in 5\% steps.
+We evaluated the baseline algorithms with the same sample images as optimization. With 60\% missing pixels, the algorithms had the following errors and standard deviations:
 
-  
-Organize the results section based on the sequence of table and
-figures you include. Prepare the tables and figures as soon as all
-the data are analyzed and arrange them in the sequence that best
-presents your findings in a logical way. A good strategy is to note,
-on a draft of each table or figure, the one or two key results you
-want to address in the text portion of the results.
+\begin{table}[h]
+\centering
+\begin{tabular}{l|r|r}
+Algorithm & Error & Deviation \\
+\hline
+Linear interpolation & ? & ? \\
+Gaussian interpolation & ? & ? \\
+Matching pursuit & ? & ? \\
+\end{tabular}
+\end{table}
 
-When reporting computational or measurement results, always
-report the mean (average value) along with a measure of variablility
-(standard deviation(s) or standard error of the mean). ((( TODO !!! )))
+Since our algorithm did not perform equally well for all sample images, we print those for which it worked best and worst as figures \ref{best_image} and \ref{worst_image}.
+
+\begin{figure}
+\centering
+\includegraphics[width=\columnwidth]{images/framing_artifacts.png}
+\caption{Best image with error ? and standard deviation ?.}
+\label{best_image}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\columnwidth]{images/framing_artifacts.png}
+\caption{Worst image with error ? and standard deviation ?.}
+\label{worst_image}
+\end{figure}
+
+The strength of our method is definitely in reconstructing edges, which can be seen in figure \ref{edge_reconstruction}.
+
+\begin{figure}
+\centering
+\includegraphics[width=\columnwidth]{images/framing_artifacts.png}
+\caption{Original image with mask (left) and its reconstruciton (right).}
+\label{edge_reconstruction}
+\end{figure}
 
 \paragraph{Note} All plots in this paper were created with MATLAB and can be reproduced using the script \emph{CreatePaperPlots.m} of our submission.
 
 \section{Discussion}
-Our algorithm is resistant to high percentages of missing pixels, the average error per missing pixel rises only slowly until ((( TODO level))). 
-
-
-Discuss the strengths and weaknesses of your approach, based on the results. Point out the implications of your novel idea on the application concerned. (((( TODO ))))
-
+Discuss the strengths and weaknesses of your approach, based on the results. Point out the implications of your novel idea on the application concerned.
 
 \section{Summary}
 Summarise your contributions in light of the new results.
