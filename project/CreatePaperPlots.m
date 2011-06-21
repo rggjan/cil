@@ -87,3 +87,8 @@ plot(range, error_algo, 'r', range, error_base1,'b', range, error_base2, 'g', ra
 legend('New algorithm', 'Baseline 1 (Linear Interpolation)', 'Baseline 2 (Matching Pursuit)', 'Baseline 3 (Gaussian Interpolation)');
 saveas(handle, 'plots/missingpixelsVsError.fig');
 hold off;
+
+% Generate curves and search strategy plots
+load('start_params.mat');
+save('params.mat', 'best_cost', 'parameters');
+OptimizeInpainting(100);
