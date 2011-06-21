@@ -137,7 +137,7 @@ function [new_value, next_old] = gradientDescent(index, getNext, parameters, old
   % Plot to graph
   global parameter_list
   parameter_list(index, rounds_done+1) = new_value;
-  f = figure(index, 'visible', 'off');
+  f = figure('visible', 'off');
   plot(parameter_list(index, :));
   title(sprintf('%s during optimization', fields{index}), 'Interpreter', 'none');
   xlabel('Steps');

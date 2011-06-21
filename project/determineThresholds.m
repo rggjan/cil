@@ -99,7 +99,8 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, val_I
         middles_values = [middles_values errors(2)];
       end
 
-      if(stepsize < 0.1)
+      global debug_threshold_plot_number
+      if length(debug_threshold_plot_number) > 0 && debug_threshold_plot_number > 0 && stepsize < 0.1
         % DEBUG Creates some nice graphs of the evolution of the threshold
         errors = [];
         steps=[];
@@ -118,23 +119,20 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, val_I
           steps = [steps, t];
         end
         
-        global debug_threshold_plot_number
-        if length(debug_threshold_plot_number) > 0 && debug_threshold_plot_number > 0
-          % Plot
-          f = figure('visible', 'off');
-          plot(steps,errors);
-          hold on;
-          plot(middles,middles_values, 'r');
-          plot(middles,middles_values, 'or');
-          xlabel('Threshold')
-          ylabel('Error in validation set')
-          title('Search strategy for minimum')
-          legend('error', 'search strategy')
-          hold off;
-          saveas(f, sprintf('plots/search_strategy_%g', debug_threshold_plot_number));
-          close(f);
-          debug_threshold_plot_number = debug_threshold_plot_number - 1;
-        end
+        % Plot
+        f = figure('visible', 'off');
+        plot(steps,errors);
+        hold on;
+        plot(middles,middles_values, 'r');
+        plot(middles,middles_values, 'or');
+        xlabel('Threshold')
+        ylabel('Error in validation set')
+        title('Search strategy for minimum')
+        legend('error', 'search strategy')
+        hold off;
+        saveas(f, sprintf('plots/search_strategy_%g', debug_threshold_plot_number));
+        close(f);
+        debug_threshold_plot_number = debug_threshold_plot_number - 1;
       end
       
       % Save the threshold for this patch
