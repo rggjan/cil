@@ -24,13 +24,13 @@ addpath('baseline1', 'baseline2', 'baseline3');
 
 fprintf('2) Evaluating performance at 60%% missing pixels\n');
 fprintf('Working in inPainting ...\n')
-[avgQErr, stdev, stdev_runs, stdev_diff] = EvaluateInpaintingParameterizedStatistics(0.6, 10, @inPainting)
+[avgQErrA, stdevA, stdev_runsA, stdev_diffA] = EvaluateInpaintingParameterizedStatistics(0.6, 10, @inPainting)
 fprintf('Working in baseline1 ...\n')
-[avgQErr, stdev, stdev_runs, stdev_diff] = EvaluateInpaintingParameterizedStatistics(0.6, 10, @baseline1)
+[avgQErrB1, stdevB1, stdev_runsB1, stdev_diffB1] = EvaluateInpaintingParameterizedStatistics(0.6, 10, @baseline1)
 fprintf('Working in baseline2 ...\n')
-[avgQErr, stdev, stdev_runs, stdev_diff] = EvaluateInpaintingParameterizedStatistics(0.6, 10, @baseline2)
+[avgQErrB2, stdevB2, stdev_runsB2, stdev_diffB2] = EvaluateInpaintingParameterizedStatistics(0.6, 10, @baseline2)
 fprintf('Working in baseline3 ...\n')
-[avgQErr, stdev, stdev_runs, stdev_diff] = EvaluateInpaintingParameterizedStatistics(0.6, 10, @baseline3)
+[avgQErrB3, stdevB3, stdev_runsB3, stdev_diffB3] = EvaluateInpaintingParameterizedStatistics(0.6, 10, @baseline3)
 
 % Generate graphs
 stepsize = 2;
