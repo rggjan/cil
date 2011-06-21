@@ -12,7 +12,7 @@
 \usetikzlibrary{shapes,arrows}
 
 \begin{document}
-\title{Inpainting with controlled dimensionality reduction in the Fourier domain}
+\title{Inpainting with controlled frequency suppression in the Fourier domain}
 
 \author{
   Group: NoobzRockz\\
@@ -23,14 +23,7 @@
 \maketitle
 
 \begin{abstract}
-The abstract should really be written last, along with the title of
-the paper. The four points that should be covered:
-\begin{enumerate}
-\item State the problem.
-\item Say why it is an interesting problem.
-\item Say what your solution achieves. (CLAIM!)
-\item Say what follows from your solution.
-\end{enumerate}
+This paper presents a new approach to the problem of inpainting, which is about recovering (deliberately) lost image information. In comparison with the submissions of our peers, we have designed a very efficient algorithm that does not fall behind other solutions in terms of accuracy. By suppressing weak frequencies in the Fourier domain, we attempt to recover the intrinsic signal of the image. Since we choose the optimal threshold with a random validation set, our method performs particularly well for the reconstruction of edges.
 \end{abstract}
 
 \section{Introduction}
@@ -117,14 +110,7 @@ Before entering the iterative part of our algorithm, the following three steps a
 
 After these preparing steps, we start to iteratively improve the reconstructed image with the following steps:
 \begin{enumerate}
-\item Using the above mentioned validation set, we evaluate several thresholds for every patch and keep for each the best one:
-After calculating a fast Fourier transform for every patch, frequencies weaker then the threshold are suppressed by setting them to 0.
-Since profiling showed that the Fourier transform with its inverse is by far the most time-consuming part of our algorithm, we try to
-perform as few threshold evaluations as possible.
-For this purpose, we iteratively evaluate two new thresholds around a center threshold, taking the best one as the new center and
-decreasing the step size by half (see figure \ref{threshold_optimization}). While this heuristic does not always reach the minimum,
-it works quite well for our error function, that appears to be very roughly convex.
-For this optimization as well as for the whole iteration, we have both a number- and a convergence-based termination criterion.
+\item Using the above mentioned validation set, we evaluate several thresholds for every patch and keep for each the best one: After calculating a fast Fourier transform for every patch, frequencies weaker then the threshold are suppressed by setting them to 0. Since profiling showed that the Fourier transform with its inverse is by far the most time-consuming part of our algorithm, we try to perform as few threshold evaluations as possible. For this purpose, we iteratively evaluate two new thresholds around a center threshold, taking the best one as the new center and halve the step size (see figure \ref{threshold_optimization}). While this heuristic does not always reach the minimum, it works quite well for our error function, which is often roughly convex. For this optimization as well as for the whole iteration, we have both a number- and a convergence-based termination criterion.
 
 \begin{figure}
 \centering
@@ -172,7 +158,7 @@ We optimize all parameters at once using a method called gradient descent. Since
 \begin{figure}
 \centering
 \includegraphics[width=\columnwidth]{images/framing_artifacts.png}
-\caption{Due to the momentum term, the cost function does not strictly decrease.}
+\caption{Due to the momentum, the cost function does not strictly decrease.}
 \label{gradient_descent_figure}
 \end{figure}
 
@@ -271,7 +257,7 @@ The strength of our method is definitely in reconstructing edges, which can be s
 Discuss the strengths and weaknesses of your approach, based on the results. Point out the implications of your novel idea on the application concerned.
 
 \section{Summary}
-Summarise your contributions in light of the new results.
+Making use of our domain knowledge about images, we have implemented an algorithm that performs well in terms of both accuracy and performance. The remarkable speed is achieved by relying on MATLAB's native functions for the most computationally intensive tasks. In our opinion, we have devised many nice methods: Gaussian interpolation, threshold optimization with validation set and frequency suppression in the Fourier domain to name just the most important ones. The key feature of our algorithm is certainly its ability to reconstruct the edges in an image.
 
 \section*{Acknowledgements}
 Our implementation is based on the inpainting and evaluation framework provided by the course \emph{Computer Intelligence Lab} held by Prof. Joachim Buhmann at ETH Zurich.
@@ -280,16 +266,3 @@ Our implementation is based on the inpainting and evaluation framework provided 
 \bibliography{biblio}
 
 \end{document}
-
-% Plots:
-% - threshold optimization => algorithm
-% - Framing artifacts (with and w/o frame) => framing
-% - Parameter optimization (convergence) => gradient descent
-% 
-% - Missing pixels vs. error (baselines)
-% - stdev over n runs of EvaluateInpainting with rep = 1
-% 
-% - image with best error (and stdev)
-% - image with worst error (and stdev)
-% 
-% - Bar to illustrate edge reconstruction (patch size)
