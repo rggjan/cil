@@ -52,6 +52,7 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, val_I
       
       % DEBUG / Visualization
       middles = [middle];
+      middles_values = [errors(2)];
       
       % Find best threshold iteratively
       while(stepsize > parameters.td_abortbelow_stepsize && dev > parameters.td_abortbelow_stdev)
@@ -73,8 +74,8 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, val_I
         % Where do we go? To the minimum of the error
         [errors(2), idx] = min(errors);
         if(middle==0 && idx == 1)
-          % We don't go left if we are at 0. Stay at 0.
-          idx = 2;
+          % We don't go left if we are at 0. We go right!
+          idx = 3;
         end
 
         % New middle = Best error position found.
@@ -95,13 +96,14 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, val_I
         stepsize = stepsize / 2;
         % DEBUG / Visualization
         middles = [middles middle];
+        middles_values = [middles_values errors(2)];
       end
 
-      if(false)
+      if(stepsize < 0.1 && false)
         % DEBUG Turn on if you want to see the evolution of the threshold
         errors = [];
         steps=[];
-        for t = 0:0.1:20
+        for t = linspace(0, parameters.td_middle*2, 100)
           P_reduced = removeFrame(dimensionReduction(P_framed, t, parameters), ...
                                   parameters);
 
@@ -121,11 +123,11 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, val_I
         figure(2);
         plot(steps,errors);
         hold on;
-        plot(middles,ones(size(middles)), 'or');
-        axis([-10,20,0,1])
+        plot(middles,middles_values, 'r');
+        plot(middles,middles_values, 'or');
         hold off;
-        figure(1);
-        imshow(P_reduced);
+        %figure(1);
+        %imshow(P_reduced);
         pause
       end
       
