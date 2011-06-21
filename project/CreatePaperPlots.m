@@ -11,6 +11,7 @@
   error_algo = zeros(no_steps, 1);
   error_base1 = zeros(no_steps, 1);
   error_base2 = zeros(no_steps, 1);
+  error_base3 = zeros(no_steps, 1);
   
   main_path = pwd;
   
@@ -58,6 +59,19 @@
     load('plots/error_B2.mat');
   end
   
+    fprintf('1D) Baseline 3\n')
+  if(~exist('plots/error_B3.mat', 'file'))    
+    cd('baseline3/')
+    parfor k=0:no_steps
+      %Baseline 2
+      error_base3(k+1) = feval('EvaluateInpaintingParameterized', stepsize*k/100);
+    end
+    cd(main_path)
+    save('plots/error_B3.mat', 'error_base3');
+  else
+    fprintf('Found saved data file. Loading...')
+    load('plots/error_B3.mat');
+  end
 
   fprintf('1) Plotting\n')
   
@@ -66,8 +80,8 @@
   hold on;
   xlabel('Missing pixels (%)');
   ylabel('Average squared error per missing pixel');
-  plot(range, error_algo, 'r', range, error_base1,'b', range, error_base2, 'g');
-  legend('New algorithm', 'Baseline 1 (linear)', 'Baseline 2 (Matching Pursuit)');
+  plot(range, error_algo, 'r', range, error_base1,'b', range, error_base2, 'g', range, error_base3, 'y');
+  legend('New algorithm', 'Baseline 1 (Linear Interpolation)', 'Baseline 2 (Matching Pursuit)', 'Baseline 3 (Gaussian Interpolation)');
   saveas(handle, 'plots/missingpixelsVsError.fig');
   hold off;
   
