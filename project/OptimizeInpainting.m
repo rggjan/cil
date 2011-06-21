@@ -16,6 +16,8 @@ function OptimizeInpainting(rounds)
   % Also reset computer_speed
   global global_best_cost;
   global computer_speed;
+  global debug_threshold_plot_number;
+  debug_threshold_plot_number = 10;
   computer_speed = [];
   global_best_cost = best_cost;
   fprintf('\nStarting optimization, current best cost is %g\n\n', best_cost);

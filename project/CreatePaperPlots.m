@@ -30,7 +30,7 @@ if(~exist('plots/error_A.mat', 'file'))
   end
   save('plots/error_A.mat', 'error_algo');
 else
-  fprintf('Found saved data file. Loading...')
+  fprintf('Found saved data file. Loading...\n')
   load('plots/error_A.mat');
 end
 
@@ -44,7 +44,7 @@ if(~exist('plots/error_B1.mat', 'file'))
   cd(main_path)
   save('plots/error_B1.mat', 'error_base1');
 else
-  fprintf('Found saved data file. Loading...')
+  fprintf('Found saved data file. Loading...\n')
   load('plots/error_B1.mat');
 end
 
@@ -58,7 +58,7 @@ if(~exist('plots/error_B2.mat', 'file'))
   cd(main_path)
   save('plots/error_B2.mat', 'error_base2');
 else
-  fprintf('Found saved data file. Loading...')
+  fprintf('Found saved data file. Loading...\n')
   load('plots/error_B2.mat');
 end
 
@@ -72,7 +72,7 @@ if(~exist('plots/error_B3.mat', 'file'))
   cd(main_path)
   save('plots/error_B3.mat', 'error_base3');
 else
-  fprintf('Found saved data file. Loading...')
+  fprintf('Found saved data file. Loading...\n')
   load('plots/error_B3.mat');
 end
 
@@ -87,3 +87,8 @@ plot(range, error_algo, 'r', range, error_base1,'b', range, error_base2, 'g', ra
 legend('New algorithm', 'Baseline 1 (Linear Interpolation)', 'Baseline 2 (Matching Pursuit)', 'Baseline 3 (Gaussian Interpolation)');
 saveas(handle, 'plots/missingpixelsVsError.fig');
 hold off;
+
+% Generate curves and search strategy plots
+load('start_params.mat');
+save('params.mat', 'best_cost', 'parameters');
+OptimizeInpainting(100);

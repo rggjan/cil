@@ -119,20 +119,20 @@ As shown in table \ref{parameters}, our algorithm has a total of 10 parameters t
 
 \begin{table*}
 \begin{center}
-\begin{tabular}{|l|l|r|r|}
+\begin{tabular}{|l|p{6cm}|r|r|}
 \hline
 Parameter & Description & Initial value & Optimized value\\
 \hline
-gauss\_size & Size of the Gaussian kernel & ? & ? \\
-gauss\_sigma & Sigma of the Gaussian kernel & ? & ? \\
-patch\_size & Patch size as exponent to the basis 2 & ? & ? \\
-patch\_frame\_size & Frame size in pixels & ? & ? \\
-td\_abortbelow\_stdev & Minimal standard deviation while evaluating thresholds & ? & ? \\
-td\_abortbelow\_stepsize & Minimal step size while evaluating thresholds & ? & ? \\
-td\_middle & Initial threshold & ? & ? \\
-validation & Fraction of pixels in the validation set & ? & ? \\
-max\_iterations & Maximum number of iterations & ? & ? \\
-abortbelow\_change & Minimal change for performing another iteration & ? & ? \\
+gauss\_size & Size of the Gaussian kernel in pixels & 10 & ? \\
+gauss\_sigma & Sigma of the Gaussian kernel & 1 & ? \\
+patch\_size & Patch size as exponent to the basis 2 & 4 & ? \\
+patch\_frame\_size & Frame size in pixels & 8 & ? \\
+td\_abortbelow\_stdev & Minimal standard deviation while evaluating thresholds as negative exponent to basis 10& 3 & ? \\
+td\_abortbelow\_stepsize & Minimal step size while evaluating thresholds as negative exponent to basis 10& 4 & ? \\
+td\_middle & Initial threshold & 10 & ? \\
+validation & Fraction of pixels in the validation set & 0.4 & ? \\
+max\_iterations & Maximum number of iterations & 5 & ? \\
+abortbelow\_change & Minimal relative change to perform another iteration & 0.1 & ? \\
 \hline
 \end{tabular}
 \end{center}
