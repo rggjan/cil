@@ -5,7 +5,7 @@
 % for randomness introduced by the random mask (fixed mask in the initially provided implementation)
 function [cost, avgQErr] = EvaluateInpaintingParameterized(parameters, missing_pixels_fract)  
   file_list = dir(); 
-  rep=3;
+  rep=2;
   
   dir_length = length(dir);
 
@@ -40,7 +40,6 @@ function [cost, avgQErr] = EvaluateInpaintingParameterized(parameters, missing_p
        holes = randperm(numpixels);
        holes = holes(1:floor(missing_pixels_fract*numpixels));
        mask(holes) = 0;
-
 
        I_mask = I;
        I_mask(~mask) = 0;
