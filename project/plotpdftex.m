@@ -99,7 +99,7 @@ if ~exist('laprint.m')
     return;
 end
 
-laprint(h,TempName,'width',12/fontsize,'factor',linesize/fontsize,'scalefonts','off','asonscreen','on'); % Generate the EPS/LaTeX file
+laprint(h,TempName,'width',12/fontsize,'factor',linesize/fontsize,'scalefonts','off','asonscreen','on','figcopy','off'); % Generate the EPS/LaTeX file
 
 disp(sprintf('\n-------------------------------------------------------'));
 disp(sprintf('PlotEpsTeX                                      02/2008'));
