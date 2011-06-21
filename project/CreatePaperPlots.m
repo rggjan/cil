@@ -11,7 +11,7 @@ load('params.mat');
 global debug_threshold_plot_number;
 fprintf('1) Creating Parameter evolution graphs')
 debug_threshold_plot_number = 10;
-EvaluateInpaintingParameterized(parameters, 0.6);
+EvaluateInpaintingParameterized(parameters, 0.6, 1);
 
 % Generate graphs
 stepsize = 2;
@@ -32,7 +32,7 @@ if(~exist('plots/error_A.mat', 'file'))
   % Use parallel computation for this, if available
   parfor k=0:no_steps
     % Our algorithm
-    [unused, e] = EvaluateInpaintingParameterized(parameters,stepsize*k/100);
+    [unused, e, unused2] = EvaluateInpaintingParameterized(parameters,stepsize*k/100, 3);
     error_algo(k+1) = e/(k*stepsize/100);% Normalized
   end
   save('plots/error_A.mat', 'error_algo');
@@ -46,7 +46,7 @@ if(~exist('plots/error_B1.mat', 'file'))
   cd('baseline1/')
   parfor k=0:no_steps
     % Baseline 1
-    error_base1(k+1) = feval('EvaluateInpaintingParameterized', stepsize*k/100);
+    [error_base1(k+1), unused] = feval('EvaluateInpaintingParameterized', stepsize*k/100);
   end
   cd(main_path)
   save('plots/error_B1.mat', 'error_base1');
