@@ -1,7 +1,10 @@
 % Measure approximation error for several images.
 
 function [cost, avgQErr] = EvaluateInpaintingParameterized(parameters, missing_pixels_fract)  
-
+  %EvaluateInpaintingParameterized Adjusted function of the framework that
+  %repeats the evaluation step to compensate for randomness introduced by
+  %the random mask (fixed mask in the initially provided implementation)
+  
   file_list = dir(); 
   rep=3;
   
@@ -10,9 +13,14 @@ function [cost, avgQErr] = EvaluateInpaintingParameterized(parameters, missing_p
   Errors_final = [];
   Times_final = [];
 
+  % Repreat rep times to compensate for noise due to the random mask
+  % Parfor will do so in parallel, if possible
   parfor r = 1 : rep
+     %Reduction variables (parfor)
      Errors = []; % mean squared errors for each image
      Times = [];
+     
+     %Search for pictures
      for i = 3 : dir_length  % running through the folder
 
         file_name = file_list(i).name; % get current filename
@@ -28,7 +36,7 @@ function [cost, avgQErr] = EvaluateInpaintingParameterized(parameters, missing_p
         I = imread(file_name);
         I = double(I) / 255;
 
-        % Generate mask at random, with 60% missing pixels
+        % Generate mask at random, with adjustable number missing pixels
         mask = ones(size(I));
         numpixels = size(I,1)*size(I,2);
         holes = randperm(numpixels);
@@ -53,10 +61,12 @@ function [cost, avgQErr] = EvaluateInpaintingParameterized(parameters, missing_p
   
   avgQErr = mean(Errors_final);
  
+  % Following part is used for the optimization
+  % Will store best found parameters into a file
   global global_best_cost 
 
   if (mean(Times_final) > 60)
-    times_error = exp((mean(Times_final)/60)-1) - 1
+    times_error = exp((mean(Times_final)/60)-1) - 1;
   else
     times_error = 0;
   end

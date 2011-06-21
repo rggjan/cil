@@ -1,7 +1,9 @@
 function I_out = gaussInterpolate(I, mask, parameters)
+% GAUSSINTERPOLATE Interpolate an image using Gauss Filter
 
 mask = double(mask);
 
+% Create filter
 h = fspecial('gaussian', parameters.gauss_size, parameters.gauss_sigma);
 I_masked = I .* mask;
 
