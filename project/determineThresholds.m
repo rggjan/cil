@@ -100,11 +100,11 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, val_I
       end
 
       global debug_threshold_plot_number
-      if length(debug_threshold_plot_number) > 0 && debug_threshold_plot_number > 0 && stepsize < 0.1
+      if length(debug_threshold_plot_number) > 0 && debug_threshold_plot_number > 0 && stepsize < 0.1 && middle > debug_threshold_plot_number*2
         % DEBUG Creates some nice graphs of the evolution of the threshold
         errors = [];
         steps=[];
-        for t = linspace(0, parameters.td_middle*2, 100)
+        for t = linspace(0, parameters.td_middle*2, 200)
           P_reduced = removeFrame(dimensionReduction(P_framed, t, parameters), ...
                                   parameters);
 
