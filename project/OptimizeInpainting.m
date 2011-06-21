@@ -43,18 +43,18 @@ function OptimizeInpainting(rounds)
     fprintf('=> cost %g\n\n', cost);
 
     % Optimize individual parameters
-    [final_parameters.gauss_size, old]             = gradientDescent(1, @getNextGaussSize, parameters, old, cost, missing_pixels, rounds_done);
-    [final_parameters.gauss_sigma, old]            = gradientDescent(2, @getNextGaussSigma, parameters, old, cost, missing_pixels, rounds_done);
-    [final_parameters.patch_size, old]             = gradientDescent(3, @getNextPatchSize, parameters, old, cost, missing_pixels, rounds_done);
-    [final_parameters.patch_frame_size, old]       = gradientDescent(4, @getNextFrameSize, parameters, old, cost, missing_pixels, rounds_done);
-    [final_parameters.td_abortbelow_stdev, old]    = gradientDescent(5, @getNextTDAbortBelowStdev, parameters, old, cost, missing_pixels, rounds_done);
-    [final_parameters.td_abortbelow_stepsize, old] = gradientDescent(6, @getNextTDAbortBelowStep, parameters, old, cost, missing_pixels, rounds_done);
-    [final_parameters.td_middle, old]              = gradientDescent(7, @getNextTDMiddle, parameters, old, cost, missing_pixels, rounds_done);
-    [final_parameters.validation, old]             = gradientDescent(8, @getNextValidation, parameters, old, cost, missing_pixels, rounds_done);
+    [final_parameters.gauss_size, old]             = gradientDescent(1, @getNextGaussSize, parameters, old, cost, missing_pixels, rounds_done, repetition_evaluation);
+    [final_parameters.gauss_sigma, old]            = gradientDescent(2, @getNextGaussSigma, parameters, old, cost, missing_pixels, rounds_done, repetition_evaluation);
+    [final_parameters.patch_size, old]             = gradientDescent(3, @getNextPatchSize, parameters, old, cost, missing_pixels, rounds_done, repetition_evaluation);
+    [final_parameters.patch_frame_size, old]       = gradientDescent(4, @getNextFrameSize, parameters, old, cost, missing_pixels, rounds_done, repetition_evaluation);
+    [final_parameters.td_abortbelow_stdev, old]    = gradientDescent(5, @getNextTDAbortBelowStdev, parameters, old, cost, missing_pixels, rounds_done, repetition_evaluation);
+    [final_parameters.td_abortbelow_stepsize, old] = gradientDescent(6, @getNextTDAbortBelowStep, parameters, old, cost, missing_pixels, rounds_done, repetition_evaluation);
+    [final_parameters.td_middle, old]              = gradientDescent(7, @getNextTDMiddle, parameters, old, cost, missing_pixels, rounds_done, repetition_evaluation);
+    [final_parameters.validation, old]             = gradientDescent(8, @getNextValidation, parameters, old, cost, missing_pixels, rounds_done, repetition_evaluation);
     % Dont iterate over bool 'iterative'
     if parameters.iterative
-      [final_parameters.max_iterations, old]         = gradientDescent(10, @getNextMaxIterations, parameters, old, cost, missing_pixels, rounds_done);
-      [final_parameters.abortbelow_change, old]      = gradientDescent(11, @getNextAbortBelowChange, parameters, old, cost, missing_pixels, rounds_done);
+      [final_parameters.max_iterations, old]         = gradientDescent(10, @getNextMaxIterations, parameters, old, cost, missing_pixels, rounds_done, repetition_evaluation);
+      [final_parameters.abortbelow_change, old]      = gradientDescent(11, @getNextAbortBelowChange, parameters, old, cost, missing_pixels, rounds_done, repetition_evaluation);
     end
 
     % Plot cost function
@@ -78,7 +78,7 @@ end
 % the old struct with all the old values, a current cost, the percentage of missing pixels and the number
 % of rounds already finished.
 % Returns the new parameter + the updated old struct
-function [new_value, next_old] = gradientDescent(index, getNext, parameters, old, cost, missing_pixels, rounds_done);
+function [new_value, next_old] = gradientDescent(index, getNext, parameters, old, cost, missing_pixels, rounds_done, repetition_evaluation);
   % The learning rate: How much should we descent the gradient?
   learning_rate = 10;
 
