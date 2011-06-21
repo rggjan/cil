@@ -58,13 +58,13 @@ function OptimizeInpainting(rounds)
 
     % Plot cost function
     cost_list = [cost_list, cost];
-    figure(9);
+    f = figure('visible', 'off');
     plot(cost_list);
     title('Cost during optimization');
     xlabel('Steps');
     ylabel('Cost function');
-    saveas(9, 'plots/cost_plot.fig');
-    drawnow
+    saveas(f, 'plots/cost_plot.fig');
+    close(f);
 
     rounds_done = rounds_done + 1;
   end
@@ -137,13 +137,13 @@ function [new_value, next_old] = gradientDescent(index, getNext, parameters, old
   % Plot to graph
   global parameter_list
   parameter_list(index, rounds_done+1) = new_value;
-  figure(index);
+  f = figure(index, 'visible', 'off');
   plot(parameter_list(index, :));
   title(sprintf('%s during optimization', fields{index}), 'Interpreter', 'none');
   xlabel('Steps');
   ylabel(sprintf('Value of %s', fields{index}), 'Interpreter', 'none');
-  saveas(index, sprintf('plots/%s_plot.fig', fields{index}));
-  drawnow;
+  saveas(f, sprintf('plots/%s_plot.fig', fields{index}));
+  close(f);
 end
 
 % ================= %

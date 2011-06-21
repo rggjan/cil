@@ -121,7 +121,7 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, val_I
         global debug_threshold_plot_number
         if length(debug_threshold_plot_number) > 0 && debug_threshold_plot_number > 0
           % Plot
-          figure(20);
+          f = figure('visible', 'off');
           plot(steps,errors);
           hold on;
           plot(middles,middles_values, 'r');
@@ -131,7 +131,8 @@ function [T, I_trained] = determineThresholds(I_training_framed, val_mask, val_I
           title('Search strategy for minimum')
           legend('error', 'search strategy')
           hold off;
-          saveas(20, sprintf('plots/search_strategy_%g', debug_threshold_plot_number));
+          saveas(f, sprintf('plots/search_strategy_%g', debug_threshold_plot_number));
+          close(f);
           debug_threshold_plot_number = debug_threshold_plot_number - 1;
         end
       end
