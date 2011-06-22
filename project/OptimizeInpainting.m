@@ -83,7 +83,7 @@ function [new_value, next_old] = gradientDescent(index, getNext, parameters, old
   learning_rate = 10;
 
   % Alpha, the momentum term.
-  alpha = 0.9;
+  alpha = 0.8;
 
   fields = {'gauss_size', ...
             'gauss_sigma', ...

@@ -103,9 +103,9 @@ function [cost, avgQErr, stdev] = EvaluateInpaintingParameterized(parameters, mi
     computer_speed = mean(Times_final)
   end
 
-  % Do not use time in cost function when below 5 times starting speed seconds
-  if (mean(Times_final) > computer_speed*5)
-    times_error = exp((mean(Times_final)/(computer_speed*5))-1) - 1
+  % Do not use time in cost function when below 3 times starting speed seconds
+  if (mean(Times_final) > computer_speed*3)
+    times_error = exp((mean(Times_final)/(computer_speed*3))-1) - 1
   else
     times_error = 0;
   end
