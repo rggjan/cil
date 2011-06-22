@@ -13,12 +13,12 @@ global debug_threshold_plot_number;
 fprintf('1) Creating Parameter evolution graphs\n')
 debug_threshold_plot_number = 10;
 
-%[unused, error_a, stdev_a] = EvaluateInpaintingParameterized(parameters, 0.6, 1);
+[unused, error_a, stdev_a] = EvaluateInpaintingParameterized(parameters, 0.6, 1);
 
-%for i = 1:10
-%  f = open(sprintf('plots/search_strategy_%g.fig', i));
-%  plotpdftex(f, sprintf('plots/search_strategy_%g', i));
-%end
+for i = 1:10
+  f = open(sprintf('plots/search_strategy_%g.fig', i));
+  plotpdftex(f, sprintf('plots/search_strategy_%g', i));
+end
 
 addpath('baseline1', 'baseline2', 'baseline3');
 
