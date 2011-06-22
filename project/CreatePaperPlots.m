@@ -35,7 +35,8 @@ fprintf('Working in baseline3 ...\n')
 
 % Generate graphs
 stepsize = 2;
-no_steps = floor(100/stepsize);
+% Ignore the 100% - the runtime will be inacceptable
+no_steps = floor(100/stepsize)-1;
 
 % Init arrays
 error_algo = zeros(no_steps, 1);
@@ -102,7 +103,7 @@ end
 fprintf('3E) Plotting\n')
 
 handle = figure;
-range = 0:stepsize:100;
+range = 0:stepsize:(no_steps*step_size);
 hold on;
 xlabel('Missing pixels (%)');
 ylabel('Average squared error per missing pixel');

@@ -78,6 +78,7 @@ for x=1:w
       I(x, y) = values / s;
     end
   end
+  x
 end
     
 
