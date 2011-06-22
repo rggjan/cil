@@ -9,7 +9,8 @@ function [avgQErr, stdev, stdev_runs, stdev_diff] = EvaluateInpaintingParameteri
   Error_means = [];
   stdev_diffs = [];
 
-  parfor r = 1 : rep
+  for r = 1 : rep
+    fprintf('At rep %d \n', r)
      Errors = []; % mean squared errors for each image
      for i = 3 : dir_length  % running through the folder
 
@@ -21,6 +22,7 @@ function [avgQErr, stdev, stdev_runs, stdev_diff] = EvaluateInpaintingParameteri
         elseif ( max(file_name(end-4:end) ~= '2.png'))
           continue;
         end
+        fprintf('At file %s\n', file_name)
 
         % Read image, convert to double precision and map to [0,1] interval
         I = imread(strcat('./',file_name));
