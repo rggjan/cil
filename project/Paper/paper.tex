@@ -5,6 +5,7 @@
 \usepackage{amsmath}
 \usepackage{url}
 \usepackage{graphicx}
+\usepackage{subfig}
 \usepackage[pdftex]{hyperref}
 \usepackage[utf8]{inputenc}
 
@@ -154,13 +155,13 @@ abortbelow\_change & Minimal relative change to perform another iteration & 0.1 
 
 \subsubsection{Gradient descent}
 \label{gradient_descent}
-We optimize all parameters at once using a method called gradient descent. Since our cost function is based on measurements, we cannot derive it with respect to individual parameters and have to determine the gradient with finite differences. Besides weighting the parameters with respect to their improvements (which gives us the slope), we also defined a momentum term that should help us to overcome local minima (see figure \ref{gradient_descent_figure}).
+We optimize all parameters at once using a gradient descent method. Since our cost function is based on measurements, we cannot derive it with respect to individual parameters and have to determine the gradient with finite differences. Besides weighting the parameters with respect to their improvements (which gives us the slope), we also defined a momentum term of 0.8 that should help us to overcome local minima and improve convergence speed. Figure \ref{gradient_descent_cost} shows the development of the cost for 100 optimisation steps.
 
 \begin{figure}
 \centering
-\includegraphics[width=\columnwidth]{images/framing_artifacts.png}
-\caption{Due to the momentum, the cost function does not strictly decrease.}
-\label{gradient_descent_figure}
+\includegraphics[width=0.8\columnwidth]{../plots/cost_plot.pdf}
+\caption{Due to the momentum term, the cost function does not strictly decrease when optimising.}
+\label{gradient_descent_cost}
 \end{figure}
 
 \subsubsection{Cost function}
@@ -168,6 +169,8 @@ For optimizing a set of parameters, a cost function is needed. Its most importan
 
 \begin{table*}
 \centering
+{\renewcommand{\arraystretch}{1.5}
+\renewcommand{\tabcolsep}{0.2cm}
 \begin{tabular}{|l|p{6cm}|p{6cm}|}
 \hline
 Function & Advantages & Disadvantages \\
@@ -178,33 +181,51 @@ $\exp(E)+\exp(T)$ & Fast increase for both error and time & Not enough gradient 
 \hline
 $(1-\exp(E))*(1-\exp(T))$ & Allows very large times for very low errors & Also true vice versa, i.e. a minimization in time \\
 \hline
-$\begin{cases}
-E & \text{if }T<60\\
-E+\exp(T/60 - 1) - 1 & \text{otherwise}
-\end{cases}$ & Continuous function that optimizes for error only when the time is below a certain value but penalizes long times. & Seems to work quite well and therefore used by us \\
+$ \begin{cases}
+E & \text{if }T<T_0\\
+E+\exp(T/T_0 - 1) - 1 & \text{otherwise}
+\end{cases} $ & Continuous function, optimizes for error when the time is below a target time $T_0$, penalizes long times. & Seems to work quite well, used by us \\
 \hline
-\end{tabular}
+\end{tabular}}
 \caption{Various cost functions used in the optimization process.}
 \label{cost_functions}
 \end{table*}
 
 \subsubsection{Sample data}
-We used the three images provided for the last exercise and four additional ones (consisting of both natural and artificial images) to evaluate the accuracy and performance of the chosen parameters. Instead of using the supplied mask, however, we generate one randomly for every evaluation in order to prevent overfitting to a particular mask. 
+We used the three images provided for the last exercise and four additional ones (consisting of both natural and artificial images, see figure \ref{new_images}) to evaluate the accuracy and performance of the chosen parameters. Instead of using the supplied mask, however, we generate one randomly for every evaluation in order to prevent overfitting to a particular mask.
+
+\begin{figure*}
+  \centering
+  \subfloat{\includegraphics[width=0.22\textwidth]{../daisiesFromBing512x512}}~
+  \subfloat{\includegraphics[width=0.22\textwidth]{../hardedges_512x512}}~
+  \subfloat{\includegraphics[width=0.22\textwidth]{../penguinsFromBing512x512}}~
+  \subfloat{\includegraphics[width=0.22\textwidth]{../velos512x512}}~
+  \caption{The four additional images used during the optimisation.}
+  \label{new_images}
+\end{figure*}
 
 \subsubsection{Found values}
 Our observations during the optimization process can be split into three classes:
 \begin{itemize}
 \item Some parameters converged towards their estimated value. The size of the Gaussian kernel, for example, has to be slightly bigger than the largest hole assumed in an image.
 \item Some parameters have a clear speed vs. accuracy tradeoff, like the stopping conditions of the threshold optimization, which depend on our cost function and could not be foreseen.
-\item Some parameters assumed totally different values than anticipated: The patch size became much larger and the validation set decreased significantly.
+\item Some parameters assumed totally different values than anticipated: The patch size became much larger and the validation set decreased significantly, as can be seen in figure \ref{gradient_descent_parameters}.
 \end{itemize}
+
+\begin{figure}
+  \centering
+  \subfloat{\label{fig:gull}\includegraphics[width=0.25\textwidth]{../plots/td_middle_plot.pdf}}                
+  \subfloat{\label{fig:tiger}\includegraphics[width=0.25\textwidth]{../plots/validation_plot.pdf}}
+  \caption{Two parameters that seem to converge quite well during the optimisation.}
+  \label{gradient_descent_parameters}
+\end{figure}
 
 \section{Results}
 We compared our algorithm with the following three baseline algorithms (see figure \ref{baseline_algorithms}):
 \begin{enumerate}
 \item Vertical and horizontal linear interpolation,
 \item Gaussian interpolation as described in section \ref{gaussian_interpolation} and
-\item Matching pursuit~\cite{matchingpursuit93} with an overcomplete dictionary of discrete cosines.
+\item Matching pursuit~\cite{matchingpursuit93} with an overcomplete dictionary of discrete cosines. TODO this reference is wrong!
 \end{enumerate}
 
 \begin{figure}
@@ -252,10 +273,10 @@ The strength of our method is definitely in reconstructing edges, which can be s
 \label{edge_reconstruction}
 \end{figure}
 
-\paragraph{Note} All plots in this paper were created with MATLAB and can be reproduced using the script \emph{CreatePaperPlots.m} of our submission.
+\paragraph{Note} All plots in this paper were created with MATLAB and were produced using the script \emph{CreatePaperPlots.m} of our submission. However, due to the randomness of the algorithm and varying speed measurements for the cost function, results can be different for each run.
 
 \section{Discussion}
-Discuss the strengths and weaknesses of your approach, based on the results. Point out the implications of your novel idea on the application concerned.
+Discuss the strengths and weaknesses of your approach, based on the results. Point out the implications of your novel idea on the application concerned. TODO
 
 \section{Summary}
 Making use of our domain knowledge about images, we have implemented an algorithm that performs well in terms of both accuracy and performance. The remarkable speed is achieved by relying on MATLAB's native functions for the most computationally intensive tasks. In our opinion, we have devised many nice methods: Gaussian interpolation, threshold optimization with validation set and frequency suppression in the Fourier domain to name just the most important ones. The key feature of our algorithm is certainly its ability to reconstruct the edges in an image.

@@ -7,9 +7,6 @@ function OptimizeInpainting(rounds)
   missing_pixels = 0.6;
   repetition_evaluation = 2;
 
-  % Set random seet to get reproducable results
-  rand('seed', 12345);
-
   % Load parameters and best_cost from (binary) file
   load('params.mat');
 
