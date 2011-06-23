@@ -155,12 +155,12 @@ abortbelow\_change & Minimal relative change to perform another iteration & 0.1 
 
 \subsubsection{Gradient descent}
 \label{gradient_descent}
-We optimize all parameters at once using a gradient descent method. Since our cost function is based on measurements, we cannot derive it with respect to individual parameters and have to determine the gradient with finite differences. Besides weighting the parameters with respect to their improvements (which gives us the slope), we also defined a momentum term of 0.8 that should help us to overcome local minima and improve convergence speed. Figure \ref{gradient_descent_cost} shows the development of the cost for 100 optimisation steps.
+We optimize all parameters at once using a gradient descent method. Since our cost function is based on measurements, we cannot derive it with respect to individual parameters and have to determine the gradient with finite differences. Besides weighting the parameters with respect to their improvements (which gives us the slope), we also defined a momentum term of 0.8 that should help us to overcome local minima and improve convergence speed. Figure \ref{gradient_descent_cost} shows the development of the cost for 100 optimization steps.
 
 \begin{figure}
 \centering
 \includegraphics[width=0.8\columnwidth]{../plots/cost_plot.pdf}
-\caption{Due to the momentum term, the cost function does not strictly decrease when optimising.}
+\caption{Due to the momentum term, the cost function does not strictly decrease when optimizing.}
 \label{gradient_descent_cost}
 \end{figure}
 
@@ -196,11 +196,11 @@ We used the three images provided for the last exercise and four additional ones
 
 \begin{figure*}
   \centering
-  \subfloat{\includegraphics[width=0.22\textwidth]{../daisiesFromBing512x512}}~
-  \subfloat{\includegraphics[width=0.22\textwidth]{../hardedges_512x512}}~
-  \subfloat{\includegraphics[width=0.22\textwidth]{../penguinsFromBing512x512}}~
-  \subfloat{\includegraphics[width=0.22\textwidth]{../velos512x512}}~
-  \caption{The four additional images used during the optimisation.}
+  \subfloat{\includegraphics[width=0.24\textwidth]{../daisiesFromBing512x512}}~
+  \subfloat{\includegraphics[width=0.24\textwidth]{../penguinsFromBing512x512}}~
+  \subfloat{\includegraphics[width=0.24\textwidth]{../velos512x512}}~
+  \subfloat{\includegraphics[width=0.24\textwidth]{../hardedges_512x512}}~
+  \caption{The four additional images used during optimization.}
   \label{new_images}
 \end{figure*}
 
@@ -216,7 +216,7 @@ Our observations during the optimization process can be split into three classes
   \centering
   \subfloat{\label{fig:gull}\includegraphics[width=0.25\textwidth]{../plots/td_middle_plot.pdf}}                
   \subfloat{\label{fig:tiger}\includegraphics[width=0.25\textwidth]{../plots/validation_plot.pdf}}
-  \caption{Two parameters that seem to converge quite well during the optimisation.}
+  \caption{Two parameters that seem to converge quite well during the optimization.}
   \label{gradient_descent_parameters}
 \end{figure}
 
@@ -225,7 +225,7 @@ We compared our algorithm with the following three baseline algorithms (see figu
 \begin{enumerate}
 \item Vertical and horizontal linear interpolation,
 \item Gaussian interpolation as described in section \ref{gaussian_interpolation} and
-\item Matching pursuit~\cite{matchingpursuit93} with an overcomplete dictionary of discrete cosines. TODO this reference is wrong!
+\item Matching pursuit~\cite{matchingpursuit93} with an overcomplete dictionary of discrete cosines.
 \end{enumerate}
 
 \begin{figure}
@@ -248,28 +248,14 @@ Matching pursuit & ? & ? \\
 \end{tabular}
 \end{table}
 
-Since our algorithm did not perform equally well for all sample images, we print those for which it worked best and worst as figures \ref{best_image} and \ref{worst_image}.
-
-\begin{figure}
-\centering
-\includegraphics[width=\columnwidth]{images/framing_artifacts.png}
-\caption{Best image with error ? and standard deviation ?.}
-\label{best_image}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[width=\columnwidth]{images/framing_artifacts.png}
-\caption{Worst image with error ? and standard deviation ?.}
-\label{worst_image}
-\end{figure}
+Our algorithm did not perform equally well for all sample images: It worked best for ? (error ? and standard deviation ?) and worst for ? (error ? and standard deviation ?).
 
 The strength of our method is definitely in reconstructing edges, which can be seen in figure \ref{edge_reconstruction}.
 
 \begin{figure}
 \centering
 \includegraphics[width=\columnwidth]{images/framing_artifacts.png}
-\caption{Original image with mask (left) and its reconstruciton (right).}
+\caption{Original image with mask (left) and its reconstruction (right).}
 \label{edge_reconstruction}
 \end{figure}
 
