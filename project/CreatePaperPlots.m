@@ -44,8 +44,9 @@ save('plots/errsAndStdevB3.mat', 'avgQErrB3', 'stdevB3', 'stdev_runsB3', 'stdev_
 
 % Generate graphs
 stepsize = 2;
-% Ignore the 100% - the runtime will be inacceptable
-no_steps = floor(100/stepsize)-1;
+% Ignore the 100% - the runtime will be inacceptable.
+% And ignore the 0% - normalizing would give NAN anyway
+no_steps = floor(100/stepsize)-2;
 
 % Init arrays
 error_algo = zeros(no_steps, 1);
@@ -61,8 +62,8 @@ if(~exist('plots/error_A.mat', 'file'))
   % Use parallel computation for this, if available
   parfor k=0:no_steps
     % Our algorithm
-    e = EvaluateInpaintingParameterizedStatistics(stepsize*k/100, 3, @inPainting);
-    error_algo(k+1) = e/(k*stepsize/100);% Normalized
+    e = EvaluateInpaintingParameterizedStatistics((stepsize+k*stepsize)/100, 3, @inPainting);
+    error_algo(k+1) = e/((stepsize+k*stepsize)/100);% Normalized
   end
   save('plots/error_A.mat', 'error_algo');
 else
@@ -74,8 +75,8 @@ fprintf('3B) Baseline 1\n')
 if(~exist('plots/error_B1.mat', 'file'))    
   parfor k=0:no_steps
     % Baseline 1
-    e = EvaluateInpaintingParameterizedStatistics(stepsize*k/100, 3, @baseline1);
-    error_base1(k+1) = e/(k*stepsize/100);% Normalized
+    e = EvaluateInpaintingParameterizedStatistics((stepsize+k*stepsize)/100, 3, @baseline1);
+    error_base1(k+1) = e/((stepsize+k*stepsize)/100);% Normalized
   end
   save('plots/error_B1.mat', 'error_base1');
 else
@@ -87,8 +88,8 @@ fprintf('3C) Baseline 2\n')
 if(~exist('plots/error_B2.mat', 'file'))    
   parfor k=0:no_steps
     % Baseline 2
-    e = EvaluateInpaintingParameterizedStatistics(stepsize*k/100, 3, @baseline2);
-    error_base2(k+1) = e/(k*stepsize/100);% Normalized
+    e = EvaluateInpaintingParameterizedStatistics((stepsize+k*stepsize)/100, 3, @baseline2);
+    error_base2(k+1) = e/((stepsize+k*stepsize)/100);% Normalized
   end
   save('plots/error_B2.mat', 'error_base2');
 else
@@ -100,8 +101,8 @@ end
 if(~exist('plots/error_B3.mat', 'file'))    
   parfor k=0:no_steps
     % Baseline 3
-    e = EvaluateInpaintingParameterizedStatistics(stepsize*k/100, 3, @baseline3);
-    error_base3(k+1) = e/(k*stepsize/100);% Normalized
+    e = EvaluateInpaintingParameterizedStatistics((stepsize+k*stepsize)/100, 3, @baseline3);
+    error_base3(k+1) = e/((stepsize+k*stepsize)/100);% Normalized
   end
   save('plots/error_B3.mat', 'error_base3');
 else
@@ -112,10 +113,11 @@ end
 fprintf('3E) Plotting\n')
 
 handle = figure;
-range = 0:stepsize:(no_steps*step_size);
+range = 0+stepsize:stepsize:(no_steps*step_size);
 hold on;
 xlabel('Missing pixels (%)');
 ylabel('Average squared error per missing pixel');
+set(gca(handle), 'YScale', 'log');
 plot(range, error_algo, 'r', range, error_base1,'b', range, error_base2, 'g', range, error_base3, 'y');
 legend('New algorithm', 'Baseline 1 (Linear Interpolation)', 'Baseline 2 (Matching Pursuit)', 'Baseline 3 (Gaussian Interpolation)');
 saveas(handle, 'plots/missingpixelsVsError.fig');
