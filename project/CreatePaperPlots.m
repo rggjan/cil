@@ -12,9 +12,9 @@ main_path = pwd;
 global debug_threshold_plot_number;
 fprintf('1) Creating Parameter evolution graphs\n')
 debug_threshold_plot_number = 10;
-
+ 
 [unused, error_a, stdev_a] = EvaluateInpaintingParameterized(parameters, 0.6, 1);
-
+ 
 for i = 1:10
   f = open(sprintf('plots/search_strategy_%g.fig', i));
   plotpdftex(f, sprintf('plots/search_strategy_%g', i));
@@ -25,14 +25,22 @@ addpath('baseline1', 'baseline2', 'baseline3');
 
 fprintf('2) Evaluating performance at 60%% missing pixels\n');
 fprintf(' Note: Errors are NOT normalized\n')
+
 fprintf('Working in inPainting ...\n')
 [avgQErrA, stdevA, stdev_runsA, stdev_diffA] = EvaluateInpaintingParameterizedStatistics(0.6, 10, @inPainting)
+save('plots/errsAndStdevA.mat', 'avgQErrA', 'stdevA', 'stdev_runsA', 'stdev_diffA');
+
 fprintf('Working in baseline1 ...\n')
 [avgQErrB1, stdevB1, stdev_runsB1, stdev_diffB1] = EvaluateInpaintingParameterizedStatistics(0.6, 10, @baseline1)
+save('plots/errsAndStdevB1.mat', 'avgQErrB1', 'stdevB1', 'stdev_runsB1', 'stdev_diffB1');
+
 fprintf('Working in baseline2 ...\n')
 [avgQErrB2, stdevB2, stdev_runsB2, stdev_diffB2] = EvaluateInpaintingParameterizedStatistics(0.6, 10, @baseline2)
+save('plots/errsAndStdevB2.mat', 'avgQErrB2', 'stdevB2', 'stdev_runsB2', 'stdev_diffB2');
+
 fprintf('Working in baseline3 ...\n')
 [avgQErrB3, stdevB3, stdev_runsB3, stdev_diffB3] = EvaluateInpaintingParameterizedStatistics(0.6, 10, @baseline3)
+save('plots/errsAndStdevB3.mat', 'avgQErrB3', 'stdevB3', 'stdev_runsB3', 'stdev_diffB3');
 
 % Generate graphs
 stepsize = 2;
