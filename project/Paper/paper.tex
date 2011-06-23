@@ -23,17 +23,17 @@
 \maketitle
 
 \begin{abstract}
-This paper presents a new approach to the problem of inpainting, which is about recovering (deliberately) lost image information. In comparison with the submissions of our peers, we have designed a very efficient algorithm that does not fall behind other solutions in terms of accuracy. By suppressing weak frequencies in the Fourier domain, we attempt to recover the intrinsic signal of the image. Since we choose the optimal threshold with a random validation set, our method performs particularly well for the reconstruction of edges.
+This paper presents a new approach to the problem of inpainting, that is recovering of lost image information. In comparison with the submissions of our peers, we have designed a very efficient algorithm that does not fall behind other solutions in terms of accuracy. By suppressing weak frequencies in the Fourier domain, we attempt to recover the intrinsic signal of the image. Since we choose the optimal threshold using a random validation set, our method performs particularly well for the reconstruction of edges.
 \end{abstract}
 
 \section{Introduction}
-Inpainting is about reconstructing the missing spots of an image by guessing the correct values. The quality of such a restoration method can be evaluated by masking an image and comparing the result with the original.\\
-Our approach is based on the assumption that (natural) images have some underlying characteristic that can be distinguished from noise. The computed pixels can be viewed as a disturbed version of the genuine ones, hence the goal is to get rid of this noise. We do so by analyzing image patches in the Fourier space, removing the weak frequencies that (hopefully) capture the noise and thereby recovering the intrinsic signal.\\
-We repeat this procedure with the newly determined values until the error of a randomly chosen validation set converges or the maximum number of iterations is reached. For a faster start, we initialize our reconstructed image with what we call Gaussian interpolation: Using MATLAB's filtering function, we compute a weighted sum over all the neighboring pixels that are known. In order to determine the best threshold for suppressing weaker frequencies, we randomly remove even more pixels from the image and use them as a validation set (for which we know the correct values).
+Inpainting is about reconstructing the missing spots of an image by guessing the correct values. The quality of such a restoration method can be evaluated by masking an image and comparing the reconstruction with the original.\\
+Our approach is based on the assumption that (natural) images have some underlying characteristic that can be distinguished from noise. We initialize our reconstructed image with what we call Gaussian interpolation: Using MATLAB's filtering function, we compute a weighted sum over all the neighboring pixels that are known. This reconstruction introduces noise compared to the original image. The hope is that this noise is weak enough compared to the real signal, that we want to get rid of it. We do so by dividing the image into patches and analyzing these in the Fourier space, removing the weak frequencies that (hopefully) capture this noise and thereby recovering the intrinsic signal.\\
+We repeat this procedure with the newly determined values until the error of a randomly chosen validation set converges or the maximum number of iterations is reached. This validation set consists of some of known pixels given to the algorithm, that are removed before starting the reconstruction. In order to determine the  threshold for suppressing weaker frequencies, this validation set (for which we know the correct values) can be used as an error measure.
 
 \section{Methods}
 \subsection{Related work}
-Without actually knowing the broad field of research about inpainting (also known as image interpolation), we could not find any papers covering similar concepts as ours. Most methods are based on partial differential equations or some form of texture synthesis.
+Without knowing in depth the broad field of research about inpainting (also known as image interpolation), we were not able to find papers covering similar concepts as ours. Most methods are based on partial differential equations or some form of texture synthesis.
 
 \subsection{New approach}
 
@@ -42,7 +42,7 @@ Without actually knowing the broad field of research about inpainting (also know
     text width=4.5em, text badly centered, inner sep=0pt]
 
 \tikzstyle{block} = [rectangle, draw, fill=blue!20, 
-    text width=7em, text centered, rounded corners, minimum height=4em]
+    text width=7em, text centered, rounded corners, minimum height=3em]
 
 \tikzstyle{line} = [draw, -latex']
 
@@ -50,15 +50,15 @@ Without actually knowing the broad field of research about inpainting (also know
     minimum height=2em]
     
 \begin{figure}
-\begin{tikzpicture}[node distance = 2cm, auto]
+\begin{tikzpicture}[node distance = 1.5cm, auto]
   % Place nodes
   \node [cloud] (node1) {Start};
   \node [block, right of=node1, node distance = 3.1cm] (node2) {Remove validation set};
   \node [block, below of=node2] (node3) {Frame image};
   \node [block, below of=node3] (node4) {Gaussian interpolation};
-  \node [decision, below of=node4] (node5) {Iterative?};
+  \node [decision, below of=node4, node distance = 1.8cm] (node5) {Iterative?};
   \node [block, right of=node5, node distance = 3.1cm, fill=green!20] (node6) {Find best threshold};
-  \node [block, below of=node6, fill=green!20] (node7) {Reset known values except validation set};
+  \node [block, below of=node6, fill=green!20, node distance = 1.8cm] (node7) {Reset known values except validation set};
 
   \node [block, left of=node5, node distance = 3.1cm] (node8) {Find best threshold};
   \node [block, below of=node8] (node9) {Gaussian interpolation on original data};
@@ -95,28 +95,29 @@ As outlined in the introduction, we combined several ideas for obtaining an inpa
 Before entering the iterative part of our algorithm, the following three steps are performed (as seen in figure \ref{flowchart}):
 \begin{enumerate}
 \item In order to guide the elimination of frequencies by finding the optimal threshold (as described below), we first remove additional pixels from the image and use them as the validation set. The fraction of additional pixels to be removed is a global parameter, which we optimized using gradient descent (as explained in section \ref{gradient_descent}).
-\item Since our reduction in the Fourier space works best with framed patches (see figure \ref{framing_artifacts}), we frame the complete image by mirroring its margin. (The size of the frame is another optimizable global parameter.)
+\item Our reduction in the Fourier space works best with frames, meaning that we use large overlapping patches for the fourier transform, but only use the inner part for the reconstruction (see figure \ref{framing_artifacts}), we frame the complete image by mirroring its margin. The size of the frame is another optimizable global parameter.
 
 \begin{figure}
 \centering
 \includegraphics[width=\columnwidth]{images/framing_artifacts.png}
-\caption{Artifacts occur w/o frames (left) that vanish with frames (right).}
+\caption{Artifacts occur w/o frames (left) that vanish with frames (right).} % TODO
 \label{framing_artifacts}
 \end{figure}
 
-\item For obtaining an initial reconstruction of the image, we compute a weighted sum over all the neighboring pixels that are known. By setting all unknown pixels in the image to zero and encoding known values with 1s in the mask, elementwise division of the filtered image by the similarly filtered mask results in a normalized sum weighted by the filtering kernel. (This procedure, which we call Gaussian interpolation, allows us to use MATLAB's fast native functions and to fill holes up to the kernel size, which is another global parameter.)
+\item For obtaining an initial reconstruction of the image, we compute a weighted sum over all the neighboring pixels that are known. By setting all unknown pixels in the image to zero and encoding known values with 1s in the mask, elementwise division of the filtered image by the similarly filtered mask results in a normalized sum weighted by the filtering kernel.\\
+This procedure, which we call Gaussian interpolation, allows us to use MATLAB's fast native functions and to fill holes up to the kernel size, which is another global parameter.
 \label{gaussian_interpolation}
 \end{enumerate}
 
 After these preparing steps, we start to iteratively improve the reconstructed image with the following steps:
 \begin{enumerate}
-\item Using the above mentioned validation set, we evaluate several thresholds for every patch and keep for each the best one: After calculating a fast Fourier transform for every patch, frequencies weaker then the threshold are suppressed by setting them to 0. Since profiling showed that the Fourier transform with its inverse is by far the most time-consuming part of our algorithm, we try to perform as few threshold evaluations as possible. For this purpose, we iteratively evaluate two new thresholds around a center threshold, taking the best one as the new center and halve the step size (see figure \ref{threshold_optimization}). While this heuristic does not always reach the minimum, it works quite well for our error function, which is often roughly convex. For this optimization as well as for the whole iteration, we have both a number- and a convergence-based termination criterion.
+\item Using the above mentioned validation set, we evaluate several thresholds for every patch and keep for each the best one: After calculating a Fourier transform for every patch, frequencies weaker then the threshold are suppressed by setting them to 0. Since profiling showed that the Fourier transform with its inverse is by far the most time-consuming part of our algorithm, we try to perform as few threshold evaluations as possible. For this purpose, we iteratively evaluate two new thresholds around a center threshold, taking the best one as the new center and halve the step size (see figure \ref{threshold_optimization}). While this heuristic does not always reach the minimum, it works quite well for our error function, which is often roughly convex. For this optimization as well as for the whole iteration, we have both a number- and a convergence-based termination criterion.
 
 \begin{figure}
 \centering
-\includegraphics[width=\columnwidth]{../plots/search_strategy_1.pdf}
-\includegraphics[width=\columnwidth]{../plots/search_strategy_6.pdf}
-\caption{The threshold is optimized by iteratively taking the best one.}
+\includegraphics[width=0.8\columnwidth]{../plots/search_strategy_6.pdf}
+\includegraphics[width=0.8\columnwidth]{../plots/search_strategy_2.pdf}
+\caption{The threshold is optimized by iteratively.}
 \label{threshold_optimization}
 \end{figure}
 

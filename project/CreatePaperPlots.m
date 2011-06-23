@@ -5,7 +5,7 @@
 % Create Error vs. MissingPixels Plot
 % Requires parameters saved in a parameters.mat file
 
-load('params.mat');
+load('start_params.mat');
 main_path = pwd;
 
 % Generate strategy plots
@@ -20,6 +20,7 @@ for i = 1:10
   plotpdftex(f, sprintf('plots/search_strategy_%g', i));
 end
 
+load('params.mat');
 addpath('baseline1', 'baseline2', 'baseline3');
 
 fprintf('2) Evaluating performance at 60%% missing pixels\n');
