@@ -27,20 +27,20 @@ fprintf('2) Evaluating performance at 60%% missing pixels\n');
 fprintf(' Note: Errors are NOT normalized\n')
 
 fprintf('Working in inPainting ...\n')
-[avgQErrA, stdevA, stdev_runsA, stdev_diffA] = EvaluateInpaintingParameterizedStatistics(0.6, 10, @inPainting)
-save('plots/errsAndStdevA.mat', 'avgQErrA', 'stdevA', 'stdev_runsA', 'stdev_diffA');
+[avgQErrA, stdevA, stdev_runsA, stdev_diffA, meanErrPerImgA] = EvaluateInpaintingParameterizedStatistics(0.6, 10, @inPainting)
+save('plots/errsAndStdevA.mat', 'avgQErrA', 'stdevA', 'stdev_runsA', 'stdev_diffA', 'meanErrPerImgA');
 
 fprintf('Working in baseline1 ...\n')
-[avgQErrB1, stdevB1, stdev_runsB1, stdev_diffB1] = EvaluateInpaintingParameterizedStatistics(0.6, 10, @baseline1)
-save('plots/errsAndStdevB1.mat', 'avgQErrB1', 'stdevB1', 'stdev_runsB1', 'stdev_diffB1');
+[avgQErrB1, stdevB1, stdev_runsB1, stdev_diffB1, meanErrPerImgB1] = EvaluateInpaintingParameterizedStatistics(0.6, 10, @baseline1)
+save('plots/errsAndStdevB1.mat', 'avgQErrB1', 'stdevB1', 'stdev_runsB1', 'stdev_diffB1', 'meanErrPerImgB1');
 
 fprintf('Working in baseline2 ...\n')
-[avgQErrB2, stdevB2, stdev_runsB2, stdev_diffB2] = EvaluateInpaintingParameterizedStatistics(0.6, 10, @baseline2)
-save('plots/errsAndStdevB2.mat', 'avgQErrB2', 'stdevB2', 'stdev_runsB2', 'stdev_diffB2');
+[avgQErrB2, stdevB2, stdev_runsB2, stdev_diffB2, meanErrPerImgB2] = EvaluateInpaintingParameterizedStatistics(0.6, 10, @baseline2)
+save('plots/errsAndStdevB2.mat', 'avgQErrB2', 'stdevB2', 'stdev_runsB2', 'stdev_diffB2', 'meanErrPerImgB2');
 
 fprintf('Working in baseline3 ...\n')
-[avgQErrB3, stdevB3, stdev_runsB3, stdev_diffB3] = EvaluateInpaintingParameterizedStatistics(0.6, 10, @baseline3)
-save('plots/errsAndStdevB3.mat', 'avgQErrB3', 'stdevB3', 'stdev_runsB3', 'stdev_diffB3');
+[avgQErrB3, stdevB3, stdev_runsB3, stdev_diffB3, meanErrPerImgB3] = EvaluateInpaintingParameterizedStatistics(0.6, 10, @baseline3)
+save('plots/errsAndStdevB3.mat', 'avgQErrB3', 'stdevB3', 'stdev_runsB3', 'stdev_diffB3', 'meanErrPerImgB3');
 
 % Generate graphs
 stepsize = 2;

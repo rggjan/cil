@@ -1,6 +1,6 @@
 % Measure approximation error for several images.
 
-function [avgQErr, stdev, stdev_runs, stdev_diff] = EvaluateInpaintingParameterizedStatistics(missing_pixels_fract, rep, inPainting)
+function [avgQErr, stdev, stdev_runs, stdev_diff, meanErrPerImg] = EvaluateInpaintingParameterizedStatistics(missing_pixels_fract, rep, inPainting)
   file_list = dir('.'); 
   
   dir_length = length(dir('.'));
@@ -69,14 +69,20 @@ function [avgQErr, stdev, stdev_runs, stdev_diff] = EvaluateInpaintingParameteri
       filenames{imc} = {file_name};
   end
   
+  % Assign filenames to output.
   for i=1:imc
     stdev{i,2} = filenames{i};
+    meanErrPerImg{i,2} = filenames{i};
   end
   
   if rep > 1
     for i=1:imc
+      % Stdev/per Image over 'rep' runs
       stdev{i,1} = std(Errors_final(i:imc:end));
+      % MeanErr per Image over 'rep' runs
+      meanErrPerImg{i,1} = mean(Errors_final(i:imc:end));
     end
+    % Stdev of run means (all images)
     stdev_runs = std(Error_means);
   else
     % 1 Iteration - no deviation
