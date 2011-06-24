@@ -11,6 +11,8 @@
 \usepackage{tikz}
 \usetikzlibrary{shapes,arrows}
 
+\providecommand{\e}[1]{\ensuremath{\times 10^{#1}}}
+
 \begin{document}
 \title{Inpainting with controlled frequency suppression in the Fourier domain}
 
@@ -117,7 +119,7 @@ After these preparing steps, we start to iteratively improve the reconstructed i
 \centering
 \includegraphics[width=0.8\columnwidth]{../plots/search_strategy_6.pdf}
 \includegraphics[width=0.8\columnwidth]{../plots/search_strategy_2.pdf}
-\caption{The threshold is optimized by iteratively.}
+\caption{The threshold is iteratively optimized.}
 \label{threshold_optimization}
 \end{figure}
 
@@ -238,16 +240,17 @@ We evaluated the baseline algorithms with the same sample images as optimization
 
 \begin{table}[h]
 \centering
-\begin{tabular}{l|r|r}
+\begin{tabular}{l|c|c}
 Algorithm & Error & Deviation \\
 \hline
-Linear interpolation & ? & ? \\
-Gaussian interpolation & ? & ? \\
-Matching pursuit & ? & ? \\
+New algorithm & 5.73\e{-4} & 6.32\e{-6} \\
+Linear interpolation & 8.08\e{-4} & 7.10\e{-6} \\
+Gaussian interpolation & 5.74\e{-3} & 1.10\e{-5} \\
+Matching pursuit & 1.72\e{-3} & 1.71\e{-5} \\
 \end{tabular}
 \end{table}
 
-Our algorithm did not perform equally well for all sample images: It worked best for ? (error ? and standard deviation ?) and worst for ? (error ? and standard deviation ?).
+Our algorithm did not perform equally well for all sample images: It worked best for the spiral (error 1.25\e{-4} and standard deviation 1.92\e{-6}) and worst for the bicycles (error 3.05\e{-3} and standard deviation 4.09\e{-5}).
 
 The strength of our method is definitely in reconstructing edges, which can be seen in figure \ref{edge_reconstruction}.
 
