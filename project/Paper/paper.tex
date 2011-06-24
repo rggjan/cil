@@ -97,15 +97,7 @@ As outlined in the introduction, we combined several ideas for obtaining an inpa
 Before entering the iterative part of our algorithm, the following three steps are performed (as seen in figure \ref{flowchart}):
 \begin{enumerate}
 \item In order to guide the elimination of frequencies by finding the optimal threshold (as described below), we first remove additional pixels from the image and use them as the validation set. The fraction of additional pixels to be removed is a global parameter, which we optimized using gradient descent (as explained in section \ref{gradient_descent}).
-\item Our reduction in the Fourier space works best with frames, meaning that we use large overlapping patches for the fourier transform, but only use the inner part for the reconstruction (see figure \ref{framing_artifacts}), we frame the complete image by mirroring its margin. The size of the frame is another optimizable global parameter.
-
-\begin{figure}
-\centering
-\includegraphics[width=\columnwidth]{images/framing_artifacts.png}
-\caption{Artifacts occur w/o frames (left) that vanish with frames (right).} % TODO
-\label{framing_artifacts}
-\end{figure}
-
+\item Our reduction in the Fourier space works best with frames, meaning that we use large overlapping patches for the fourier transform, but only use the inner part for the reconstruction, we frame the complete image by mirroring its margin. The size of the frame is another optimizable global parameter.
 \item For obtaining an initial reconstruction of the image, we compute a weighted sum over all the neighboring pixels that are known. By setting all unknown pixels in the image to zero and encoding known values with 1s in the mask, elementwise division of the filtered image by the similarly filtered mask results in a normalized sum weighted by the filtering kernel.\\
 This procedure, which we call Gaussian interpolation, allows us to use MATLAB's fast native functions and to fill holes up to the kernel size, which is another global parameter.
 \label{gaussian_interpolation}
